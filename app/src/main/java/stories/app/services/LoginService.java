@@ -1,8 +1,13 @@
 package stories.app.services;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -16,14 +21,39 @@ public class LoginService {
         // see https://developer.android.com/reference/java/net/HttpURLConnection.html
         // and https://www.numetriclabz.com/android-post-and-get-request-using-httpurlconnection/
         try {
-            URL url = new URL("http://www.google.com");
+            URL url = new URL("http://192.168.0.22:8000/api/v1/users/login");
             client = (HttpURLConnection) url.openConnection();
-            client.setRequestMethod("GET");
+            client.setRequestMethod("POST");
+            client.setRequestProperty("Content-Type", "application/json");
+            client.setRequestProperty("Accept", "application/json");
+
+            JSONObject credentials = new JSONObject();
+
+            credentials.put("username",username);
+            credentials.put("password", password);
+
+            OutputStream outputStream = client.getOutputStream();
+            outputStream.write(credentials.toString().getBytes("UTF-8"));
+            outputStream.close();
 
             client.connect();
 
-            int responseCode = client.getResponseCode();
-            return responseCode == 200;
+            BufferedReader br;
+
+            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+                br = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            } else {
+                br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
+            }
+
+            StringBuilder sb = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            String result = sb.toString();
+
+            return result != "";
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
@@ -35,6 +65,9 @@ public class LoginService {
         }
         catch (IOException error) {
             //Handles input and output errors
+            return false;
+        }
+        catch (JSONException error) {
             return false;
         }
         finally {

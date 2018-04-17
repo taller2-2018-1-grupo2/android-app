@@ -10,17 +10,27 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import stories.app.R;
-import stories.app.services.LoginService;
+import stories.app.services.AuthenticationService;
 
-public class LoginActivity extends AppCompatActivity {
+public class LogInActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Button loginButton = (Button)this.findViewById(R.id.loginButton);
+        Button loginButton = this.findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new LoginClickHandler());
+
+        TextView signInLink = this.findViewById(R.id.signInLink);
+        signInLink.setOnClickListener(new SignInLinkClickHandler());
+    }
+
+    protected class SignInLinkClickHandler implements View.OnClickListener {
+        public void onClick(View v){
+            Intent navigationIntent = new Intent(LogInActivity.this, SignInActivity.class);
+            startActivity(navigationIntent);
+        }
     }
 
     protected class LoginClickHandler implements View.OnClickListener {
@@ -36,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     protected class LoginUserTask extends AsyncTask<String, Void, Boolean> {
-        private LoginService loginService = new LoginService();
+        private AuthenticationService authenticationService = new AuthenticationService();
 
         protected void onPreExecute() {
             Button loginButton = findViewById(R.id.loginButton);
@@ -44,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         protected Boolean doInBackground(String... params) {
-            return loginService.validateUser(params[0], params[1]);
+            return authenticationService.loginUser(params[0], params[1]);
         }
 
         protected void onPostExecute(Boolean result) {
@@ -56,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
             if (!result) {
                 loginResult.setText(R.string.error_invalid_login);
             } else {
-                Intent navigationIntent = new Intent(LoginActivity.this, HomeActivity.class);
+                Intent navigationIntent = new Intent(LogInActivity.this, HomeActivity.class);
                 startActivity(navigationIntent);
             }
         }

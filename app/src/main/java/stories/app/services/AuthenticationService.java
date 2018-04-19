@@ -16,18 +16,20 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 
 public class AuthenticationService {
+
+    private String URL = "https://stories-app-server.herokuapp.com/api/v1";
+
     public boolean loginUser(String username, String password) {
         HttpURLConnection client = null;
 
         try {
-            URL url = new URL("http://192.168.0.22:8000/api/v1/users/login");
+            URL url = new URL(URL + "/users/login");
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             client.setRequestProperty("Content-Type", "application/json");
             client.setRequestProperty("Accept", "application/json");
 
             JSONObject credentials = new JSONObject();
-
             credentials.put("username",username);
             credentials.put("password", password);
 
@@ -80,14 +82,13 @@ public class AuthenticationService {
         HttpURLConnection client = null;
 
         try {
-            URL url = new URL("http://192.168.0.22:8000/api/v1/users");
+            URL url = new URL(URL + "/users");
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             client.setRequestProperty("Content-Type", "application/json");
             client.setRequestProperty("Accept", "application/json");
 
             JSONObject credentials = new JSONObject();
-
             credentials.put("username", username);
             credentials.put("email", email);
             credentials.put("password", password);

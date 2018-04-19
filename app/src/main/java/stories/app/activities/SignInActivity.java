@@ -79,7 +79,7 @@ public class SignInActivity extends AppCompatActivity {
         private AuthenticationService authenticationService = new AuthenticationService();
 
         protected void onPreExecute() {
-            Button signInButton = findViewById(R.id.signinButton);
+            Button signInButton = findViewById(R.id.signInButton);
             signInButton.setEnabled(false);
         }
 
@@ -88,10 +88,10 @@ public class SignInActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(Boolean result) {
-            Button signInButton = findViewById(R.id.signinButton);
+            Button signInButton = findViewById(R.id.signInButton);
             signInButton.setEnabled(true);
 
-            TextView signInResult = findViewById(R.id.signinResult);
+            TextView signInResult = findViewById(R.id.signInButton);
 
             if (!result) {
                 signInResult.setText(R.string.error_invalid_signin);

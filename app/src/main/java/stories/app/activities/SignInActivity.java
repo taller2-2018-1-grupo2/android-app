@@ -27,11 +27,15 @@ public class SignInActivity extends AppCompatActivity {
         EditText email = findViewById(R.id.email);
         EditText password = findViewById(R.id.password);
         EditText confirmPassword = findViewById(R.id.confirmPassword);
+        EditText firstName = findViewById(R.id.first_name);
+        EditText lastName = findViewById(R.id.last_name);
 
         username.setOnFocusChangeListener(new FocusChangeHandler());
         email.setOnFocusChangeListener(new FocusChangeHandler());
         password.setOnFocusChangeListener(new FocusChangeHandler());
         confirmPassword.setOnFocusChangeListener(new FocusChangeHandler());
+        firstName.setOnFocusChangeListener(new FocusChangeHandler());
+        lastName.setOnFocusChangeListener(new FocusChangeHandler());
     }
 
     protected class FocusChangeHandler implements View.OnFocusChangeListener {
@@ -42,6 +46,8 @@ public class SignInActivity extends AppCompatActivity {
             EditText email = findViewById(R.id.email);
             EditText password = findViewById(R.id.password);
             EditText confirmPassword = findViewById(R.id.confirmPassword);
+            EditText firstName = findViewById(R.id.first_name);
+            EditText lastName = findViewById(R.id.last_name);
 
             boolean arePasswordEqual = password.getText().toString().equals(confirmPassword.getText().toString());
 
@@ -57,6 +63,8 @@ public class SignInActivity extends AppCompatActivity {
                 && password.getText().toString() != ""
                 && confirmPassword.getText().toString() != ""
                 && arePasswordEqual
+                && firstName.getText().toString() != ""
+                && lastName.getText().toString() != ""
             );
         }
     }
@@ -66,11 +74,15 @@ public class SignInActivity extends AppCompatActivity {
             EditText username = findViewById(R.id.username);
             EditText email = findViewById(R.id.email);
             EditText password = findViewById(R.id.password);
+            EditText firstName = findViewById(R.id.first_name);
+            EditText lastName = findViewById(R.id.last_name);
 
             new SignInUserTask().execute(
                 username.getText().toString(),
                 email.getText().toString(),
-                password.getText().toString()
+                password.getText().toString(),
+                firstName.getText().toString(),
+                lastName.getText().toString()
             );
         }
     }
@@ -84,14 +96,14 @@ public class SignInActivity extends AppCompatActivity {
         }
 
         protected Boolean doInBackground(String... params) {
-            return authenticationService.signinUser(params[0], params[1], params[2]);
+            return authenticationService.signinUser(params[0], params[1], params[2], params[3], params[4]);
         }
 
         protected void onPostExecute(Boolean result) {
             Button signInButton = findViewById(R.id.signInButton);
             signInButton.setEnabled(true);
 
-            TextView signInResult = findViewById(R.id.signInButton);
+            TextView signInResult = findViewById(R.id.signInResult);
 
             if (!result) {
                 signInResult.setText(R.string.error_invalid_signin);

@@ -13,29 +13,18 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 
 import stories.app.utils.Constants;
-import stories.app.utils.LocalStorage;
 
-public class AuthenticationService {
+public class ProfileService {
 
     private String URL = Constants.appServerURI;
 
-    public boolean loginUser(String username, String password) {
+    public String getUserData(String userID) {
         HttpURLConnection client = null;
 
         try {
-            URL url = new URL(URL + "/users/login");
+            URL url = new URL(URL + "/users/" + userID);
             client = (HttpURLConnection) url.openConnection();
-            client.setRequestMethod("POST");
-            client.setRequestProperty("Content-Type", "application/json");
-            client.setRequestProperty("Accept", "application/json");
-
-            JSONObject credentials = new JSONObject();
-            credentials.put("username",username);
-            credentials.put("password", password);
-
-            OutputStream outputStream = client.getOutputStream();
-            outputStream.write(credentials.toString().getBytes("UTF-8"));
-            outputStream.close();
+            client.setRequestMethod("GET");
 
             client.connect();
 
@@ -54,27 +43,19 @@ public class AuthenticationService {
             }
             String result = sb.toString();
 
-            JSONObject jsonObject = new JSONObject(result);
-            String userID = jsonObject.getString("user_id");
-
-            LocalStorage.setUserID(userID);
-
-            return result != "";
+            return result;
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
-            return false;
+            return "";
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
-            return false;
+            return "";
         }
         catch (IOException error) {
             //Handles input and output errors
-            return false;
-        }
-        catch (JSONException error) {
-            return false;
+            return "";
         }
         finally {
             if(client != null) {
@@ -83,22 +64,21 @@ public class AuthenticationService {
         }
     }
 
-    public boolean signinUser(String username, String email, String password, String firstName, String lastName) {
+    public Boolean updateUserData(String userID, String firstName, String lastName, String email, String profilePic) {
         HttpURLConnection client = null;
 
         try {
-            URL url = new URL(URL + "/users");
+            URL url = new URL(URL + "/users/" + userID);
             client = (HttpURLConnection) url.openConnection();
-            client.setRequestMethod("POST");
+            client.setRequestMethod("PUT");
             client.setRequestProperty("Content-Type", "application/json");
             client.setRequestProperty("Accept", "application/json");
 
             JSONObject credentials = new JSONObject();
-            credentials.put("username", username);
-            credentials.put("email", email);
-            credentials.put("password", password);
             credentials.put("first_name", firstName);
             credentials.put("last_name", lastName);
+            credentials.put("email", email);
+            credentials.put("profile_pic", profilePic);
 
             OutputStream outputStream = client.getOutputStream();
             outputStream.write(credentials.toString().getBytes("UTF-8"));
@@ -120,14 +100,6 @@ public class AuthenticationService {
                 sb.append(output);
             }
             String result = sb.toString();
-
-            JSONObject jsonObject = new JSONObject(result);
-            String userJSON = jsonObject.getString("user");
-
-            jsonObject = new JSONObject(userJSON);
-            String userID = jsonObject.getString("user_id");
-
-            LocalStorage.setUserID(userID);
 
             return result != "";
 

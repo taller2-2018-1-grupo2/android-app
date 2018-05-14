@@ -10,7 +10,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My Profile"
+        android:text="Mi Perfil"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,24 +38,25 @@
         android:gravity="center"
         android:orientation="vertical"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="26dp">
+        tools:layout_editor_absoluteY="130dp">
 
         <EditText
-            android:id="@+id/name"
+            android:id="@+id/first_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="14"
-            android:hint="Name"
+            android:hint="Nombre"
             android:inputType="text"
-            android:textSize="20sp" />
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/last_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Last Name"
-            android:inputType="text" />
+            android:hint="Apellido"
+            android:inputType="text"
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/email"
@@ -63,18 +64,11 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Email"
-            android:inputType="text|textEmailAddress" />
-
-        <EditText
-            android:id="@+id/confirmPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/prompt_confirm_password"
-            android:inputType="textPassword" />
+            android:inputType="text|textEmailAddress"
+            android:textSize="24sp" />
 
         <Button
-            android:id="@+id/signInButton"
+            android:id="@+id/applyChangesButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/action_edit_profile" />

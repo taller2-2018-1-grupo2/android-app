@@ -1,15 +1,26 @@
 package stories.app.activities;
 
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import stories.app.R;
 
 public class FriendshipRequestsActivity extends AppCompatActivity {
+
+    ArrayList<String> listItems=new ArrayList<String>();
+
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +30,15 @@ public class FriendshipRequestsActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
+        SearchView searchView = this.findViewById(R.id.friends_search_bar);
+        searchView.setOnQueryTextListener(new SearchQueryHandler());
+
+        adapter=new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                listItems);
+        ListView listView = findViewById(R.id.list_view);
+        listView.setAdapter(adapter);
     }
 
     @Override
@@ -40,5 +60,20 @@ public class FriendshipRequestsActivity extends AppCompatActivity {
             return(true);
         }
         return(super.onOptionsItemSelected(item));
+    }
+
+    protected class SearchQueryHandler implements SearchView.OnQueryTextListener {
+        public boolean onQueryTextChange(String s) {
+            return true;
+        }
+
+        public boolean onQueryTextSubmit(String s){
+            SearchView searchView = findViewById(R.id.friends_search_bar);
+
+            adapter.add(searchView.getQuery().toString());
+
+            searchView.clearFocus();
+            return true;
+        }
     }
 }

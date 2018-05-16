@@ -58,6 +58,7 @@ public class AuthenticationService {
             String userID = jsonObject.getString("user_id");
 
             LocalStorage.setUserID(userID);
+            LocalStorage.setUsername(username);
 
             return result != "";
 
@@ -128,6 +129,10 @@ public class AuthenticationService {
             String userID = jsonObject.getString("user_id");
 
             LocalStorage.setUserID(userID);
+
+            String saveUsername = jsonObject.getString("username");
+
+            LocalStorage.setUsername(saveUsername);
 
             return result != "";
 

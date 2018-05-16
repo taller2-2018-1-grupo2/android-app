@@ -1,5 +1,6 @@
 package stories.app.services;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,41 +10,43 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Calendar;
 
-import stories.app.models.User;
+import stories.app.models.Story;
 import stories.app.utils.Constants;
 import stories.app.utils.LocalStorage;
 
-public class AuthenticationService extends BaseService {
+public class StoryService extends BaseService {
 
-    private String URL = Constants.appServerURI;
+    public ArrayList<Story> getStoriesVisiblesToUser(String userId) {
 
-    public User loginUser(String username, String password) {
         HttpURLConnection client = null;
 
         try {
-            URL url = new URL(URL + "/users/login");
+            URL url = new URL(Constants.appServerURI + "/stories");
             client = (HttpURLConnection) url.openConnection();
-            client.setRequestMethod("POST");
-            client.setRequestProperty("Content-Type", "application/json");
-            client.setRequestProperty("Accept", "application/json");
-
-            JSONObject credentials = new JSONObject();
-            credentials.put("username",username);
-            credentials.put("password", password);
-
-            OutputStream outputStream = client.getOutputStream();
-            outputStream.write(credentials.toString().getBytes("UTF-8"));
-            outputStream.close();
+            client.setRequestMethod("GET");
 
             client.connect();
 
-            JSONObject result = this.getResponseResult(client);
-            User user = User.fromJsonObject(result);
+            BufferedReader br;
+            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+                br = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            } else {
+                br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
+            }
 
-            // Save the user information
-            LocalStorage.setUser(user);
-            return user;
+            JSONObject result = this.getResponseResult(client);
+            JSONArray storiesJson = result.getJSONArray("stories");
+            ArrayList<Story> stories = new ArrayList<>();
+
+            for (int i = 0; i < storiesJson.length(); i++) {
+                JSONObject storyJson = storiesJson.getJSONObject(i);
+                stories.add(Story.fromJsonObject(storyJson));
+            }
+
+            return stories;
         } catch(Exception exception) {
             return null;
         } finally {
@@ -53,18 +56,17 @@ public class AuthenticationService extends BaseService {
         }
     }
 
-    public User signinUser(User user, String password) {
+    public Story createStory(Story story) {
         HttpURLConnection client = null;
 
         try {
-            URL url = new URL(URL + "/users");
+            URL url = new URL(Constants.appServerURI + "/stories");
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             client.setRequestProperty("Content-Type", "application/json");
             client.setRequestProperty("Accept", "application/json");
 
-            JSONObject requestBody = User.toJsonObject(user);
-            requestBody.put("password", password);
+            JSONObject requestBody = Story.toJsonObject(story);
 
             OutputStream outputStream = client.getOutputStream();
             outputStream.write(requestBody.toString().getBytes("UTF-8"));
@@ -73,14 +75,13 @@ public class AuthenticationService extends BaseService {
             client.connect();
 
             JSONObject result = this.getResponseResult(client);
-            User signedInUser = User.fromJsonObject(result.getJSONObject("user"));
 
-            // TODO: merge both user and signedInUser
+            if (result == null) {
+                return null;
+            }
 
-            // Save the user information
-            LocalStorage.setUser(signedInUser);
-            return signedInUser;
-
+            Story newStory = Story.fromJsonObject(result);
+            return newStory;
         } catch(Exception exception) {
             return null;
         } finally {

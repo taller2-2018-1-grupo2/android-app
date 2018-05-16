@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.CreateStoryActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/createStoryTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/prompt_title"
+        android:inputType="text" />
+
+        <EditText
+            android:id="@+id/createStoryDescription"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:ems="10"
+            android:hint="@string/prompt_description"
+            android:inputType="textMultiLine" />
+
+        <RadioGroup
+            android:id="@+id/createStoryVisibility"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:checkedButton="@+id/createStoryVisibilityIsPublic"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/createStoryVisibilityIsPublic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_visibility_public" />
+
+            <RadioButton
+                android:id="@+id/createStoryVisibilitIsPrivate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_visibility_private" />
+        </RadioGroup>
+
+        <CheckBox
+            android:id="@+id/createStoryIsQuickStory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_isQuickStory" />
+
+        <Button
+            android:id="@+id/createStoryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_createStory" />
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

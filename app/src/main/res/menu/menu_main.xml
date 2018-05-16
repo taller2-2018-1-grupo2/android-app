@@ -3,7 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
     <item
-        android:id="@+id/profile"
+        android:id="@+id/story_menu"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/story_menu"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/profile_menu"
         android:icon="@drawable/ic_account_circle"
         app:showAsAction="always"
         android:title="@string/profile_menu"/>

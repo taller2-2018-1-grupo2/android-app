@@ -30,14 +30,20 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.profile) {
-            Intent navigationIntent = new Intent(HomeActivity.this, ProfileActivity.class);
-            startActivity(navigationIntent);
-            return(true);
-        } else if (item.getItemId() == R.id.friendship_requests) {
-            Intent navigationIntent = new Intent(HomeActivity.this, FriendshipRequestsActivity.class);
-            startActivity(navigationIntent);
-            return(true);
+        Intent navigationIntent;
+        switch(item.getItemId()) {
+            case R.id.profile:
+                navigationIntent = new Intent(HomeActivity.this, ProfileActivity.class);
+                startActivity(navigationIntent);
+                return(true);
+            case R.id.friendship_requests:
+                navigationIntent = new Intent(HomeActivity.this, FriendshipRequestsActivity.class);
+                startActivity(navigationIntent);
+                return(true);
+            case R.id.direct_messages:
+                navigationIntent = new Intent(HomeActivity.this, DirectMessagesActivity.class);
+                startActivity(navigationIntent);
+                return(true);
         }
         return(super.onOptionsItemSelected(item));
     }

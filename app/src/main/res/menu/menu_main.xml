@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
     <item
+        android:id="@+id/direct_messages"
+        android:icon="@drawable/ic_menu_messages"
+        app:showAsAction="always"
+        android:title="Direct Messages"/>
+    <item
         android:id="@+id/friendship_requests"
         android:icon="@drawable/ic_menu_allfriends"
         app:showAsAction="always"

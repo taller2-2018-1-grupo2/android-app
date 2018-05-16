@@ -7,7 +7,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+
 import stories.app.R;
+import stories.app.models.Story;
+import stories.app.services.StoryService;
+import stories.app.utils.LocalStorage;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -19,6 +24,9 @@ public class HomeActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
+        // Retrieve all stories visibles to the user
+        new GetStoriesVisiblesToUserTask().execute(LocalStorage.getUser().id);
     }
 
     @Override
@@ -30,21 +38,43 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent navigationIntent;
-        switch(item.getItemId()) {
-            case R.id.profile:
-                navigationIntent = new Intent(HomeActivity.this, ProfileActivity.class);
-                startActivity(navigationIntent);
-                return(true);
-            case R.id.friendship_requests:
-                navigationIntent = new Intent(HomeActivity.this, FriendshipRequestsActivity.class);
-                startActivity(navigationIntent);
-                return(true);
-            case R.id.direct_messages:
-                navigationIntent = new Intent(HomeActivity.this, DirectMessagesActivity.class);
-                startActivity(navigationIntent);
-                return(true);
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.story_menu) {
+            Intent navigationIntent = new Intent(HomeActivity.this, CreateStoryActivity.class);
+            startActivity(navigationIntent);
+            return true;
         }
-        return(super.onOptionsItemSelected(item));
+
+        if(itemId == R.id.profile_menu) {
+            Intent navigationIntent = new Intent(HomeActivity.this, ProfileActivity.class);
+            startActivity(navigationIntent);
+            return true;
+        }
+
+        if (itemId == R.id.friendship_requests) {
+            Intent navigationIntent = new Intent(HomeActivity.this, FriendshipRequestsActivity.class);
+            startActivity(navigationIntent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    protected class GetStoriesVisiblesToUserTask extends AsyncTask<String, Void, ArrayList<Story>> {
+        private StoryService storyService = new StoryService();
+
+        protected void onPreExecute() {
+        }
+
+        protected ArrayList<Story> doInBackground(String... params) {
+            return storyService.getStoriesVisiblesToUser(params[0]);
+        }
+
+        protected void onPostExecute(Story[] result) {
+
+            // Do something with the stories
+
+        }
     }
 }

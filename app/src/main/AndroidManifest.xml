@@ -2,9 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="stories.app">
 
+    <uses-sdk android:minSdkVersion="21" />
+
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-sdk android:minSdkVersion="21" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -23,12 +27,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.HomeActivity" />
-        <activity android:name=".activities.SignInActivity"></activity>
-        <activity android:name=".activities.ProfileActivity"></activity>
+        <activity android:name=".activities.SignInActivity" />
+        <activity android:name=".activities.ProfileActivity" />
+        <activity android:name=".activities.CreateStoryActivity"></activity>
         <activity android:name=".activities.FriendshipRequestsActivity"
                     android:windowSoftInputMode="adjustPan"></activity>
         <activity android:name=".activities.FriendshipRequestsSentActivity"></activity>
         <activity android:name=".activities.FriendshipRequestsReceivedActivity"></activity>
     </application>
-
 </manifest>

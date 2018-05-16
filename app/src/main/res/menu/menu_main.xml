@@ -13,7 +13,7 @@
         app:showAsAction="always"
         android:title="Friendship Requests"/>
     <item
-        android:id="@+id/profile"
+        android:id="@+id/profile_menu"
         android:icon="@drawable/ic_account_circle"
         app:showAsAction="always"
         android:title="@string/profile_menu"/>

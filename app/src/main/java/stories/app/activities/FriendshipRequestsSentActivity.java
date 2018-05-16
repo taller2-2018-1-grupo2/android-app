@@ -1,15 +1,30 @@
 package stories.app.activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import java.util.ArrayList;
 
 import stories.app.R;
+import stories.app.adapters.FriendshipRequestsRecyclerViewAdapter;
+import stories.app.services.FriendshipRequestsService;
+import stories.app.utils.LocalStorage;
 
-public class FriendshipRequestsSentActivity extends AppCompatActivity {
+public class FriendshipRequestsSentActivity extends AppCompatActivity implements FriendshipRequestsRecyclerViewAdapter.ItemClickListener{
+
+    private RecyclerView recyclerView;
+    private FriendshipRequestsRecyclerViewAdapter recyclerViewAdapter;
+    private RecyclerView.LayoutManager recyclerViewLayoutManager;
+    private ArrayList<String> dataset = new ArrayList<String>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,6 +33,16 @@ public class FriendshipRequestsSentActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
+        // set up the RecyclerView
+        recyclerView = findViewById(R.id.friendship_requests_sent_recycler_view);
+        recyclerViewLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(recyclerViewLayoutManager);
+        recyclerViewAdapter = new FriendshipRequestsRecyclerViewAdapter(this, dataset);
+        recyclerViewAdapter.setClickListener(this);
+        recyclerView.setAdapter(recyclerViewAdapter);
+
+        new GetFriendshipRequestsSent().execute();
     }
 
     @Override
@@ -39,5 +64,31 @@ public class FriendshipRequestsSentActivity extends AppCompatActivity {
             return(true);
         }
         return(super.onOptionsItemSelected(item));
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+
+    }
+
+    protected class GetFriendshipRequestsSent extends AsyncTask<String, Void, ArrayList<String>> {
+        private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
+
+        protected void onPreExecute() {
+        }
+
+        protected ArrayList<String> doInBackground(String... params) {
+            return friendshipRequestsService.getFriendshipRequestsSent(
+                    LocalStorage.getUsername()
+            );
+        }
+
+        protected void onPostExecute(ArrayList<String> result) {
+            dataset.clear();
+            for (int i = 0; i < result.size(); i++) {
+                dataset.add(result.get(i));
+            }
+            recyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 }

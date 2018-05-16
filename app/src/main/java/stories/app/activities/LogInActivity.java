@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import stories.app.R;
+import stories.app.models.User;
 import stories.app.services.AuthenticationService;
 
 public class LogInActivity extends AppCompatActivity {
@@ -45,7 +46,7 @@ public class LogInActivity extends AppCompatActivity {
         }
     }
 
-    protected class LoginUserTask extends AsyncTask<String, Void, Boolean> {
+    protected class LoginUserTask extends AsyncTask<String, Void, User> {
         private AuthenticationService authenticationService = new AuthenticationService();
 
         protected void onPreExecute() {
@@ -53,17 +54,17 @@ public class LogInActivity extends AppCompatActivity {
             loginButton.setEnabled(false);
         }
 
-        protected Boolean doInBackground(String... params) {
+        protected User doInBackground(String... params) {
             return authenticationService.loginUser(params[0], params[1]);
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(User result) {
             Button loginButton = findViewById(R.id.loginButton);
             loginButton.setEnabled(true);
 
             TextView loginResult = findViewById(R.id.loginResult);
 
-            if (!result) {
+            if (result == null) {
                 loginResult.setText(R.string.error_invalid_login);
             } else {
                 Intent navigationIntent = new Intent(LogInActivity.this, HomeActivity.class);

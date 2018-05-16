@@ -8,18 +8,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 
+import stories.app.models.User;
 import stories.app.utils.Constants;
 import stories.app.utils.LocalStorage;
 
-public class AuthenticationService {
+public class AuthenticationService extends BaseService {
 
     private String URL = Constants.appServerURI;
 
-    public boolean loginUser(String username, String password) {
+    public User loginUser(String username, String password) {
         HttpURLConnection client = null;
 
         try {
@@ -39,51 +38,26 @@ public class AuthenticationService {
 
             client.connect();
 
-            BufferedReader br;
+            JSONObject result = this.getResponseResult(client);
+            User user = User.fromJsonObject(result);
 
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
-                br = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            } else {
-                br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
-            }
+            // Save the user information
+            LocalStorage.setUser(user);
 
-            StringBuilder sb = new StringBuilder();
-            String output;
-            while ((output = br.readLine()) != null) {
-                sb.append(output);
-            }
-            String result = sb.toString();
+            // Temporary until we find a solution to the code above, which doesn't work for username.
+            LocalStorage.setUsername(username);
 
-            JSONObject jsonObject = new JSONObject(result);
-            String userID = jsonObject.getString("user_id");
-
-            LocalStorage.setUserID(userID);
-
-            return result != "";
-
-        } catch(MalformedURLException error) {
-            //Handles an incorrectly entered URL
-            return false;
-        }
-        catch(SocketTimeoutException error) {
-            //Handles URL access timeout.
-            return false;
-        }
-        catch (IOException error) {
-            //Handles input and output errors
-            return false;
-        }
-        catch (JSONException error) {
-            return false;
-        }
-        finally {
+            return user;
+        } catch(Exception exception) {
+            return null;
+        } finally {
             if(client != null) {
                 client.disconnect();
             }
         }
     }
 
-    public boolean signinUser(String username, String email, String password, String firstName, String lastName) {
+    public User signinUser(User user, String password) {
         HttpURLConnection client = null;
 
         try {
@@ -93,60 +67,31 @@ public class AuthenticationService {
             client.setRequestProperty("Content-Type", "application/json");
             client.setRequestProperty("Accept", "application/json");
 
-            JSONObject credentials = new JSONObject();
-            credentials.put("username", username);
-            credentials.put("email", email);
-            credentials.put("password", password);
-            credentials.put("first_name", firstName);
-            credentials.put("last_name", lastName);
+            JSONObject requestBody = User.toJsonObject(user);
+            requestBody.put("password", password);
 
             OutputStream outputStream = client.getOutputStream();
-            outputStream.write(credentials.toString().getBytes("UTF-8"));
+            outputStream.write(requestBody.toString().getBytes("UTF-8"));
             outputStream.close();
 
             client.connect();
 
-            BufferedReader br;
+            JSONObject result = this.getResponseResult(client);
+            User signedInUser = User.fromJsonObject(result.getJSONObject("user"));
 
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
-                br = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            } else {
-                br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
-            }
+            // TODO: merge both user and signedInUser
 
-            StringBuilder sb = new StringBuilder();
-            String output;
-            while ((output = br.readLine()) != null) {
-                sb.append(output);
-            }
-            String result = sb.toString();
+            // Save the user information
+            LocalStorage.setUser(signedInUser);
 
-            JSONObject jsonObject = new JSONObject(result);
-            String userJSON = jsonObject.getString("user");
+            // Same as in Login method. Inconsistencies with code above.
+            JSONObject jsonUser = result.getJSONObject("user");
+            LocalStorage.setUsername(jsonUser.getString("username"));
 
-            jsonObject = new JSONObject(userJSON);
-            String userID = jsonObject.getString("user_id");
-
-            LocalStorage.setUserID(userID);
-
-            return result != "";
-
-        } catch(MalformedURLException error) {
-            //Handles an incorrectly entered URL
-            return false;
-        }
-        catch(SocketTimeoutException error) {
-            //Handles URL access timeout.
-            return false;
-        }
-        catch (IOException error) {
-            //Handles input and output errors
-            return false;
-        }
-        catch (JSONException error) {
-            return false;
-        }
-        finally {
+            return signedInUser;
+        } catch(Exception exception) {
+            return null;
+        } finally {
             if(client != null) {
                 client.disconnect();
             }

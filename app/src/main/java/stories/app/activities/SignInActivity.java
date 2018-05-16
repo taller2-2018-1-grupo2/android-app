@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import stories.app.R;
+import stories.app.models.User;
 import stories.app.services.AuthenticationService;
 
 public class SignInActivity extends AppCompatActivity {
@@ -77,17 +78,17 @@ public class SignInActivity extends AppCompatActivity {
             EditText firstName = findViewById(R.id.first_name);
             EditText lastName = findViewById(R.id.last_name);
 
-            new SignInUserTask().execute(
-                username.getText().toString(),
-                email.getText().toString(),
-                password.getText().toString(),
-                firstName.getText().toString(),
-                lastName.getText().toString()
-            );
+            User user = new User();
+            user.username = username.getText().toString();
+            user.email = email.getText().toString();
+            user.firstName = firstName.getText().toString();
+            user.lastName = lastName.getText().toString();
+
+            new SignInUserTask().execute(user,  password.getText().toString());
         }
     }
 
-    protected class SignInUserTask extends AsyncTask<String, Void, Boolean> {
+    protected class SignInUserTask extends AsyncTask<Object, Void, User> {
         private AuthenticationService authenticationService = new AuthenticationService();
 
         protected void onPreExecute() {
@@ -95,17 +96,17 @@ public class SignInActivity extends AppCompatActivity {
             signInButton.setEnabled(false);
         }
 
-        protected Boolean doInBackground(String... params) {
-            return authenticationService.signinUser(params[0], params[1], params[2], params[3], params[4]);
+        protected User doInBackground(Object... params) {
+            return authenticationService.signinUser((User)params[0], (String)params[1]);
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(User result) {
             Button signInButton = findViewById(R.id.signInButton);
             signInButton.setEnabled(true);
 
             TextView signInResult = findViewById(R.id.signInResult);
 
-            if (!result) {
+            if (result == null) {
                 signInResult.setText(R.string.error_invalid_signin);
             } else {
                 // Navigate to Home page

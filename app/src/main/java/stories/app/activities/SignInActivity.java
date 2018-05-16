@@ -108,6 +108,7 @@ public class SignInActivity extends AppCompatActivity {
             if (!result) {
                 signInResult.setText(R.string.error_invalid_signin);
             } else {
+                // Navigate to Home page
                 Intent navigationIntent = new Intent(SignInActivity.this, HomeActivity.class);
                 startActivity(navigationIntent);
             }

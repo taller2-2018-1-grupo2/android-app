@@ -48,7 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         protected String doInBackground(String... params) {
-            return profileService.getUserData(LocalStorage.getUserID());
+            return profileService.getUserData(LocalStorage.getUser().id);
         }
 
         protected void onPostExecute(String result) {
@@ -84,7 +84,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         protected Boolean doInBackground(String... params) {
             return profileService.updateUserData(
-                    LocalStorage.getUserID(),
+                    LocalStorage.getUser().id,
                     params[0],
                     params[1],
                     params[2],

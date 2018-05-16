@@ -8,10 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 
+import stories.app.models.User;
 import stories.app.utils.Constants;
 import stories.app.utils.LocalStorage;
 
@@ -19,7 +18,7 @@ public class AuthenticationService {
 
     private String URL = Constants.appServerURI;
 
-    public boolean loginUser(String username, String password) {
+    public Boolean loginUser(String username, String password) {
         HttpURLConnection client = null;
 
         try {
@@ -47,43 +46,28 @@ public class AuthenticationService {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
             }
 
-            StringBuilder sb = new StringBuilder();
-            String output;
-            while ((output = br.readLine()) != null) {
-                sb.append(output);
-            }
-            String result = sb.toString();
+            JSONObject result = this.getResponseResult(br);
 
-            JSONObject jsonObject = new JSONObject(result);
-            String userID = jsonObject.getString("user_id");
-
-            LocalStorage.setUserID(userID);
-
-            return result != "";
-
-        } catch(MalformedURLException error) {
-            //Handles an incorrectly entered URL
-            return false;
-        }
-        catch(SocketTimeoutException error) {
-            //Handles URL access timeout.
-            return false;
-        }
-        catch (IOException error) {
-            //Handles input and output errors
-            return false;
-        }
-        catch (JSONException error) {
-            return false;
-        }
-        finally {
+            // Save the user's id and token
+            User user = new User(
+                result.getString("user_id"),
+                null,
+               null,
+                null,
+                result.getJSONObject("token").getString("token")
+            );
+            LocalStorage.setUser(user);
+            return true;
+        } catch(Exception exception) {
+            return null;
+        } finally {
             if(client != null) {
                 client.disconnect();
             }
         }
     }
 
-    public boolean signinUser(String username, String email, String password, String firstName, String lastName) {
+    public Boolean signinUser(String username, String email, String password, String firstName, String lastName) {
         HttpURLConnection client = null;
 
         try {
@@ -114,42 +98,45 @@ public class AuthenticationService {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
             }
 
-            StringBuilder sb = new StringBuilder();
-            String output;
-            while ((output = br.readLine()) != null) {
-                sb.append(output);
-            }
-            String result = sb.toString();
+            JSONObject result = this.getResponseResult(br);
 
-            JSONObject jsonObject = new JSONObject(result);
-            String userJSON = jsonObject.getString("user");
-
-            jsonObject = new JSONObject(userJSON);
-            String userID = jsonObject.getString("user_id");
-
-            LocalStorage.setUserID(userID);
-
-            return result != "";
-
-        } catch(MalformedURLException error) {
-            //Handles an incorrectly entered URL
-            return false;
-        }
-        catch(SocketTimeoutException error) {
-            //Handles URL access timeout.
-            return false;
-        }
-        catch (IOException error) {
-            //Handles input and output errors
-            return false;
-        }
-        catch (JSONException error) {
-            return false;
-        }
-        finally {
+            // Save the user information (but not the token)
+            JSONObject userObject = result.getJSONObject("user");
+            User user = new User(
+                userObject.getString("user_id"),
+                userObject.getString("first_name"),
+                userObject.getString("last_name"),
+                userObject.getString("email"),
+                null
+            );
+            LocalStorage.setUser(user);
+            return true;
+        } catch(Exception exception) {
+            return null;
+        } finally {
             if(client != null) {
                 client.disconnect();
             }
         }
+    }
+
+    private JSONObject getResponseResult(BufferedReader br) throws IOException, JSONException {
+        // Convert result to string
+        StringBuilder sb = new StringBuilder();
+        String output;
+        while ((output = br.readLine()) != null) {
+            sb.append(output);
+        }
+
+        String stringResult = sb.toString();
+
+        // Convert result string to JSON object
+        JSONObject result = new JSONObject(stringResult);
+
+        if (result.has("error")) {
+            return null;
+        }
+
+        return result;
     }
 }

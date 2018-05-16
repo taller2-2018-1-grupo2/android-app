@@ -43,6 +43,10 @@ public class AuthenticationService extends BaseService {
 
             // Save the user information
             LocalStorage.setUser(user);
+
+            // Temporary until we find a solution to the code above, which doesn't work for username.
+            LocalStorage.setUsername(username);
+
             return user;
         } catch(Exception exception) {
             return null;
@@ -79,8 +83,12 @@ public class AuthenticationService extends BaseService {
 
             // Save the user information
             LocalStorage.setUser(signedInUser);
-            return signedInUser;
 
+            // Same as in Login method. Inconsistencies with code above.
+            JSONObject jsonUser = result.getJSONObject("user");
+            LocalStorage.setUsername(jsonUser.getString("username"));
+
+            return signedInUser;
         } catch(Exception exception) {
             return null;
         } finally {

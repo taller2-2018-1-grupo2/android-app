@@ -53,6 +53,12 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         }
 
+        if (itemId == R.id.friendship_requests) {
+            Intent navigationIntent = new Intent(HomeActivity.this, FriendshipRequestsActivity.class);
+            startActivity(navigationIntent);
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -69,6 +75,7 @@ public class HomeActivity extends AppCompatActivity {
         protected void onPostExecute(Story[] result) {
 
             // Do something with the stories
+
         }
     }
 }

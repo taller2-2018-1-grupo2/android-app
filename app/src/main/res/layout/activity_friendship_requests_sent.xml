@@ -32,7 +32,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/friendship_requests_sent_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="400dp"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="10dp"
         android:scrollbars="vertical"
@@ -41,6 +41,6 @@
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.293" />
+        app:layout_constraintVertical_bias="0.7" />
 
 </android.support.constraint.ConstraintLayout>

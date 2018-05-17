@@ -1,7 +1,5 @@
 package stories.app.models;
 
-import android.widget.ArrayAdapter;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,4 +46,3 @@ public class Story {
         return storyJson;
     }
 }
-

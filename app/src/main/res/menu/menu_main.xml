@@ -9,6 +9,11 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/friendship_requests"
+        android:icon="@drawable/ic_menu_allfriends"
+        app:showAsAction="always"
+        android:title="Friendship Requests"/>
+    <item
         android:id="@+id/profile_menu"
         android:icon="@drawable/ic_account_circle"
         app:showAsAction="always"

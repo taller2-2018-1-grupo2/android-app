@@ -22,15 +22,31 @@
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.SignInActivity" />
         <activity android:name=".activities.ProfileActivity" />
-        <activity android:name=".activities.CreateStoryActivity"></activity>
-        <activity android:name=".activities.FriendshipRequestsActivity" android:windowSoftInputMode="adjustPan"></activity>
-        <activity android:name=".activities.FriendshipRequestsSentActivity"></activity>
-        <activity android:name=".activities.FriendshipRequestsReceivedActivity"></activity>
+        <activity android:name=".activities.CreateStoryActivity" />
+        <activity
+            android:name=".activities.FriendshipRequestsActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".activities.FriendshipRequestsSentActivity" />
+        <activity android:name=".activities.FriendshipRequestsReceivedActivity" />
+        <activity android:name=".activities.DirectMessagesActivity" />
+
+        <service android:name=".services.MessagingInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".services.MessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
+
 </manifest>

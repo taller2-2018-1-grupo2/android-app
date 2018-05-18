@@ -1,6 +1,7 @@
 package stories.app.activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -41,25 +42,22 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
+        Intent navigationIntent;
 
-        if (itemId == R.id.story_menu) {
-            Intent navigationIntent = new Intent(HomeActivity.this, CreateStoryActivity.class);
-            startActivity(navigationIntent);
-            return true;
+        switch (itemId) {
+            case R.id.profile_menu:
+                navigationIntent = new Intent(HomeActivity.this, ProfileActivity.class);
+                startActivity(navigationIntent);
+                return true;
+            case R.id.friendship_requests:
+                navigationIntent = new Intent(HomeActivity.this, FriendshipRequestsActivity.class);
+                startActivity(navigationIntent);
+                return true;
+            case R.id.direct_messages:
+                navigationIntent = new Intent(HomeActivity.this, DirectMessagesActivity.class);
+                startActivity(navigationIntent);
+                return true;
         }
-
-        if(itemId == R.id.profile_menu) {
-            Intent navigationIntent = new Intent(HomeActivity.this, ProfileActivity.class);
-            startActivity(navigationIntent);
-            return true;
-        }
-
-        if (itemId == R.id.friendship_requests) {
-            Intent navigationIntent = new Intent(HomeActivity.this, FriendshipRequestsActivity.class);
-            startActivity(navigationIntent);
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

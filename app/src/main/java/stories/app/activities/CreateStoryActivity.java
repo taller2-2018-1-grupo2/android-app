@@ -149,11 +149,11 @@ public class CreateStoryActivity extends AppCompatActivity {
             return storyService.createStory(params[0]);
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Story result) {
             Button createStoryButton = findViewById(R.id.createStoryButton);
             createStoryButton.setEnabled(true);
 
-            if (result) {
+            if (result != null) {
                 // Navigate to Home page
                 Intent navigationIntent = new Intent(CreateStoryActivity.this, HomeActivity.class);
                 startActivity(navigationIntent);

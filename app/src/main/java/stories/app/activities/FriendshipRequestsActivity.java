@@ -1,5 +1,6 @@
 package stories.app.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -91,9 +92,8 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
 
     @Override
     public void onItemClick(View view, int position) {
-        new CreateFriendshipRequestTask().execute(recyclerViewAdapter.getItem(position));
-
-        Toast.makeText(this, "Enviaste una solicitud de amistad a: " + recyclerViewAdapter.getItem(position), Toast.LENGTH_SHORT).show();
+        CreateFriendshipRequestTask task = new CreateFriendshipRequestTask(this);
+        task.execute(recyclerViewAdapter.getItem(position));
     }
 
     protected class GetUsersTask extends AsyncTask<String, Void, ArrayList<String>> {
@@ -118,21 +118,36 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
         }
     }
 
-    protected class CreateFriendshipRequestTask extends AsyncTask<String, Void, Boolean> {
+    protected class CreateFriendshipRequestTask extends AsyncTask<String, Void, String> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
+
+        private Context context;
+
+        public CreateFriendshipRequestTask (Context context){
+            this.context = context;
+        }
 
         protected void onPreExecute() {
         }
 
-        protected Boolean doInBackground(String... params) {
+        protected String doInBackground(String... params) {
             return friendshipRequestsService.createFriendshipRequest(
                     LocalStorage.getUsername(),
                     params[0]
             );
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(String result) {
+            if (result != "") {
+                Toast.makeText(this.context, "Enviaste una solicitud de amistad a: " + result, Toast.LENGTH_SHORT).show();
 
+                for (int i = 0; i < dataset.size(); i++) {
+                    if (dataset.get(i) == result) {
+                        dataset.remove(i);
+                    }
+                }
+                recyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 }

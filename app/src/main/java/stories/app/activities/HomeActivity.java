@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 
 import stories.app.R;
+import stories.app.adapters.StoriesAdapter;
 import stories.app.models.Story;
 import stories.app.services.StoryService;
 import stories.app.utils.LocalStorage;
@@ -72,10 +74,10 @@ public class HomeActivity extends AppCompatActivity {
             return storyService.getStoriesVisiblesToUser(params[0]);
         }
 
-        protected void onPostExecute(Story[] result) {
+        protected void onPostExecute(ArrayList<Story> result) {
 
-            // Do something with the stories
-
+            ListView storiesList = (ListView)findViewById(R.id.storiesList);
+            storiesList.setAdapter(new StoriesAdapter(HomeActivity.this, result));
         }
     }
 }

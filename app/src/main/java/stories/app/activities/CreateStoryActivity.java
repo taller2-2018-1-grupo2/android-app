@@ -55,7 +55,7 @@ public class CreateStoryActivity extends AppCompatActivity {
                 Uri selectedImage = data.getData();
 
                 String filePath = getPath(selectedImage);
-                String file_exqtn = filePath.substring(filePath.lastIndexOf(".") + 1);
+                String file_extn = filePath.substring(filePath.lastIndexOf(".") + 1);
 
                 TextView uploadedFile = findViewById(R.id.uploadedFilename);
                 uploadedFile.setText(filePath);

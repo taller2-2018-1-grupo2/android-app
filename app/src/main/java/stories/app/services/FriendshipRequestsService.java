@@ -90,7 +90,7 @@ public class FriendshipRequestsService {
         }
     }
 
-    public Boolean createFriendshipRequest(String fromUsername, String toUsername) {
+    public String createFriendshipRequest(String fromUsername, String toUsername) {
         HttpURLConnection client = null;
 
         try {
@@ -125,23 +125,23 @@ public class FriendshipRequestsService {
             }
             String result = sb.toString();
 
-            return result != "";
+            return toUsername;
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
-            return false;
+            return "";
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
-            return false;
+            return "";
         }
         catch (IOException error) {
             //Handles input and output errors
-            return false;
+            return "";
         }
         catch (JSONException error) {
             //Handles input and output errors
-            return false;
+            return "";
         }
         finally {
             if(client != null) {
@@ -280,6 +280,112 @@ public class FriendshipRequestsService {
             ArrayList<String> result = new ArrayList<String>();
             result.add("JSONException");
             return result;
+        }
+        finally {
+            if(client != null) {
+                client.disconnect();
+            }
+        }
+    }
+
+    public String deleteFriendshipRequest(String fromUsername, String toUsername) {
+        HttpURLConnection client = null;
+
+        try {
+            URL url = new URL(URL + "/friendship/request/" + fromUsername + "/" + toUsername);
+            client = (HttpURLConnection) url.openConnection();
+            client.setRequestMethod("DELETE");
+
+            client.connect();
+
+            BufferedReader br;
+
+            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+                br = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            } else {
+                br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
+            }
+
+            StringBuilder sb = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            String result = sb.toString();
+
+            return toUsername;
+
+        } catch(MalformedURLException error) {
+            //Handles an incorrectly entered URL
+            return "";
+        }
+        catch(SocketTimeoutException error) {
+            //Handles URL access timeout.
+            return "";
+        }
+        catch (IOException error) {
+            //Handles input and output errors
+            return "";
+        }
+        finally {
+            if(client != null) {
+                client.disconnect();
+            }
+        }
+    }
+
+    public String acceptFriendshipRequest(String fromUsername, String toUsername) {
+        HttpURLConnection client = null;
+
+        try {
+            URL url = new URL(URL + "/friendship");
+            client = (HttpURLConnection) url.openConnection();
+            client.setRequestMethod("POST");
+            client.setRequestProperty("Content-Type", "application/json");
+            client.setRequestProperty("Accept", "application/json");
+
+            JSONObject credentials = new JSONObject();
+            credentials.put("from_username",fromUsername);
+            credentials.put("to_username", toUsername);
+
+            OutputStream outputStream = client.getOutputStream();
+            outputStream.write(credentials.toString().getBytes("UTF-8"));
+            outputStream.close();
+
+            client.connect();
+
+            BufferedReader br;
+
+            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+                br = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            } else {
+                br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
+            }
+
+            StringBuilder sb = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            String result = sb.toString();
+
+            return fromUsername;
+
+        } catch(MalformedURLException error) {
+            //Handles an incorrectly entered URL
+            return "";
+        }
+        catch(SocketTimeoutException error) {
+            //Handles URL access timeout.
+            return "";
+        }
+        catch (IOException error) {
+            //Handles input and output errors
+            return "";
+        }
+        catch (JSONException error) {
+            //Handles input and output errors
+            return "";
         }
         finally {
             if(client != null) {

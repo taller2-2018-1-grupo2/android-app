@@ -17,17 +17,26 @@ public class FriendshipRequestsRecyclerViewAdapter extends RecyclerView.Adapter<
     private ArrayList<String> mData;
     private LayoutInflater mInflater;
     private FriendshipRequestsRecyclerViewAdapter.ItemClickListener mClickListener;
+    private String type;
 
     // data is passed into the constructor
-    public FriendshipRequestsRecyclerViewAdapter(Context context, ArrayList<String> data) {
+    public FriendshipRequestsRecyclerViewAdapter(Context context, ArrayList<String> data, String type) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        this.type = type;
     }
 
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recycler_row_friendship_requests, parent, false);
+        int recyclerRow;
+        if (type == "received") {
+            recyclerRow = R.layout.recycler_row_friendship_requests_received;
+        } else {
+            recyclerRow = R.layout.recycler_row_friendship_requests_sent;
+        }
+
+        View view = mInflater.inflate(recyclerRow, parent, false);
         return new ViewHolder(view);
     }
 
@@ -48,11 +57,17 @@ public class FriendshipRequestsRecyclerViewAdapter extends RecyclerView.Adapter<
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView friendshipRequestTextView;
+        ImageView requestButton;
 
         ViewHolder(View itemView) {
             super(itemView);
             friendshipRequestTextView = itemView.findViewById(R.id.friendship_request_username);
-            itemView.setOnClickListener(this);
+            if (type == "received") {
+                requestButton = itemView.findViewById(R.id.accept_friendship_request);
+            } else {
+                requestButton = itemView.findViewById(R.id.delete_friendship_request);
+            }
+            requestButton.setOnClickListener(this);
         }
 
         @Override

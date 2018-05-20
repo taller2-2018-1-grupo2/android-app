@@ -1,5 +1,6 @@
 package stories.app.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -38,7 +40,7 @@ public class FriendshipRequestsSentActivity extends AppCompatActivity implements
         recyclerView = findViewById(R.id.friendship_requests_sent_recycler_view);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewAdapter = new FriendshipRequestsRecyclerViewAdapter(this, dataset);
+        recyclerViewAdapter = new FriendshipRequestsRecyclerViewAdapter(this, dataset, "sent");
         recyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
@@ -68,7 +70,8 @@ public class FriendshipRequestsSentActivity extends AppCompatActivity implements
 
     @Override
     public void onItemClick(View view, int position) {
-
+        DeleteFriendshipRequestTask task = new DeleteFriendshipRequestTask(this);
+        task.execute(recyclerViewAdapter.getItem(position));
     }
 
     protected class GetFriendshipRequestsSent extends AsyncTask<String, Void, ArrayList<String>> {
@@ -89,6 +92,37 @@ public class FriendshipRequestsSentActivity extends AppCompatActivity implements
                 dataset.add(result.get(i));
             }
             recyclerViewAdapter.notifyDataSetChanged();
+        }
+    }
+
+    protected class DeleteFriendshipRequestTask extends AsyncTask<String, Void, String> {
+        private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
+
+        private Context context;
+
+        public DeleteFriendshipRequestTask (Context context){
+            this.context = context;
+        }
+
+        protected void onPreExecute() {
+        }
+
+        protected String doInBackground(String... params) {
+            return friendshipRequestsService.deleteFriendshipRequest(
+                    LocalStorage.getUsername(),
+                    params[0]
+            );
+        }
+
+        protected void onPostExecute(String result) {
+            if (result != "") {
+                for (int i = 0; i < dataset.size(); i++) {
+                    if (dataset.get(i) == result) {
+                        dataset.remove(i);
+                    }
+                }
+                recyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 }

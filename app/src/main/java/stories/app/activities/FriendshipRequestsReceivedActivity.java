@@ -1,5 +1,6 @@
 package stories.app.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,7 +41,7 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
         recyclerView = findViewById(R.id.friendship_requests_received_recycler_view);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewAdapter = new FriendshipRequestsRecyclerViewAdapter(this, dataset);
+        recyclerViewAdapter = new FriendshipRequestsRecyclerViewAdapter(this, dataset, "received");
         recyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
@@ -70,7 +71,8 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
 
     @Override
     public void onItemClick(View view, int position) {
-
+        AcceptFriendshipRequestTask task = new AcceptFriendshipRequestTask(this);
+        task.execute(recyclerViewAdapter.getItem(position));
     }
 
     protected class GetFriendshipRequestsReceived extends AsyncTask<String, Void, ArrayList<String>> {
@@ -91,6 +93,37 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
                 dataset.add(result.get(i));
             }
             recyclerViewAdapter.notifyDataSetChanged();
+        }
+    }
+
+    protected class AcceptFriendshipRequestTask extends AsyncTask<String, Void, String> {
+        private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
+
+        private Context context;
+
+        public AcceptFriendshipRequestTask (Context context){
+            this.context = context;
+        }
+
+        protected void onPreExecute() {
+        }
+
+        protected String doInBackground(String... params) {
+            return friendshipRequestsService.acceptFriendshipRequest(
+                    params[0],
+                    LocalStorage.getUsername()
+            );
+        }
+
+        protected void onPostExecute(String result) {
+            if (result != "") {
+                for (int i = 0; i < dataset.size(); i++) {
+                    if (dataset.get(i) == result) {
+                        dataset.remove(i);
+                    }
+                }
+                recyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 }

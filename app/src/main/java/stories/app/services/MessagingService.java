@@ -5,15 +5,13 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
-import stories.app.models.Message;
+import stories.app.models.responses.DirectMessageResponse;
 import stories.app.utils.Constants;
 
 import static android.content.ContentValues.TAG;
@@ -54,10 +52,10 @@ public class MessagingService extends FirebaseMessagingService {
     }
 
 
-    public ArrayList<Message> getUserMessages(String username) {
+    public DirectMessageResponse getUserMessages(String username) {
         HttpURLConnection client = null;
         try {
-            URL url = new URL(Constants.appServerURI + "/messages/" + username);
+            URL url = new URL(Constants.appServerURI + "/direct_message/" + username);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("GET");
             client.connect();
@@ -75,8 +73,7 @@ public class MessagingService extends FirebaseMessagingService {
             }
             String result = sb.toString();
 
-            ArrayList<Message> messages = gson.fromJson(result, new TypeToken<ArrayList<Message>>() {
-            }.getType());
+            DirectMessageResponse messages = gson.fromJson(result, DirectMessageResponse.class);
 
             return messages;
         } catch (Exception exception) {

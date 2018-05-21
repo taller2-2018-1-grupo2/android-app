@@ -7,12 +7,17 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import stories.app.R;
 import stories.app.models.Message;
 
 public class DirectMessagesAdapter extends ArrayAdapter<Message> {
+
+    private static String DATE_FORMAT = "dd MMM yyyy HH:mm";
+
     public DirectMessagesAdapter(Context context, ArrayList<Message> messages) {
         super(context, R.layout.message_item, messages);
     }
@@ -28,7 +33,7 @@ public class DirectMessagesAdapter extends ArrayAdapter<Message> {
             messageUsername.setText(message.from_username);
 
             TextView timestamp = (TextView) convertView.findViewById(R.id.message_item_timestamp);
-            timestamp.setText(message.timestamp);
+            timestamp.setText(new SimpleDateFormat(DATE_FORMAT).format(new Date(message.timestamp)));
 
             TextView messageText = (TextView) convertView.findViewById(R.id.message_item_text);
             messageText.setText(message.message);

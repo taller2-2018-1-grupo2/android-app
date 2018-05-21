@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import stories.app.R;
 import stories.app.adapters.DirectMessagesAdapter;
@@ -28,7 +29,7 @@ public class DirectMessagesActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
         // Retrieve all stories visibles to the user
-        new GetUserMessagesTask().execute(LocalStorage.getUser().id);
+        new GetUserMessagesTask().execute(LocalStorage.getUser().username);
     }
 
     protected class GetUserMessagesTask extends AsyncTask<String, Void, ArrayList<Message>> {
@@ -38,7 +39,7 @@ public class DirectMessagesActivity extends AppCompatActivity {
         }
 
         protected ArrayList<Message> doInBackground(String... params) {
-            return messagingService.getUserMessages(params[0]);
+            return messagingService.getUserMessages(params[0]).direct_messages;
         }
 
         protected void onPostExecute(ArrayList<Message> result) {

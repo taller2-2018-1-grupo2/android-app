@@ -6,6 +6,6 @@ public class Message {
     public String from_username;
     public String to_username;
     public String message;
-    public String timestamp;
+    public long timestamp;
 
 }

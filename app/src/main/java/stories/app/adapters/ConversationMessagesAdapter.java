@@ -14,11 +14,11 @@ import java.util.Date;
 import stories.app.R;
 import stories.app.models.Message;
 
-public class DirectMessagesAdapter extends ArrayAdapter<Message> {
+public class ConversationMessagesAdapter extends ArrayAdapter<Message> {
 
     private static String DATE_FORMAT = "dd MMM yyyy HH:mm";
 
-    public DirectMessagesAdapter(Context context, ArrayList<Message> messages) {
+    public ConversationMessagesAdapter(Context context, ArrayList<Message> messages) {
         super(context, R.layout.message_item, messages);
     }
 
@@ -30,14 +30,7 @@ public class DirectMessagesAdapter extends ArrayAdapter<Message> {
             Message message = this.getItem(position);
 
             TextView messageUsername = (TextView) convertView.findViewById(R.id.message_item_title);
-            StringBuilder sb = new StringBuilder();
-            if (message._id.equals(message.from_username)) {
-                sb.append("From: ");
-            } else {
-                sb.append("To: ");
-            }
-            sb.append(message._id);
-            messageUsername.setText(sb.toString());
+            messageUsername.setText(message.from_username);
 
             TextView timestamp = (TextView) convertView.findViewById(R.id.message_item_timestamp);
             timestamp.setText(new SimpleDateFormat(DATE_FORMAT).format(new Date(message.timestamp)));

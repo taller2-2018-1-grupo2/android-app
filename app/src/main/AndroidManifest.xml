@@ -36,6 +36,7 @@
         <activity android:name=".activities.FriendshipRequestsSentActivity" />
         <activity android:name=".activities.FriendshipRequestsReceivedActivity" />
         <activity android:name=".activities.DirectMessagesActivity" />
+        <activity android:name=".activities.DirectMessagesConversationActivity" />
 
         <service android:name=".services.MessagingInstanceIDService">
             <intent-filter>

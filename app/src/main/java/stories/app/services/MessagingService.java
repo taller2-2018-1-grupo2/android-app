@@ -85,5 +85,38 @@ public class MessagingService extends FirebaseMessagingService {
         }
     }
 
+    public DirectMessageResponse getConversationMessages(String username1, String username2) {
+        HttpURLConnection client = null;
+        try {
+            URL url = new URL(Constants.appServerURI + "/direct_message/conversation/" + username1 + "/" + username2);
+            client = (HttpURLConnection) url.openConnection();
+            client.setRequestMethod("GET");
+            client.connect();
+
+            BufferedReader br;
+            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+                br = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            } else {
+                br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
+            }
+            StringBuilder sb = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            String result = sb.toString();
+
+            DirectMessageResponse messages = gson.fromJson(result, DirectMessageResponse.class);
+
+            return messages;
+        } catch (Exception exception) {
+            return null;
+        } finally {
+            if (client != null) {
+                client.disconnect();
+            }
+        }
+    }
+
 
 }

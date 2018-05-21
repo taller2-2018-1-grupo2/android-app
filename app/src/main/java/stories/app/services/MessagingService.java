@@ -4,10 +4,23 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+
+import stories.app.models.Message;
+import stories.app.utils.Constants;
 
 import static android.content.ContentValues.TAG;
 
 public class MessagingService extends FirebaseMessagingService {
+
+    private Gson gson = new Gson();
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -23,10 +36,10 @@ public class MessagingService extends FirebaseMessagingService {
 
             if (/* Check if data needs to be processed by long running job */ true) {
                 // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-             //   scheduleJob();
+                //   scheduleJob();
             } else {
                 // Handle message within 10 seconds
-               // handleNow();
+                // handleNow();
             }
 
         }
@@ -38,6 +51,41 @@ public class MessagingService extends FirebaseMessagingService {
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
+    }
+
+
+    public ArrayList<Message> getUserMessages(String username) {
+        HttpURLConnection client = null;
+        try {
+            URL url = new URL(Constants.appServerURI + "/messages/" + username);
+            client = (HttpURLConnection) url.openConnection();
+            client.setRequestMethod("GET");
+            client.connect();
+
+            BufferedReader br;
+            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+                br = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            } else {
+                br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
+            }
+            StringBuilder sb = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            String result = sb.toString();
+
+            ArrayList<Message> messages = gson.fromJson(result, new TypeToken<ArrayList<Message>>() {
+            }.getType());
+
+            return messages;
+        } catch (Exception exception) {
+            return null;
+        } finally {
+            if (client != null) {
+                client.disconnect();
+            }
+        }
     }
 
 

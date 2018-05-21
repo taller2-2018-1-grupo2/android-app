@@ -30,13 +30,6 @@ public class StoryService extends BaseService {
 
             client.connect();
 
-            BufferedReader br;
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
-                br = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            } else {
-                br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
-            }
-
             JSONObject result = this.getResponseResult(client);
             JSONArray storiesJson = result.getJSONArray("stories");
             ArrayList<Story> stories = new ArrayList<>();
@@ -47,10 +40,10 @@ public class StoryService extends BaseService {
             }
 
             return stories;
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             return null;
         } finally {
-            if(client != null) {
+            if (client != null) {
                 client.disconnect();
             }
         }
@@ -82,10 +75,10 @@ public class StoryService extends BaseService {
 
             Story newStory = Story.fromJsonObject(result);
             return newStory;
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             return null;
         } finally {
-            if(client != null) {
+            if (client != null) {
                 client.disconnect();
             }
         }

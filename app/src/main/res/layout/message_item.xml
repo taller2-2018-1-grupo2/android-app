@@ -36,7 +36,7 @@
         <TextView
             android:id="@+id/message_item_text"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="wrap_content"
             android:layout_below="@id/message_item_title"
             android:text="Message Text"
             android:textColor="@android:color/background_light" />

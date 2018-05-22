@@ -37,13 +37,16 @@
         <activity android:name=".activities.FriendshipRequestsReceivedActivity" />
         <activity android:name=".activities.DirectMessagesActivity" />
         <activity android:name=".activities.DirectMessagesConversationActivity" />
+        <activity android:name=".activities.DirectMessagesCreateActivity" />
+        <activity android:name=".activities.ChatActivity" />
+        <activity android:name=".activities.ChatCreateActivity" />
 
-        <service android:name=".services.MessagingInstanceIDService">
+        <service android:name=".services.ChatInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".services.MessagingService">
+        <service android:name=".services.ChatService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

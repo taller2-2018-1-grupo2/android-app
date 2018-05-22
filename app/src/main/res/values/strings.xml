@@ -27,4 +27,9 @@
     <string name="label_isQuickStory">Es una historia rápida</string>
     <string name="action_createStory">Crear historia</string>
 
+    <!-- Strings related to Create Message -->
+    <string name="message_destination">To</string>
+    <string name="message_text">Message</string>
+    <string name="action_sendMessage">Send</string>
+
 </resources>

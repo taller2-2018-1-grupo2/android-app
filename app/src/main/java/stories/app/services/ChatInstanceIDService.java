@@ -7,12 +7,15 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 
 import static android.content.ContentValues.TAG;
 
-public class MessagingInstanceIDService extends FirebaseInstanceIdService {
+public class ChatInstanceIDService extends FirebaseInstanceIdService {
+
+    public static String FIREBASE_TOKEN = FirebaseInstanceId.getInstance().getToken();;
 
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        FIREBASE_TOKEN = refreshedToken;
         Log.d(TAG, "Refreshed token: " + refreshedToken);
 
         // If you want to send messages to this application instance or

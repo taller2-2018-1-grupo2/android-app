@@ -8,4 +8,14 @@ public class Message {
     public String message;
     public long timestamp;
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "_id=" + _id + '\'' +
+                ", from_username='" + from_username + '\'' +
+                ", to_username=" + to_username +
+                ", message=" + message +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }

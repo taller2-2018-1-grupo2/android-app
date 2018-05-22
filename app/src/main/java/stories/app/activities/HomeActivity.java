@@ -30,6 +30,11 @@ public class HomeActivity extends AppCompatActivity {
 
         // Retrieve all stories visibles to the user
         new GetStoriesVisiblesToUserTask().execute(LocalStorage.getUser().id);
+
+        if (getIntent().getExtras() != null) {
+            String from_username = getIntent().getExtras().getString("from_username");
+            String to_username = getIntent().getExtras().getString("to_username");
+        }
     }
 
     @Override
@@ -57,6 +62,10 @@ public class HomeActivity extends AppCompatActivity {
                 navigationIntent = new Intent(HomeActivity.this, DirectMessagesActivity.class);
                 startActivity(navigationIntent);
                 return true;
+            case R.id.chat:
+                navigationIntent = new Intent(HomeActivity.this, ChatActivity.class);
+                startActivity(navigationIntent);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -73,7 +82,7 @@ public class HomeActivity extends AppCompatActivity {
 
         protected void onPostExecute(ArrayList<Story> result) {
 
-            ListView storiesList = (ListView)findViewById(R.id.storiesList);
+            ListView storiesList = (ListView) findViewById(R.id.storiesList);
             storiesList.setAdapter(new StoriesAdapter(HomeActivity.this, result));
         }
     }

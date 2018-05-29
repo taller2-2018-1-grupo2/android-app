@@ -28,6 +28,17 @@
             android:hint="@string/prompt_description"
             android:inputType="textMultiLine" />
 
+        <Button
+            android:id="@+id/uploadFileButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_uploadFile" />
+
+        <TextView
+            android:id="@+id/uploadedFilename"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <RadioGroup
             android:id="@+id/createStoryVisibility"
             android:layout_width="wrap_content"

@@ -1,15 +1,23 @@
 package stories.app.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Calendar;
 
 import stories.app.R;
@@ -24,16 +32,87 @@ public class CreateStoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_story);
 
+        Button uploadImageButton = this.findViewById(R.id.uploadFileButton);
+        uploadImageButton.setOnClickListener(new UploadImageHandler());
+
         Button createStoryButton = this.findViewById(R.id.createStoryButton);
         createStoryButton.setOnClickListener(new CreateStoryHandler());
     }
 
-    protected class CreateStoryHandler implements View.OnClickListener {
+    protected class UploadImageHandler implements View.OnClickListener {
         public void onClick(View v){
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, 1);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1)
+            if (resultCode == AppCompatActivity.RESULT_OK) {
+                Uri selectedImage = data.getData();
+
+                String filePath = getPath(selectedImage);
+                String file_extn = filePath.substring(filePath.lastIndexOf(".") + 1);
+
+                TextView uploadedFile = findViewById(R.id.uploadedFilename);
+                uploadedFile.setText(filePath);
+
+                Button uploadImageButton = this.findViewById(R.id.uploadFileButton);
+                uploadImageButton.setVisibility(View.GONE);
+
+                if (file_extn.equals("img") || file_extn.equals("jpg") || file_extn.equals("jpeg") || file_extn.equals("gif") || file_extn.equals("png")) {
+                    //FINE
+                } else {
+                    //NOT IN REQUIRED FORMAT
+                }
+            }
+    }
+
+    public String getPath(Uri contentUri) {
+        String res = null;
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if(cursor.moveToFirst()){
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            res = cursor.getString(column_index);
+        }
+        cursor.close();
+        return res;
+    }
+
+
+    protected class CreateStoryHandler implements View.OnClickListener {
+
+        private byte[] loadFileAsBytesArray(File file) throws Exception {
+            int length = (int) file.length();
+            BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file));
+            byte[] bytes = new byte[length];
+            reader.read(bytes, 0, length);
+            reader.close();
+            return bytes;
+        }
+
+        private String getUploadedFile(File file){
+            try {
+                byte[] byteArrayImage = loadFileAsBytesArray(file);
+                String encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
+                return encodedImage;
+            } catch(Exception e){
+                return "";
+            }
+        }
+
+        public void onClick(View v){
+            //TODO: pedir permisos de almacenamiento de forma explicita
+
             EditText title = findViewById(R.id.createStoryTitle);
             EditText description = findViewById(R.id.createStoryDescription);
             CheckBox isQuickStory = findViewById(R.id.createStoryIsQuickStory);
             RadioGroup visibility = findViewById(R.id.createStoryVisibility);
+            TextView uploadedFilename = findViewById(R.id.uploadedFilename);
 
             int selectedVisibilityId = visibility.getCheckedRadioButtonId();
             String visibilityType = selectedVisibilityId == R.id.createStoryVisibilityIsPublic ? "public" : "private";
@@ -49,8 +128,10 @@ public class CreateStoryActivity extends AppCompatActivity {
             // TODO: get current or last location
             story.location = "40.714224,-73.961452";
 
-            // TODO: get file
-            story.fileUrl = "";
+            String filePath = uploadedFilename.getText().toString();
+            File file = new File(filePath);
+            story.uploadedFile = getUploadedFile(file);
+            story.uploadedFilename = file.getName();
 
             new CreateStoryTask().execute(story);
         }

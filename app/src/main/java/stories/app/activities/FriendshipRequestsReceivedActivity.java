@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +27,7 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
     private RecyclerView recyclerView;
     private FriendshipRequestsRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private ArrayList<String> dataset = new ArrayList<String>();
+    private ArrayList<Pair<String,String>> dataset = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,22 +73,22 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
     @Override
     public void onItemClick(View view, int position) {
         AcceptFriendshipRequestTask task = new AcceptFriendshipRequestTask(this);
-        task.execute(recyclerViewAdapter.getItem(position));
+        task.execute(recyclerViewAdapter.getItem(position).first);
     }
 
-    protected class GetFriendshipRequestsReceived extends AsyncTask<String, Void, ArrayList<String>> {
+    protected class GetFriendshipRequestsReceived extends AsyncTask<String, Void, ArrayList<Pair<String,String>>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
 
         protected void onPreExecute() {
         }
 
-        protected ArrayList<String> doInBackground(String... params) {
+        protected ArrayList<Pair<String,String>> doInBackground(String... params) {
             return friendshipRequestsService.getFriendshipRequestsReceived(
                     LocalStorage.getUsername()
             );
         }
 
-        protected void onPostExecute(ArrayList<String> result) {
+        protected void onPostExecute(ArrayList<Pair<String,String>> result) {
             dataset.clear();
             for (int i = 0; i < result.size(); i++) {
                 dataset.add(result.get(i));
@@ -118,7 +119,7 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
         protected void onPostExecute(String result) {
             if (result != "") {
                 for (int i = 0; i < dataset.size(); i++) {
-                    if (dataset.get(i) == result) {
+                    if (dataset.get(i).first == result) {
                         dataset.remove(i);
                     }
                 }

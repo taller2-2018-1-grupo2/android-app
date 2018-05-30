@@ -2,6 +2,7 @@ package stories.app.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +11,19 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import stories.app.R;
+import stories.app.utils.Base64UtilityClass;
 
 public class FriendshipRequestsRecyclerViewAdapter extends RecyclerView.Adapter<FriendshipRequestsRecyclerViewAdapter.ViewHolder>{
 
-    private ArrayList<String> mData;
+    private ArrayList<Pair<String,String>> mData;
     private LayoutInflater mInflater;
     private FriendshipRequestsRecyclerViewAdapter.ItemClickListener mClickListener;
     private String type;
 
     // data is passed into the constructor
-    public FriendshipRequestsRecyclerViewAdapter(Context context, ArrayList<String> data, String type) {
+    public FriendshipRequestsRecyclerViewAdapter(Context context, ArrayList<Pair<String,String>> data, String type) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.type = type;
@@ -43,8 +46,13 @@ public class FriendshipRequestsRecyclerViewAdapter extends RecyclerView.Adapter<
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String username = mData.get(position);
+        String username = mData.get(position).first;
         holder.friendshipRequestTextView.setText(username);
+
+        String profilePicString = mData.get(position).second;
+        if (!profilePicString.isEmpty()) {
+            holder.friendshipRequestProfilePicImageView.setImageBitmap(Base64UtilityClass.toBitmap(profilePicString));
+        }
     }
 
     // total number of rows
@@ -56,12 +64,15 @@ public class FriendshipRequestsRecyclerViewAdapter extends RecyclerView.Adapter<
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        CircleImageView friendshipRequestProfilePicImageView;
         TextView friendshipRequestTextView;
         ImageView requestButton;
 
         ViewHolder(View itemView) {
             super(itemView);
+            friendshipRequestProfilePicImageView = itemView.findViewById(R.id.friendship_request_profile_pic);
             friendshipRequestTextView = itemView.findViewById(R.id.friendship_request_username);
+
             if (type == "received") {
                 requestButton = itemView.findViewById(R.id.accept_friendship_request);
             } else {
@@ -77,7 +88,7 @@ public class FriendshipRequestsRecyclerViewAdapter extends RecyclerView.Adapter<
     }
 
     // convenience method for getting data at click position
-    public String getItem(int id) {
+    public Pair<String,String> getItem(int id) {
         return mData.get(id);
     }
 

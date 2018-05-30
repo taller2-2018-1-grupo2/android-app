@@ -1,5 +1,7 @@
 package stories.app.services;
 
+import android.util.Pair;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +23,7 @@ public class FriendshipRequestsService {
 
     private String URL = Constants.appServerURI;
 
-    public ArrayList<String> getUsers(String partialUsername, String userID) {
+    public ArrayList<Pair<String, String>> getUsers(String partialUsername, String userID) {
         HttpURLConnection client = null;
 
         try {
@@ -49,38 +51,38 @@ public class FriendshipRequestsService {
             JSONObject jsonObject = new JSONObject(result);
             JSONArray jsonArray = jsonObject.getJSONArray("found_users");
 
-            ArrayList<String> usernames = new ArrayList<String>();
+            ArrayList<Pair<String,String>> users = new ArrayList<Pair<String,String>>();
 
             for (int i=0; i < jsonArray.length(); i++) {
                 JSONObject itemObject = jsonArray.getJSONObject(i);
                 // Pulling items from the array
-                usernames.add(itemObject.getString("username"));
+                users.add(Pair.create(itemObject.getString("username"), itemObject.getString("profile_pic")));
             }
 
-            return usernames;
+            return users;
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("MalformedURLException");
+            ArrayList<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
+            result.add(Pair.create("MalformedURLException",""));
             return result;
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("SocketTimeoutException");
+            ArrayList<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
+            result.add(Pair.create("SocketTimeoutException",""));
             return result;
         }
         catch (IOException error) {
             //Handles input and output errors
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("IOException");
+            ArrayList<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
+            result.add(Pair.create("IOException",""));
             return result;
         }
         catch (JSONException error) {
             //Handles input and output errors
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("JSONException");
+            ArrayList<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
+            result.add(Pair.create("JSONException",""));
             return result;
         }
         finally {
@@ -150,7 +152,7 @@ public class FriendshipRequestsService {
         }
     }
 
-    public ArrayList<String> getFriendshipRequestsReceived(String toUsername) {
+    public ArrayList<Pair<String,String>> getFriendshipRequestsReceived(String toUsername) {
         HttpURLConnection client = null;
 
         try {
@@ -178,38 +180,38 @@ public class FriendshipRequestsService {
             JSONObject jsonObject = new JSONObject(result);
             JSONArray jsonArray = jsonObject.getJSONArray("friendship_requests");
 
-            ArrayList<String> friendship_requests = new ArrayList<String>();
+            ArrayList<Pair<String,String>> friendship_requests = new ArrayList<>();
 
             for (int i=0; i < jsonArray.length(); i++) {
                 JSONObject itemObject = jsonArray.getJSONObject(i);
                 // Pulling items from the array
-                friendship_requests.add(itemObject.getString("from_username"));
+                friendship_requests.add(Pair.create(itemObject.getString("from_username"), itemObject.getString("profile_pic")));
             }
 
             return friendship_requests;
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("MalformedURLException");
+            ArrayList<Pair<String,String>> result = new ArrayList<>();
+            result.add(Pair.create("MalformedURLException", ""));
             return result;
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("SocketTimeoutException");
+            ArrayList<Pair<String,String>> result = new ArrayList<>();
+            result.add(Pair.create("SocketTimeoutException", ""));
             return result;
         }
         catch (IOException error) {
             //Handles input and output errors
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("IOException");
+            ArrayList<Pair<String,String>> result = new ArrayList<>();
+            result.add(Pair.create("IOException", ""));
             return result;
         }
         catch (JSONException error) {
             //Handles input and output errors
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("JSONException");
+            ArrayList<Pair<String,String>> result = new ArrayList<>();
+            result.add(Pair.create("JSONException", ""));
             return result;
         }
         finally {
@@ -219,7 +221,7 @@ public class FriendshipRequestsService {
         }
     }
 
-    public ArrayList<String> getFriendshipRequestsSent(String fromUsername) {
+    public ArrayList<Pair<String,String>> getFriendshipRequestsSent(String fromUsername) {
         HttpURLConnection client = null;
 
         try {
@@ -247,38 +249,38 @@ public class FriendshipRequestsService {
             JSONObject jsonObject = new JSONObject(result);
             JSONArray jsonArray = jsonObject.getJSONArray("friendship_requests");
 
-            ArrayList<String> friendship_requests = new ArrayList<String>();
+            ArrayList<Pair<String,String>> friendship_requests = new ArrayList<>();
 
             for (int i=0; i < jsonArray.length(); i++) {
                 JSONObject itemObject = jsonArray.getJSONObject(i);
                 // Pulling items from the array
-                friendship_requests.add(itemObject.getString("to_username"));
+                friendship_requests.add(Pair.create(itemObject.getString("to_username"), itemObject.getString("profile_pic")));
             }
 
             return friendship_requests;
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("MalformedURLException");
+            ArrayList<Pair<String,String>> result = new ArrayList<>();
+            result.add(Pair.create("MalformedURLException", ""));
             return result;
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("SocketTimeoutException");
+            ArrayList<Pair<String,String>> result = new ArrayList<>();
+            result.add(Pair.create("SocketTimeoutException", ""));
             return result;
         }
         catch (IOException error) {
             //Handles input and output errors
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("IOException");
+            ArrayList<Pair<String,String>> result = new ArrayList<>();
+            result.add(Pair.create("IOException", ""));
             return result;
         }
         catch (JSONException error) {
             //Handles input and output errors
-            ArrayList<String> result = new ArrayList<String>();
-            result.add("JSONException");
+            ArrayList<Pair<String,String>> result = new ArrayList<>();
+            result.add(Pair.create("JSONException", ""));
             return result;
         }
         finally {

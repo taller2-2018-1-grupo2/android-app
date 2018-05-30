@@ -7,10 +7,20 @@
     android:orientation="horizontal"
     android:padding="10dp">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/friendship_request_profile_pic"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/profile_placeholder"
+        app:civ_border_width="0dp"
+        app:civ_border_color="@color/primary_material_dark"/>
+
     <TextView
         android:id="@+id/friendship_request_username"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
         android:textSize="35sp" />
 
     <ImageView

@@ -2,6 +2,7 @@ package stories.app.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +12,18 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import stories.app.R;
+import stories.app.utils.Base64UtilityClass;
 
 public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<String> mData;
+    private ArrayList<Pair<String,String>> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     // data is passed into the constructor
-    public UsersRecyclerViewAdapter(Context context, ArrayList<String> data) {
+    public UsersRecyclerViewAdapter(Context context, ArrayList<Pair<String,String>> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
@@ -35,8 +38,13 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String username = mData.get(position);
+        String username = mData.get(position).first;
         holder.usernameTextView.setText(username);
+
+        String profilePicString = mData.get(position).second;
+        if (!profilePicString.isEmpty()) {
+            holder.profilePicImageView.setImageBitmap(Base64UtilityClass.toBitmap(profilePicString));
+        }
     }
 
     // total number of rows
@@ -48,11 +56,13 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        CircleImageView profilePicImageView;
         TextView usernameTextView;
         ImageView addUserButtonView;
 
         ViewHolder(View itemView) {
             super(itemView);
+            profilePicImageView = itemView.findViewById(R.id.recycler_view_row_profile_pic);
             usernameTextView = itemView.findViewById(R.id.username);
             addUserButtonView = itemView.findViewById(R.id.add_user);
             addUserButtonView.setOnClickListener(this);
@@ -65,7 +75,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
     }
 
     // convenience method for getting data at click position
-    public String getItem(int id) {
+    public Pair<String, String> getItem(int id) {
         return mData.get(id);
     }
 

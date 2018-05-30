@@ -25,6 +25,7 @@ import java.io.IOException;
 import de.hdodenhof.circleimageview.CircleImageView;
 import stories.app.R;
 import stories.app.services.ProfileService;
+import stories.app.utils.Base64UtilityClass;
 import stories.app.utils.LocalStorage;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -130,9 +131,7 @@ public class ProfileActivity extends AppCompatActivity {
                 if (!profilePicString.isEmpty()) {
                     CircleImageView profilePic = findViewById(R.id.profile_pic);
 
-                    byte[] imageBytes = Base64.decode(profilePicString, Base64.DEFAULT);
-                    Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                    profilePic.setImageBitmap(decodedImage);
+                    profilePic.setImageBitmap(Base64UtilityClass.toBitmap(profilePicString));
                 }
 
             } catch (JSONException error) {
@@ -156,11 +155,8 @@ public class ProfileActivity extends AppCompatActivity {
 
             CircleImageView profilePic = findViewById(R.id.profile_pic);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Bitmap bitmap = ((BitmapDrawable) profilePic.getDrawable()).getBitmap();;
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-            byte[] imageBytes = baos.toByteArray();
-            this.profilePicString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+            Bitmap bitmap = ((BitmapDrawable) profilePic.getDrawable()).getBitmap();
+            this.profilePicString = Base64UtilityClass.toBase64String(bitmap);
         }
 
         protected Boolean doInBackground(String... params) {

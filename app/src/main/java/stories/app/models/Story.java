@@ -15,7 +15,10 @@ public class Story {
     public String fileUrl;
     public String location;
     public String timestamp;
+    public String uploadedFile;
+    public String uploadedFilename;
 
+    //outgoing and incoming stories are different, consider refactor
     public static Story fromJsonObject(JSONObject storyJson) throws JSONException {
         Story story = new Story();
         story.id = storyJson.getString("id");
@@ -31,15 +34,17 @@ public class Story {
         return story;
     }
 
+    //outgoing and incoming stories are different, consider refactor
     public static JSONObject toJsonObject(Story story) throws JSONException {
         JSONObject storyJson = new JSONObject();
         storyJson.put("id", story.id);
         storyJson.put("user_id", story.userId);
         storyJson.put("title", story.title);
         storyJson.put("description", story.description);
+        storyJson.put("uploaded_file", story.uploadedFile);
+        storyJson.put("uploaded_filename", story.uploadedFilename);
         storyJson.put("is_quick_story", story.isQuickStory);
         storyJson.put("visibility", story.visibility);
-        storyJson.put("file_url", story.fileUrl);
         storyJson.put("location", story.location);
         storyJson.put("timestamp", story.timestamp);
 

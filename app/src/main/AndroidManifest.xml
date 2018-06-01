@@ -32,5 +32,6 @@
         <activity android:name=".activities.FriendshipRequestsActivity" android:windowSoftInputMode="adjustPan"></activity>
         <activity android:name=".activities.FriendshipRequestsSentActivity"></activity>
         <activity android:name=".activities.FriendshipRequestsReceivedActivity"></activity>
+        <activity android:name=".activities.FriendsListActivity"></activity>
     </application>
 </manifest>

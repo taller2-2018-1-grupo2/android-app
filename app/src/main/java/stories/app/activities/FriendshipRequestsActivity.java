@@ -41,6 +41,7 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        setTitle("Solicitudes de amistad");
 
         SearchView searchView = this.findViewById(R.id.friends_search_bar);
         searchView.setOnQueryTextListener(new SearchQueryHandler());

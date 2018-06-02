@@ -40,6 +40,7 @@ public class AuthenticationService extends BaseService {
 
             JSONObject result = this.getResponseResult(client);
             User user = User.fromJsonObject(result);
+            user.username = username;
 
             // Save the user information
             LocalStorage.setUser(user);

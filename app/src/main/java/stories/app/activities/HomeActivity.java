@@ -30,6 +30,11 @@ public class HomeActivity extends AppCompatActivity {
 
         // Retrieve all stories visibles to the user
         new GetStoriesVisiblesToUserTask().execute(LocalStorage.getUser().id);
+
+        if (getIntent().getExtras() != null) {
+            String from_username = getIntent().getExtras().getString("from_username");
+            String to_username = getIntent().getExtras().getString("to_username");
+        }
     }
 
     @Override
@@ -42,25 +47,26 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
+        Intent navigationIntent;
 
-        if (itemId == R.id.story_menu) {
-            Intent navigationIntent = new Intent(HomeActivity.this, CreateStoryActivity.class);
-            startActivity(navigationIntent);
-            return true;
+        switch (itemId) {
+            case R.id.profile_menu:
+                navigationIntent = new Intent(HomeActivity.this, ProfileActivity.class);
+                startActivity(navigationIntent);
+                return true;
+            case R.id.friendship_requests:
+                navigationIntent = new Intent(HomeActivity.this, FriendshipRequestsActivity.class);
+                startActivity(navigationIntent);
+                return true;
+            case R.id.direct_messages:
+                navigationIntent = new Intent(HomeActivity.this, DirectMessagesActivity.class);
+                startActivity(navigationIntent);
+                return true;
+//            case R.id.chat:
+//                navigationIntent = new Intent(HomeActivity.this, ChatActivity.class);
+//                startActivity(navigationIntent);
+//                return true;
         }
-
-        if(itemId == R.id.profile_menu) {
-            Intent navigationIntent = new Intent(HomeActivity.this, ProfileActivity.class);
-            startActivity(navigationIntent);
-            return true;
-        }
-
-        if (itemId == R.id.friendship_requests) {
-            Intent navigationIntent = new Intent(HomeActivity.this, FriendshipRequestsActivity.class);
-            startActivity(navigationIntent);
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -76,7 +82,7 @@ public class HomeActivity extends AppCompatActivity {
 
         protected void onPostExecute(ArrayList<Story> result) {
 
-            ListView storiesList = (ListView)findViewById(R.id.storiesList);
+            ListView storiesList = (ListView) findViewById(R.id.storiesList);
             storiesList.setAdapter(new StoriesAdapter(HomeActivity.this, result));
         }
     }

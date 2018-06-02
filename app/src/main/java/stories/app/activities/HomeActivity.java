@@ -62,10 +62,10 @@ public class HomeActivity extends AppCompatActivity {
                 navigationIntent = new Intent(HomeActivity.this, DirectMessagesActivity.class);
                 startActivity(navigationIntent);
                 return true;
-            case R.id.chat:
-                navigationIntent = new Intent(HomeActivity.this, ChatActivity.class);
-                startActivity(navigationIntent);
-                return true;
+//            case R.id.chat:
+//                navigationIntent = new Intent(HomeActivity.this, ChatActivity.class);
+//                startActivity(navigationIntent);
+//                return true;
         }
         return super.onOptionsItemSelected(item);
     }

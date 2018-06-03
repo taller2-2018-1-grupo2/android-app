@@ -21,18 +21,33 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
     private ArrayList<Pair<String,String>> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    private String type;
 
     // data is passed into the constructor
-    public UsersRecyclerViewAdapter(Context context, ArrayList<Pair<String,String>> data) {
+    public UsersRecyclerViewAdapter(Context context, ArrayList<Pair<String,String>> data, String type) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        this.type = type;
     }
 
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recycler_row_users, parent, false);
-        return new ViewHolder(view);
+        int recyclerRow;
+
+        switch (type) {
+            case "users":  recyclerRow = R.layout.recycler_row_users;
+                break;
+            case "friends":  recyclerRow = R.layout.recycler_row_friends;
+                break;
+            case "received":  recyclerRow = R.layout.recycler_row_friendship_requests_received;
+                break;
+            default: recyclerRow = R.layout.recycler_row_friendship_requests_sent;
+                break;
+        }
+
+        View view = mInflater.inflate(recyclerRow, parent, false);
+        return new UsersRecyclerViewAdapter.ViewHolder(view);
     }
 
     // binds the data to the TextView in each row
@@ -58,14 +73,29 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CircleImageView profilePicImageView;
         TextView usernameTextView;
-        ImageView addUserButtonView;
+        ImageView actionButton;
 
         ViewHolder(View itemView) {
             super(itemView);
             profilePicImageView = itemView.findViewById(R.id.recycler_view_row_profile_pic);
             usernameTextView = itemView.findViewById(R.id.username);
-            addUserButtonView = itemView.findViewById(R.id.add_user);
-            addUserButtonView.setOnClickListener(this);
+
+            switch (type) {
+                case "users":
+                    actionButton = itemView.findViewById(R.id.add_user);
+                    actionButton.setOnClickListener(this);
+                    break;
+                case "friends":
+                    break;
+                case "received":
+                    actionButton = itemView.findViewById(R.id.accept_friendship_request);
+                    actionButton.setOnClickListener(this);
+                    break;
+                default:
+                    actionButton = itemView.findViewById(R.id.delete_friendship_request);
+                    actionButton.setOnClickListener(this);
+                    break;
+            }
         }
 
         @Override

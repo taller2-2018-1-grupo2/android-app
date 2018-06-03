@@ -50,7 +50,7 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
         recyclerView = findViewById(R.id.users_recycler_view);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewAdapter = new UsersRecyclerViewAdapter(this, dataset);
+        recyclerViewAdapter = new UsersRecyclerViewAdapter(this, dataset, "users");
         recyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(recyclerViewAdapter);
     }

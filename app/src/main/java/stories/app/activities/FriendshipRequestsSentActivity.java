@@ -17,14 +17,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import stories.app.R;
-import stories.app.adapters.FriendshipRequestsRecyclerViewAdapter;
+import stories.app.adapters.UsersRecyclerViewAdapter;
 import stories.app.services.FriendshipRequestsService;
 import stories.app.utils.LocalStorage;
 
-public class FriendshipRequestsSentActivity extends AppCompatActivity implements FriendshipRequestsRecyclerViewAdapter.ItemClickListener{
+public class FriendshipRequestsSentActivity extends AppCompatActivity implements UsersRecyclerViewAdapter.ItemClickListener{
 
     private RecyclerView recyclerView;
-    private FriendshipRequestsRecyclerViewAdapter recyclerViewAdapter;
+    private UsersRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private ArrayList<Pair<String,String>> dataset = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public class FriendshipRequestsSentActivity extends AppCompatActivity implements
         recyclerView = findViewById(R.id.friendship_requests_sent_recycler_view);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewAdapter = new FriendshipRequestsRecyclerViewAdapter(this, dataset, "sent");
+        recyclerViewAdapter = new UsersRecyclerViewAdapter(this, dataset, "sent");
         recyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(recyclerViewAdapter);
 

@@ -41,6 +41,7 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        setTitle("Solicitudes de amistad");
 
         SearchView searchView = this.findViewById(R.id.friends_search_bar);
         searchView.setOnQueryTextListener(new SearchQueryHandler());
@@ -49,7 +50,7 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
         recyclerView = findViewById(R.id.users_recycler_view);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewAdapter = new UsersRecyclerViewAdapter(this, dataset);
+        recyclerViewAdapter = new UsersRecyclerViewAdapter(this, dataset, "users");
         recyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(recyclerViewAdapter);
     }

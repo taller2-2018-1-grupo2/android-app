@@ -40,6 +40,7 @@
         <activity android:name=".activities.DirectMessagesCreateActivity" />
         <activity android:name=".activities.ChatActivity" />
         <activity android:name=".activities.ChatCreateActivity" />
+        <activity android:name=".activities.FriendsListActivity" />
 
         <service android:name=".services.ChatInstanceIDService">
             <intent-filter>

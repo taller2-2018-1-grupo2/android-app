@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1024362877358",
+    "firebase_url": "https://taller2-2018-1-grupo2.firebaseio.com",
+    "project_id": "taller2-2018-1-grupo2",
+    "storage_bucket": "taller2-2018-1-grupo2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1024362877358:android:dfb5d1080168dcc4",
+        "android_client_info": {
+          "package_name": "stories.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1024362877358-o8pkbgteiml0l33k28o00t8ppbfrd48a.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1024362877358-o8pkbgteiml0l33k28o00t8ppbfrd48a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLRXpTJPn-g0YO2hVXh0-xl2rsoQwaLj0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

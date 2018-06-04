@@ -17,7 +17,10 @@
 
     <!-- Strings related to Menu -->
     <string name="story_menu">Crear Historia</string>
+    <string name="messages_menu">Mensajes directos</string>
+    <string name="friendship_menu">Solicitudes de amistad</string>
     <string name="profile_menu">Perfil</string>
+
 
     <!-- Strings related to Create Story -->
     <string name="prompt_title">Título</string>

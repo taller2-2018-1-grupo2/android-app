@@ -7,16 +7,22 @@
         android:id="@+id/chat"
         app:showAsAction="always"
         android:title="Chat"/>-->
+
+    <item
+        android:id="@+id/story_menu"
+        android:icon="@android:drawable/ic_menu_edit"
+        app:showAsAction="always"
+        android:title="@string/story_menu" />
     <item
         android:id="@+id/direct_messages"
         android:icon="@drawable/ic_menu_messages"
         app:showAsAction="always"
-        android:title="Direct Messages"/>
+        android:title="@string/messages_menu"/>
     <item
         android:id="@+id/friendship_requests"
         android:icon="@drawable/ic_menu_allfriends"
         app:showAsAction="always"
-        android:title="Friendship Requests"/>
+        android:title="@string/friendship_menu"/>
     <item
         android:id="@+id/profile_menu"
         android:icon="@drawable/ic_account_circle"

@@ -28,15 +28,13 @@ public class SignInActivity extends AppCompatActivity {
         EditText email = findViewById(R.id.email);
         EditText password = findViewById(R.id.password);
         EditText confirmPassword = findViewById(R.id.confirmPassword);
-        EditText firstName = findViewById(R.id.first_name);
-        EditText lastName = findViewById(R.id.last_name);
+        EditText name = findViewById(R.id.name);
 
         username.setOnFocusChangeListener(new FocusChangeHandler());
         email.setOnFocusChangeListener(new FocusChangeHandler());
         password.setOnFocusChangeListener(new FocusChangeHandler());
         confirmPassword.setOnFocusChangeListener(new FocusChangeHandler());
-        firstName.setOnFocusChangeListener(new FocusChangeHandler());
-        lastName.setOnFocusChangeListener(new FocusChangeHandler());
+        name.setOnFocusChangeListener(new FocusChangeHandler());
     }
 
     protected class FocusChangeHandler implements View.OnFocusChangeListener {
@@ -47,8 +45,7 @@ public class SignInActivity extends AppCompatActivity {
             EditText email = findViewById(R.id.email);
             EditText password = findViewById(R.id.password);
             EditText confirmPassword = findViewById(R.id.confirmPassword);
-            EditText firstName = findViewById(R.id.first_name);
-            EditText lastName = findViewById(R.id.last_name);
+            EditText name = findViewById(R.id.name);
 
             boolean arePasswordEqual = password.getText().toString().equals(confirmPassword.getText().toString());
 
@@ -64,8 +61,7 @@ public class SignInActivity extends AppCompatActivity {
                 && password.getText().toString() != ""
                 && confirmPassword.getText().toString() != ""
                 && arePasswordEqual
-                && firstName.getText().toString() != ""
-                && lastName.getText().toString() != ""
+                && name.getText().toString() != ""
             );
         }
     }
@@ -75,14 +71,12 @@ public class SignInActivity extends AppCompatActivity {
             EditText username = findViewById(R.id.username);
             EditText email = findViewById(R.id.email);
             EditText password = findViewById(R.id.password);
-            EditText firstName = findViewById(R.id.first_name);
-            EditText lastName = findViewById(R.id.last_name);
+            EditText name = findViewById(R.id.name);
 
             User user = new User();
             user.username = username.getText().toString();
             user.email = email.getText().toString();
-            user.firstName = firstName.getText().toString();
-            user.lastName = lastName.getText().toString();
+            user.name = name.getText().toString();
 
             new SignInUserTask().execute(user,  password.getText().toString());
         }

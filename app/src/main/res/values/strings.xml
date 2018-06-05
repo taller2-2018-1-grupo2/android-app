@@ -6,8 +6,7 @@
     <string name="prompt_password">Contraseña</string>
     <string name="prompt_confirm_password">Confirmar contraseña</string>
     <string name="prompt_email">Email</string>
-    <string name="prompt_first_name">Nombre</string>
-    <string name="prompt_last_name">Apellido</string>
+    <string name="prompt_name">Nombre</string>
     <string name="action_login">Loguearse</string>
     <string name="action_signin">Registrarse</string>
     <string name="action_edit_profile">Aplicar cambios</string>
@@ -35,5 +34,8 @@
     <string name="message_destination">To</string>
     <string name="message_text">Message</string>
     <string name="action_sendMessage">Send</string>
+
+    <string name="facebook_app_id">1039303862894248</string>
+    <string name="fb_login_protocol_scheme">fb1039303862894248</string>
 
 </resources>

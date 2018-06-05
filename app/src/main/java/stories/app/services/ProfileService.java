@@ -64,7 +64,7 @@ public class ProfileService {
         }
     }
 
-    public Boolean updateUserData(String userID, String firstName, String lastName, String email, String profilePic) {
+    public Boolean updateUserData(String userID, String name, String email, String profilePic) {
         HttpURLConnection client = null;
 
         try {
@@ -75,8 +75,7 @@ public class ProfileService {
             client.setRequestProperty("Accept", "application/json");
 
             JSONObject credentials = new JSONObject();
-            credentials.put("first_name", firstName);
-            credentials.put("last_name", lastName);
+            credentials.put("name", name);
             credentials.put("email", email);
             credentials.put("profile_pic", profilePic);
 

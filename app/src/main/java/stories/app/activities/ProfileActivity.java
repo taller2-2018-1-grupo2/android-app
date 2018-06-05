@@ -110,14 +110,12 @@ public class ProfileActivity extends AppCompatActivity {
 
         public void onClick(View v) {
 
-            EditText firstName = findViewById(R.id.first_name);
-            EditText lastName = findViewById(R.id.last_name);
+            EditText name = findViewById(R.id.name);
             EditText email = findViewById(R.id.email);
 
             UpdateUserDataTask task = new UpdateUserDataTask(this.context);
             task.execute(
-                    firstName.getText().toString(),
-                    lastName.getText().toString(),
+                    name.getText().toString(),
                     email.getText().toString()
             );
         }
@@ -142,12 +140,10 @@ public class ProfileActivity extends AppCompatActivity {
 
                 jsonObject = new JSONObject(userJSON);
 
-                EditText firstName = findViewById(R.id.first_name);
-                EditText lastName = findViewById(R.id.last_name);
+                EditText name = findViewById(R.id.name);
                 EditText email = findViewById(R.id.email);
 
-                firstName.setText(jsonObject.getString("first_name"));
-                lastName.setText(jsonObject.getString("last_name"));
+                name.setText(jsonObject.getString("name"));
                 email.setText(jsonObject.getString("email"));
 
                 String profilePicString = jsonObject.getString("profile_pic");
@@ -188,7 +184,6 @@ public class ProfileActivity extends AppCompatActivity {
                     LocalStorage.getUser().id,
                     params[0],
                     params[1],
-                    params[2],
                     this.profilePicString
             );
         }

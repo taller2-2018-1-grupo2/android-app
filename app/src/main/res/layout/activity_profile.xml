@@ -15,19 +15,6 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat" />
 
-    <!--<TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Mi Perfil"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.072"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.03" />-->
-
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_pic"
         android:layout_width="229dp"
@@ -56,20 +43,11 @@
         app:layout_constraintVertical_bias="0.303">
 
         <EditText
-            android:id="@+id/first_name"
+            android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="14"
             android:hint="Nombre"
-            android:inputType="text"
-            android:textSize="24sp" />
-
-        <EditText
-            android:id="@+id/last_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Apellido"
             android:inputType="text"
             android:textSize="24sp" />
 

@@ -6,6 +6,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class Base64UtilityClass {
 

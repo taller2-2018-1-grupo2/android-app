@@ -98,4 +98,48 @@ public class AuthenticationService extends BaseService {
             }
         }
     }
+
+    public User fbLoginUser(String username, String name, String pictureURL, String email) {
+        HttpURLConnection client = null;
+
+        try {
+            URL url = new URL(URL + "/users/fb_login");
+            client = (HttpURLConnection) url.openConnection();
+            client.setRequestMethod("POST");
+            client.setRequestProperty("Content-Type", "application/json");
+            client.setRequestProperty("Accept", "application/json");
+
+            JSONObject credentials = new JSONObject();
+            credentials.put("username",username);
+            credentials.put("name", name);
+            credentials.put("profile_pic", pictureURL);
+            credentials.put("email", email);
+
+            OutputStream outputStream = client.getOutputStream();
+            outputStream.write(credentials.toString().getBytes("UTF-8"));
+            outputStream.close();
+
+            client.connect();
+
+            JSONObject result = this.getResponseResult(client);
+            User user = User.fromJsonObject(result.getJSONObject("user"));
+
+            // TODO: merge both user and signedInUser
+
+            // Save the user information
+            LocalStorage.setUser(user);
+
+            // Same as in Login method. Inconsistencies with code above.
+            JSONObject jsonUser = result.getJSONObject("user");
+            LocalStorage.setUsername(jsonUser.getString("username"));
+
+            return user;
+        } catch(Exception exception) {
+            return null;
+        } finally {
+            if(client != null) {
+                client.disconnect();
+            }
+        }
+    }
 }

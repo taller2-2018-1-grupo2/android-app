@@ -9,9 +9,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import stories.app.R;
 import stories.app.models.User;
 import stories.app.services.AuthenticationService;
+import stories.app.services.ChatInstanceIDService;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -38,7 +41,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     protected class FocusChangeHandler implements View.OnFocusChangeListener {
-        public void onFocusChange(View v, boolean hasFocus){
+        public void onFocusChange(View v, boolean hasFocus) {
             TextView signInResult = findViewById(R.id.signInResult);
             Button signInButton = findViewById(R.id.signInButton);
             EditText username = findViewById(R.id.username);
@@ -56,18 +59,18 @@ public class SignInActivity extends AppCompatActivity {
 
             signInResult.setText("");
             signInButton.setEnabled(
-                username.getText().toString() != ""
-                && email.getText().toString() != ""
-                && password.getText().toString() != ""
-                && confirmPassword.getText().toString() != ""
-                && arePasswordEqual
-                && name.getText().toString() != ""
+                    username.getText().toString() != ""
+                            && email.getText().toString() != ""
+                            && password.getText().toString() != ""
+                            && confirmPassword.getText().toString() != ""
+                            && arePasswordEqual
+                            && name.getText().toString() != ""
             );
         }
     }
 
     protected class SignInClickHandler implements View.OnClickListener {
-        public void onClick(View v){
+        public void onClick(View v) {
             EditText username = findViewById(R.id.username);
             EditText email = findViewById(R.id.email);
             EditText password = findViewById(R.id.password);
@@ -77,8 +80,9 @@ public class SignInActivity extends AppCompatActivity {
             user.username = username.getText().toString();
             user.email = email.getText().toString();
             user.name = name.getText().toString();
+            user.firebaseToken = ChatInstanceIDService.FIREBASE_TOKEN;
 
-            new SignInUserTask().execute(user,  password.getText().toString());
+            new SignInUserTask().execute(user, password.getText().toString());
         }
     }
 
@@ -91,7 +95,7 @@ public class SignInActivity extends AppCompatActivity {
         }
 
         protected User doInBackground(Object... params) {
-            return authenticationService.signinUser((User)params[0], (String)params[1]);
+            return authenticationService.signinUser((User) params[0], (String) params[1]);
         }
 
         protected void onPostExecute(User result) {

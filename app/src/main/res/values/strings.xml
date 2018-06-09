@@ -31,9 +31,9 @@
     <string name="action_createStory">Crear historia</string>
 
     <!-- Strings related to Create Message -->
-    <string name="message_destination">To</string>
-    <string name="message_text">Message</string>
-    <string name="action_sendMessage">Send</string>
+    <string name="message_destination">Destinatario</string>
+    <string name="message_text">Mensaje</string>
+    <string name="action_sendMessage">Enviar</string>
 
     <string name="facebook_app_id">1039303862894248</string>
     <string name="fb_login_protocol_scheme">fb1039303862894248</string>

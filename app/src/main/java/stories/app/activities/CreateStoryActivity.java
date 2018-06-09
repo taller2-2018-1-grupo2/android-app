@@ -21,19 +21,26 @@ import java.io.FileInputStream;
 import java.util.Calendar;
 
 import stories.app.R;
+import stories.app.images.ImageFiltersActivity;
+import stories.app.images.utils.BitmapUtils;
 import stories.app.models.Story;
 import stories.app.services.StoryService;
 import stories.app.utils.LocalStorage;
 
 public class CreateStoryActivity extends AppCompatActivity {
 
+    private static final int START_IMAGE_FILTER = 5;
+    private static final int FINISH_IMAGE_FILTER = 6;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_story);
 
+        //Hiding image upload button
         Button uploadImageButton = this.findViewById(R.id.uploadFileButton);
         uploadImageButton.setOnClickListener(new UploadImageHandler());
+        uploadImageButton.setVisibility(View.GONE);
 
         Button createStoryButton = this.findViewById(R.id.createStoryButton);
         createStoryButton.setOnClickListener(new CreateStoryHandler());
@@ -47,6 +54,84 @@ public class CreateStoryActivity extends AppCompatActivity {
         }
     }
 
+    public String getPath(Uri contentUri) {
+        String res = null;
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if(cursor.moveToFirst()){
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            res = cursor.getString(column_index);
+        }
+        cursor.close();
+        return res;
+    }
+
+    private byte[] loadFileAsBytesArray(File file) throws Exception {
+        int length = (int) file.length();
+        BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file));
+        byte[] bytes = new byte[length];
+        reader.read(bytes, 0, length);
+        reader.close();
+        return bytes;
+    }
+
+    private String getUploadedFile(File file){
+        try {
+            byte[] byteArrayImage = loadFileAsBytesArray(file);
+            String encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
+            return encodedImage;
+        } catch(Exception e){
+            return "";
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == START_IMAGE_FILTER) {
+            if (resultCode == AppCompatActivity.RESULT_OK) {
+                Uri selectedImage = data.getData();
+                String filePath = BitmapUtils.getBitmapPath(this, selectedImage);
+
+                Intent navigationIntent = new Intent(CreateStoryActivity.this, ImageFiltersActivity.class);
+                navigationIntent.putExtra("imageUri", filePath);
+                startActivityForResult(navigationIntent, FINISH_IMAGE_FILTER);
+            }
+        }
+        else if (requestCode == FINISH_IMAGE_FILTER){
+            if (resultCode == AppCompatActivity.RESULT_OK) {
+
+                EditText title = findViewById(R.id.createStoryTitle);
+                EditText description = findViewById(R.id.createStoryDescription);
+                CheckBox isQuickStory = findViewById(R.id.createStoryIsQuickStory);
+                RadioGroup visibility = findViewById(R.id.createStoryVisibility);
+
+                int selectedVisibilityId = visibility.getCheckedRadioButtonId();
+                String visibilityType = selectedVisibilityId == R.id.createStoryVisibilityIsPublic ? "public" : "private";
+
+                Story story = new Story();
+                story.userId = LocalStorage.getUser().id;
+                story.title = title.getText().toString();
+                story.description = description.getText().toString();
+                story.isQuickStory = isQuickStory.isSelected();
+                story.visibility = visibilityType;
+                story.timestamp = Calendar.getInstance().getTime().toString();
+
+                // TODO: get current or last location
+                story.location = "40.714224,-73.961452";
+
+                String filePath = getPath(Uri.parse(data.getDataString()));
+                File file = new File(filePath);
+                story.uploadedFile = getUploadedFile(file);
+                story.uploadedFilename = file.getName();
+
+                new CreateStoryTask().execute(story);
+            }
+        }
+    }
+
+
+
+/** COMMENTING OLD IMAGE UPLOAD CODE
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -81,59 +166,15 @@ public class CreateStoryActivity extends AppCompatActivity {
         }
         cursor.close();
         return res;
-    }
+    } **/
 
 
     protected class CreateStoryHandler implements View.OnClickListener {
 
-        private byte[] loadFileAsBytesArray(File file) throws Exception {
-            int length = (int) file.length();
-            BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file));
-            byte[] bytes = new byte[length];
-            reader.read(bytes, 0, length);
-            reader.close();
-            return bytes;
-        }
-
-        private String getUploadedFile(File file){
-            try {
-                byte[] byteArrayImage = loadFileAsBytesArray(file);
-                String encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
-                return encodedImage;
-            } catch(Exception e){
-                return "";
-            }
-        }
-
         public void onClick(View v){
-            //TODO: pedir permisos de almacenamiento de forma explicita
-
-            EditText title = findViewById(R.id.createStoryTitle);
-            EditText description = findViewById(R.id.createStoryDescription);
-            CheckBox isQuickStory = findViewById(R.id.createStoryIsQuickStory);
-            RadioGroup visibility = findViewById(R.id.createStoryVisibility);
-            TextView uploadedFilename = findViewById(R.id.uploadedFilename);
-
-            int selectedVisibilityId = visibility.getCheckedRadioButtonId();
-            String visibilityType = selectedVisibilityId == R.id.createStoryVisibilityIsPublic ? "public" : "private";
-
-            Story story = new Story();
-            story.userId = LocalStorage.getUser().id;
-            story.title = title.getText().toString();
-            story.description = description.getText().toString();
-            story.isQuickStory = isQuickStory.isSelected();
-            story.visibility = visibilityType;
-            story.timestamp = Calendar.getInstance().getTime().toString();
-
-            // TODO: get current or last location
-            story.location = "40.714224,-73.961452";
-
-            String filePath = uploadedFilename.getText().toString();
-            File file = new File(filePath);
-            story.uploadedFile = getUploadedFile(file);
-            story.uploadedFilename = file.getName();
-
-            new CreateStoryTask().execute(story);
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, START_IMAGE_FILTER);
         }
     }
 

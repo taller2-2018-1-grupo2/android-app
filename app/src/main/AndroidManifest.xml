@@ -41,6 +41,7 @@
         <activity android:name=".activities.ChatActivity" />
         <activity android:name=".activities.ChatCreateActivity" />
         <activity android:name=".activities.FriendsListActivity" />
+        <activity android:name=".images.ImageFiltersActivity" />
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>

@@ -20,7 +20,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.087" />
+        app:layout_constraintVertical_bias="0.087"
+        style="@style/DefaultTitleStyle" />
 
     <EditText
         android:id="@+id/username"
@@ -114,7 +115,6 @@
         android:id="@+id/signInResult"
         android:layout_width="330dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/raleway"
         android:gravity="center"
         android:text="Ocurrio un error al registrar al usuario"
         android:textColor="@color/colorError"

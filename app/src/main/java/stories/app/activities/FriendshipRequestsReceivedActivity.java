@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import stories.app.R;
 import stories.app.adapters.UsersRecyclerViewAdapter;
@@ -26,7 +27,7 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
     private RecyclerView recyclerView;
     private UsersRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private ArrayList<Pair<String,String>> dataset = new ArrayList<>();
+    private ArrayList<HashMap<String,String>> dataset = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // set up the RecyclerView
         recyclerView = findViewById(R.id.friendship_requests_received_recycler_view);
@@ -72,22 +74,22 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
     @Override
     public void onItemClick(View view, int position) {
         AcceptFriendshipRequestTask task = new AcceptFriendshipRequestTask(this);
-        task.execute(recyclerViewAdapter.getItem(position).first);
+        task.execute(recyclerViewAdapter.getItem(position).get("username"));
     }
 
-    protected class GetFriendshipRequestsReceived extends AsyncTask<String, Void, ArrayList<Pair<String,String>>> {
+    protected class GetFriendshipRequestsReceived extends AsyncTask<String, Void, ArrayList<HashMap<String,String>>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
 
         protected void onPreExecute() {
         }
 
-        protected ArrayList<Pair<String,String>> doInBackground(String... params) {
+        protected ArrayList<HashMap<String,String>> doInBackground(String... params) {
             return friendshipRequestsService.getFriendshipRequestsReceived(
                     LocalStorage.getUsername()
             );
         }
 
-        protected void onPostExecute(ArrayList<Pair<String,String>> result) {
+        protected void onPostExecute(ArrayList<HashMap<String,String>> result) {
             dataset.clear();
             for (int i = 0; i < result.size(); i++) {
                 dataset.add(result.get(i));
@@ -118,7 +120,7 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
         protected void onPostExecute(String result) {
             if (result != "") {
                 for (int i = 0; i < dataset.size(); i++) {
-                    if (dataset.get(i).first == result) {
+                    if (dataset.get(i).get("username") == result) {
                         dataset.remove(i);
                     }
                 }

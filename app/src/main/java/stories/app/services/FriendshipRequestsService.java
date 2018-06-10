@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import stories.app.utils.Constants;
@@ -23,7 +24,7 @@ public class FriendshipRequestsService {
 
     private String URL = Constants.appServerURI;
 
-    public ArrayList<Pair<String, String>> getUsers(String partialUsername, String userID) {
+    public ArrayList<HashMap<String, String>> getUsers(String partialUsername, String userID) {
         HttpURLConnection client = null;
 
         try {
@@ -51,38 +52,50 @@ public class FriendshipRequestsService {
             JSONObject jsonObject = new JSONObject(result);
             JSONArray jsonArray = jsonObject.getJSONArray("found_users");
 
-            ArrayList<Pair<String,String>> users = new ArrayList<Pair<String,String>>();
+            ArrayList<HashMap<String,String>> users = new ArrayList<HashMap<String,String>>();
 
             for (int i=0; i < jsonArray.length(); i++) {
                 JSONObject itemObject = jsonArray.getJSONObject(i);
+                HashMap<String,String> map = new HashMap<>();
+                map.put("username", itemObject.getString("username"));
+                map.put("profilePic", itemObject.getString("profile_pic"));
+                map.put("name", itemObject.getString("name"));
                 // Pulling items from the array
-                users.add(Pair.create(itemObject.getString("username"), itemObject.getString("profile_pic")));
+                users.add(map);
             }
 
             return users;
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
-            ArrayList<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
-            result.add(Pair.create("MalformedURLException",""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "MalformedURLException");
+            result.add(map);
             return result;
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
-            ArrayList<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
-            result.add(Pair.create("SocketTimeoutException",""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "SocketTimeoutException");
+            result.add(map);
             return result;
         }
         catch (IOException error) {
             //Handles input and output errors
-            ArrayList<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
-            result.add(Pair.create("IOException",""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "IOException");
+            result.add(map);
             return result;
         }
         catch (JSONException error) {
             //Handles input and output errors
-            ArrayList<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
-            result.add(Pair.create("JSONException",""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "JSONException");
+            result.add(map);
             return result;
         }
         finally {
@@ -152,7 +165,7 @@ public class FriendshipRequestsService {
         }
     }
 
-    public ArrayList<Pair<String,String>> getFriendshipRequestsReceived(String toUsername) {
+    public ArrayList<HashMap<String,String>> getFriendshipRequestsReceived(String toUsername) {
         HttpURLConnection client = null;
 
         try {
@@ -180,38 +193,50 @@ public class FriendshipRequestsService {
             JSONObject jsonObject = new JSONObject(result);
             JSONArray jsonArray = jsonObject.getJSONArray("friendship_requests");
 
-            ArrayList<Pair<String,String>> friendship_requests = new ArrayList<>();
+            ArrayList<HashMap<String,String>> friendship_requests = new ArrayList<>();
 
             for (int i=0; i < jsonArray.length(); i++) {
                 JSONObject itemObject = jsonArray.getJSONObject(i);
+                HashMap<String,String> map = new HashMap<>();
+                map.put("username", itemObject.getString("from_username"));
+                map.put("profilePic", itemObject.getString("profile_pic"));
+                map.put("name", itemObject.getString("name"));
                 // Pulling items from the array
-                friendship_requests.add(Pair.create(itemObject.getString("from_username"), itemObject.getString("profile_pic")));
+                friendship_requests.add(map);
             }
 
             return friendship_requests;
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
-            ArrayList<Pair<String,String>> result = new ArrayList<>();
-            result.add(Pair.create("MalformedURLException", ""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "MalformedURLException");
+            result.add(map);
             return result;
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
-            ArrayList<Pair<String,String>> result = new ArrayList<>();
-            result.add(Pair.create("SocketTimeoutException", ""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "SocketTimeoutException");
+            result.add(map);
             return result;
         }
         catch (IOException error) {
             //Handles input and output errors
-            ArrayList<Pair<String,String>> result = new ArrayList<>();
-            result.add(Pair.create("IOException", ""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "IOException");
+            result.add(map);
             return result;
         }
         catch (JSONException error) {
             //Handles input and output errors
-            ArrayList<Pair<String,String>> result = new ArrayList<>();
-            result.add(Pair.create("JSONException", ""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "JSONException");
+            result.add(map);
             return result;
         }
         finally {
@@ -221,7 +246,7 @@ public class FriendshipRequestsService {
         }
     }
 
-    public ArrayList<Pair<String,String>> getFriendshipRequestsSent(String fromUsername) {
+    public ArrayList<HashMap<String,String>> getFriendshipRequestsSent(String fromUsername) {
         HttpURLConnection client = null;
 
         try {
@@ -249,38 +274,50 @@ public class FriendshipRequestsService {
             JSONObject jsonObject = new JSONObject(result);
             JSONArray jsonArray = jsonObject.getJSONArray("friendship_requests");
 
-            ArrayList<Pair<String,String>> friendship_requests = new ArrayList<>();
+            ArrayList<HashMap<String,String>> friendship_requests = new ArrayList<>();
 
             for (int i=0; i < jsonArray.length(); i++) {
                 JSONObject itemObject = jsonArray.getJSONObject(i);
+                HashMap<String,String> map = new HashMap<>();
+                map.put("username", itemObject.getString("to_username"));
+                map.put("profilePic", itemObject.getString("profile_pic"));
+                map.put("name", itemObject.getString("name"));
                 // Pulling items from the array
-                friendship_requests.add(Pair.create(itemObject.getString("to_username"), itemObject.getString("profile_pic")));
+                friendship_requests.add(map);
             }
 
             return friendship_requests;
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
-            ArrayList<Pair<String,String>> result = new ArrayList<>();
-            result.add(Pair.create("MalformedURLException", ""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "MalformedURLException");
+            result.add(map);
             return result;
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
-            ArrayList<Pair<String,String>> result = new ArrayList<>();
-            result.add(Pair.create("SocketTimeoutException", ""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "SocketTimeoutException");
+            result.add(map);
             return result;
         }
         catch (IOException error) {
             //Handles input and output errors
-            ArrayList<Pair<String,String>> result = new ArrayList<>();
-            result.add(Pair.create("IOException", ""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "IOException");
+            result.add(map);
             return result;
         }
         catch (JSONException error) {
             //Handles input and output errors
-            ArrayList<Pair<String,String>> result = new ArrayList<>();
-            result.add(Pair.create("JSONException", ""));
+            ArrayList<HashMap<String,String>> result = new ArrayList<>();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("error", "JSONException");
+            result.add(map);
             return result;
         }
         finally {

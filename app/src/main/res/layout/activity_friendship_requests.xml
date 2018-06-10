@@ -10,10 +10,22 @@
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
+        android:background="@color/primary_material_light"
+        android:textColor="@color/textPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat" >
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            style="@style/DefaultTitleStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Buscar Usuarios"
+            android:textSize="25sp"
+            android:textColor="@color/textPrimary"/>
+
+    </android.support.v7.widget.Toolbar>
 
     <SearchView
         android:id="@+id/friends_search_bar"

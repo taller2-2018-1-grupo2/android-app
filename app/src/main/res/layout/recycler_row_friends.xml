@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,11 +17,25 @@
         app:civ_border_color="@color/primary_material_dark"/>
 
     <TextView
+        android:id="@+id/full_name"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="6dp"
+        android:textColor="@color/textPrimary"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
         android:id="@+id/username"
-        android:layout_width="250dp"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:textSize="35sp" />
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/recycler_view_row_profile_pic"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="7dp"
+        android:textSize="14sp"
+        android:textStyle="italic" />
 
 
-</LinearLayout>
+</RelativeLayout>

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -18,13 +19,13 @@ import stories.app.utils.Base64UtilityClass;
 
 public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Pair<String,String>> mData;
+    private ArrayList<HashMap<String,String>> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     private String type;
 
     // data is passed into the constructor
-    public UsersRecyclerViewAdapter(Context context, ArrayList<Pair<String,String>> data, String type) {
+    public UsersRecyclerViewAdapter(Context context, ArrayList<HashMap<String,String>> data, String type) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.type = type;
@@ -53,13 +54,16 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String username = mData.get(position).first;
+        String username = mData.get(position).get("username");
         holder.usernameTextView.setText(username);
 
-        String profilePicString = mData.get(position).second;
+        String profilePicString = mData.get(position).get("profilePic");
         if (!profilePicString.isEmpty()) {
             holder.profilePicImageView.setImageBitmap(Base64UtilityClass.toBitmap(profilePicString));
         }
+
+        String name = mData.get(position).get("name");
+        holder.nameTextView.setText(name);
     }
 
     // total number of rows
@@ -73,12 +77,14 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CircleImageView profilePicImageView;
         TextView usernameTextView;
+        TextView nameTextView;
         ImageView actionButton;
 
         ViewHolder(View itemView) {
             super(itemView);
             profilePicImageView = itemView.findViewById(R.id.recycler_view_row_profile_pic);
             usernameTextView = itemView.findViewById(R.id.username);
+            nameTextView = itemView.findViewById(R.id.full_name);
 
             switch (type) {
                 case "users":
@@ -105,7 +111,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
     }
 
     // convenience method for getting data at click position
-    public Pair<String, String> getItem(int id) {
+    public HashMap<String, String> getItem(int id) {
         return mData.get(id);
     }
 

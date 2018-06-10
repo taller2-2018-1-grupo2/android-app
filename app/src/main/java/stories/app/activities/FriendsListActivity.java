@@ -16,6 +16,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import stories.app.R;
 import stories.app.adapters.UsersRecyclerViewAdapter;
@@ -28,7 +29,7 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
     private RecyclerView recyclerView;
     private UsersRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private ArrayList<Pair<String,String>> dataset = new ArrayList<Pair<String,String>>();
+    private ArrayList<HashMap<String,String>> dataset = new ArrayList<HashMap<String,String>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         setTitle("Amigos");
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // set up the RecyclerView
         recyclerView = findViewById(R.id.users_recycler_view);
@@ -68,19 +70,19 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
 
     }
 
-    protected class GetFriendsTask extends AsyncTask<String, Void, ArrayList<Pair<String,String>>> {
+    protected class GetFriendsTask extends AsyncTask<String, Void, ArrayList<HashMap<String,String>>> {
         private FriendsService friendsService = new FriendsService();
 
         protected void onPreExecute() {
         }
 
-        protected ArrayList<Pair<String,String>> doInBackground(String... params) {
+        protected ArrayList<HashMap<String,String>> doInBackground(String... params) {
             return friendsService.getFriends(
                     LocalStorage.getUser().id
             );
         }
 
-        protected void onPostExecute(ArrayList<Pair<String,String>> result) {
+        protected void onPostExecute(ArrayList<HashMap<String,String>> result) {
             dataset.clear();
             for (int i = 0; i < result.size(); i++) {
                 dataset.add(result.get(i));

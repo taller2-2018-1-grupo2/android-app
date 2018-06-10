@@ -2,6 +2,8 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textViewStyle">@style/DefaultTextViewStyle</item>
+        <item name="editTextStyle">@style/DefaultEditTextStyle</item>
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primary_material_light</item>
         <item name="colorPrimaryDark">@color/primary_dark_material_light</item>
@@ -24,4 +26,15 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="DefaultTextViewStyle" parent="@android:style/Widget.TextView">
+        <item name="android:fontFamily">@font/raleway</item>
+    </style>
+
+    <style name="DefaultEditTextStyle" parent="@android:style/Widget.EditText">
+        <item name="android:fontFamily">@font/raleway</item>
+    </style>
+
+    <style name="DefaultTitleStyle">
+        <item name="android:fontFamily">@font/lobster</item>
+    </style>
 </resources>

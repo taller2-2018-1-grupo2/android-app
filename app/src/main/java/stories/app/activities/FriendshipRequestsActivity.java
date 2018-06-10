@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,9 +17,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import stories.app.R;
 import stories.app.adapters.UsersRecyclerViewAdapter;
@@ -31,7 +34,7 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
     private RecyclerView recyclerView;
     private UsersRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private ArrayList<Pair<String,String>> dataset = new ArrayList<Pair<String,String>>();
+    private ArrayList<HashMap<String,String>> dataset = new ArrayList<HashMap<String,String>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,7 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         setTitle("Solicitudes de amistad");
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         SearchView searchView = this.findViewById(R.id.friends_search_bar);
         searchView.setOnQueryTextListener(new SearchQueryHandler());
@@ -95,23 +99,23 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
     @Override
     public void onItemClick(View view, int position) {
         CreateFriendshipRequestTask task = new CreateFriendshipRequestTask(this);
-        task.execute(recyclerViewAdapter.getItem(position).first);
+        task.execute(recyclerViewAdapter.getItem(position).get("username"));
     }
 
-    protected class GetUsersTask extends AsyncTask<String, Void, ArrayList<Pair<String,String>>> {
+    protected class GetUsersTask extends AsyncTask<String, Void, ArrayList<HashMap<String,String>>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
 
         protected void onPreExecute() {
         }
 
-        protected ArrayList<Pair<String,String>> doInBackground(String... params) {
+        protected ArrayList<HashMap<String,String>> doInBackground(String... params) {
             return friendshipRequestsService.getUsers(
                     params[0],
                     LocalStorage.getUser().id
             );
         }
 
-        protected void onPostExecute(ArrayList<Pair<String,String>> result) {
+        protected void onPostExecute(ArrayList<HashMap<String,String>> result) {
             dataset.clear();
             for (int i = 0; i < result.size(); i++) {
                 dataset.add(result.get(i));
@@ -144,7 +148,7 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
                 Toast.makeText(this.context, "Enviaste una solicitud de amistad a: " + result, Toast.LENGTH_SHORT).show();
 
                 for (int i = 0; i < dataset.size(); i++) {
-                    if (dataset.get(i).first == result) {
+                    if (dataset.get(i).get("username") == result) {
                         dataset.remove(i);
                     }
                 }

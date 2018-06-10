@@ -1,22 +1,59 @@
 package stories.app.services;
 
-import android.util.Log;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 
-import static android.content.ContentValues.TAG;
+import stories.app.R;
+import stories.app.activities.DirectMessagesActivity;
+import stories.app.utils.LocalStorage;
 
 public class ChatService extends FirebaseMessagingService {
+
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+
+        if (remoteMessage.getNotification() != null) {
+
+            String titulo = remoteMessage.getNotification().getTitle();
+            String texto = remoteMessage.getNotification().getBody();
+
+            //Opcional: mostrar la notificación en la barra de estado
+            showNotification(titulo, texto);
+        }
+    }
+
+    private void showNotification(String title, String text) {
+        Intent intent = new Intent(this, DirectMessagesActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(title)
+                        .setContentText(text)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, notificationBuilder.build());
+    }
+
+
     public DatabaseReference messagesDB;
     //public Query userMessagesDB;
 
+    /*
     public ChatService() {
+
         this.messagesDB = FirebaseDatabase.getInstance().getReference();
         messagesDB.addChildEventListener(new ChildEventListener() {
             @Override
@@ -45,7 +82,9 @@ public class ChatService extends FirebaseMessagingService {
             }
         });
 
-        //userMessagesDB = FirebaseDatabase.getInstance().getReference().orderByChild("");
+        userMessagesDB = FirebaseDatabase.getInstance().getReference().orderByChild("");
+
     }
+    */
 
 }

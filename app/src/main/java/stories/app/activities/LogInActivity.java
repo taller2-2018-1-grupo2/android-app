@@ -28,6 +28,7 @@ import java.util.Arrays;
 import stories.app.R;
 import stories.app.models.User;
 import stories.app.services.AuthenticationService;
+import stories.app.services.ChatInstanceIDService;
 import stories.app.utils.Base64UtilityClass;
 
 public class LogInActivity extends AppCompatActivity {
@@ -71,7 +72,9 @@ public class LogInActivity extends AppCompatActivity {
                                     String pictureURL = pictureData.getString("url");
                                     String email = object.getString("email");
 
-                                    new FacebookLoginUserTask().execute(id, name, pictureURL, email);
+                                    String firebaseToken = ChatInstanceIDService.FIREBASE_TOKEN;
+
+                                    new FacebookLoginUserTask().execute(id, name, pictureURL, email, firebaseToken);
                                 }
                                 catch (JSONException error) {
 
@@ -162,7 +165,8 @@ public class LogInActivity extends AppCompatActivity {
                     params[0],
                     params[1],
                     params[2],
-                    params[3]);
+                    params[3],
+                    params[4]);
         }
 
         protected void onPostExecute(User result) {

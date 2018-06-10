@@ -9,6 +9,7 @@ public class User {
     public String name;
     public String email;
     public String token;
+    public String firebaseToken;
 
     public static User fromJsonObject(JSONObject userJson) throws JSONException {
         User user = new User();
@@ -17,6 +18,7 @@ public class User {
         user.name = userJson.has("name") ? userJson.getString("name") : "";
         user.email = userJson.has("email") ? userJson.getString("email") : "";
         user.token = userJson.has("token") ? userJson.getJSONObject("token").getString("token") : "";
+        user.firebaseToken = userJson.has("firebase_token") ? userJson.getString("firebase_token") : "";
 
         return user;
     }
@@ -27,6 +29,7 @@ public class User {
         userJson.put("username", user.username);
         userJson.put("name", user.name);
         userJson.put("email", user.email);
+        userJson.put("firebase_token", user.firebaseToken);
 
         return userJson;
     }

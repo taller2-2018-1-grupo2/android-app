@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:paddingLeft="@dimen/margin_horizontal"
     android:paddingRight="@dimen/margin_horizontal"
-    tools:context="stories.app.images.ImageFiltersActivity">
+    tools:context=".activities.images.ImageFiltersActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

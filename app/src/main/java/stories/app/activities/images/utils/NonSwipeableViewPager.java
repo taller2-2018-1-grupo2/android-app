@@ -1,4 +1,4 @@
-package stories.app.images.utils;
+package stories.app.activities.images.utils;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

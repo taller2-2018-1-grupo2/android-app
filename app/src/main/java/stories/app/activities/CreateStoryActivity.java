@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -21,8 +20,8 @@ import java.io.FileInputStream;
 import java.util.Calendar;
 
 import stories.app.R;
-import stories.app.images.ImageFiltersActivity;
-import stories.app.images.utils.BitmapUtils;
+import stories.app.activities.images.ImageFiltersActivity;
+import stories.app.utils.BitmapUtils;
 import stories.app.models.Story;
 import stories.app.services.StoryService;
 import stories.app.utils.LocalStorage;

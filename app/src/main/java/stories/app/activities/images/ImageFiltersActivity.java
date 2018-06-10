@@ -1,4 +1,4 @@
-package stories.app.images;
+package stories.app.activities.images;
 
 import android.Manifest;
 import android.content.Intent;
@@ -17,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -37,7 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import stories.app.R;
-import stories.app.images.utils.BitmapUtils;
+import stories.app.utils.BitmapUtils;
 
 public class ImageFiltersActivity extends AppCompatActivity implements FiltersListFragment.FiltersListFragmentListener, EditImageFragment.EditImageFragmentListener {
 

@@ -1,4 +1,4 @@
-package stories.app.images;
+package stories.app.activities.images;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -22,8 +22,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import stories.app.R;
-import stories.app.images.utils.BitmapUtils;
-import stories.app.images.utils.SpacesItemDecoration;
+import stories.app.utils.BitmapUtils;
+import stories.app.activities.images.utils.SpacesItemDecoration;
 
 
 public class FiltersListFragment extends Fragment implements ThumbnailsAdapter.ThumbnailsAdapterListener {

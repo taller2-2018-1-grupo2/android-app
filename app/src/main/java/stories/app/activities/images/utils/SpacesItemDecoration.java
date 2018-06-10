@@ -1,4 +1,4 @@
-package stories.app.images.utils;
+package stories.app.activities.images.utils;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

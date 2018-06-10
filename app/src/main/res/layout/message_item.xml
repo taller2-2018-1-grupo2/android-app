@@ -18,8 +18,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_alignParentLeft="true"
-                android:text="Message Username"
-                android:textColor="@android:color/background_light"
+                android:text="Username"
+                android:textColor="@color/textPrimary"
                 android:textStyle="bold" />
 
             <TextView
@@ -27,8 +27,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_alignParentRight="true"
-                android:text="Message Timestamp"
-                android:textColor="@android:color/background_light"
+                android:text="Timestamp"
+                android:textColor="@color/textPrimary"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/message_item_title"
-            android:text="Message Text"
-            android:textColor="@android:color/background_light" />
+            android:text="Mensaje"
+            android:textColor="@color/textPrimary" />
     </LinearLayout>
 </LinearLayout>

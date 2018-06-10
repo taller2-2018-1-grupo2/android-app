@@ -11,6 +11,7 @@ import android.widget.EditText;
 
 import stories.app.R;
 import stories.app.models.Message;
+import stories.app.services.ChatService;
 import stories.app.services.MessagingService;
 import stories.app.utils.LocalStorage;
 
@@ -46,6 +47,7 @@ public class DirectMessagesCreateActivity extends AppCompatActivity {
 
     protected class SendMessageTask extends AsyncTask<Message, Void, Message> {
         private MessagingService messagingService = new MessagingService();
+        private ChatService chatService = new ChatService();
 
         protected void onPreExecute() {
             Button sendMessageButton = findViewById(R.id.sendMessageButton);

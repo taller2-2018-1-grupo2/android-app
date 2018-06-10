@@ -99,7 +99,7 @@ public class AuthenticationService extends BaseService {
         }
     }
 
-    public User fbLoginUser(String username, String name, String pictureURL, String email) {
+    public User fbLoginUser(String username, String name, String pictureURL, String email, String firebaseToken) {
         HttpURLConnection client = null;
 
         try {
@@ -114,6 +114,7 @@ public class AuthenticationService extends BaseService {
             credentials.put("name", name);
             credentials.put("profile_pic", pictureURL);
             credentials.put("email", email);
+            credentials.put("firebase_token", firebaseToken);
 
             OutputStream outputStream = client.getOutputStream();
             outputStream.write(credentials.toString().getBytes("UTF-8"));

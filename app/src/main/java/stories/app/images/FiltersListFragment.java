@@ -85,12 +85,6 @@ public class FiltersListFragment extends Fragment implements ThumbnailsAdapter.T
         return view;
     }
 
-    /**
-     * Renders thumbnails in horizontal list
-     * loads default image from Assets if passed param is null
-     *
-     * @param bitmap
-     */
     public void prepareThumbnail(final Bitmap bitmap) {
         Runnable r = new Runnable() {
             public void run() {
@@ -106,10 +100,8 @@ public class FiltersListFragment extends Fragment implements ThumbnailsAdapter.T
                     return;
 
                 ThumbnailsManager.clearThumbs();
-                //the following line was generating NPE
                 thumbnailItemList.clear();
 
-                //thumbnailItemList = new ArrayList<>();
 
                 // add normal bitmap first
                 ThumbnailItem thumbnailItem = new ThumbnailItem();

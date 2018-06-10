@@ -18,10 +18,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import stories.app.R;
 
-/**
- * Created by ravi on 23/10/17.
- */
-
 public class ThumbnailsAdapter extends RecyclerView.Adapter<ThumbnailsAdapter.MyViewHolder> {
 
     private List<ThumbnailItem> thumbnailItemList;

@@ -9,12 +9,6 @@ import android.widget.Scroller;
 
 import java.lang.reflect.Field;
 
-/**
- * Created by ravi on 24/10/17.
- * Custom viewpager disabling the swipe
- * https://stackoverflow.com/questions/9650265/how-do-disable-paging-by-swiping-with-finger-in-viewpager-but-still-be-able-to-s
- */
-
 public class NonSwipeableViewPager extends ViewPager {
 
     public NonSwipeableViewPager(Context context) {

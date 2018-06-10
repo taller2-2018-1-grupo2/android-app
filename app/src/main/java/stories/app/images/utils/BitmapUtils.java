@@ -21,38 +21,6 @@ import java.io.OutputStream;
 
 public class BitmapUtils {
 
-    private static final String TAG = BitmapUtils.class.getSimpleName();
-
-    /**
-     * Getting bitmap from Assets folder
-     *
-     * @return
-     */
-    public static Bitmap getBitmapFromAssets(Context context, String fileName, int width, int height) {
-        AssetManager assetManager = context.getAssets();
-
-        InputStream istr;
-        Bitmap bitmap = null;
-        try {
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-
-            istr = assetManager.open(fileName);
-
-            // Calculate inSampleSize
-            options.inSampleSize = calculateInSampleSize(options, width, height);
-
-            // Decode bitmap with inSampleSize set
-            options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeStream(istr, null, options);
-        } catch (IOException e) {
-            Log.e(TAG, "Exception: " + e.getMessage());
-        }
-
-        return null;
-    }
-
-
     public static String getBitmapPath(Context context, Uri path){
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
         Cursor cursor = context.getContentResolver().query(path, filePathColumn, null, null, null);
@@ -65,17 +33,7 @@ public class BitmapUtils {
 
     public static Bitmap getBitmapFromGallery(Context context, Uri path, int width, int height) {
         String picturePath = getBitmapPath(context, path);
-
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(picturePath, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, width, height);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(picturePath, options);
+        return getBitmapFromPath(picturePath, width, height);
     }
 
     public static Bitmap getBitmapFromPath(String picturePath, int width, int height) {
@@ -114,30 +72,6 @@ public class BitmapUtils {
         return inSampleSize;
     }
 
-    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-                                                         int reqWidth, int reqHeight) {
-
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(res, resId, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(res, resId, options);
-    }
-
-    /**
-     * Storing image to device gallery
-     * @param cr
-     * @param source
-     * @param title
-     * @param description
-     * @return
-     */
     public static final String insertImage(ContentResolver cr,
                                            Bitmap source,
                                            String title,
@@ -189,13 +123,6 @@ public class BitmapUtils {
         return stringUrl;
     }
 
-    /**
-     * A copy of the Android internals StoreThumbnail method, it used with the insertImage to
-     * populate the android.provider.MediaStore.Images.Media#insertImage with all the correct
-     * meta data. The StoreThumbnail method is private so it must be duplicated here.
-     *
-     * @see MediaStore.Images.Media (StoreThumbnail private method)
-     */
     private static final Bitmap storeThumbnail(
             ContentResolver cr,
             Bitmap source,

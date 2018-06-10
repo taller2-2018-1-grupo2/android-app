@@ -171,10 +171,6 @@ public class ImageFiltersActivity extends AppCompatActivity implements FiltersLi
         finalImage = myFilter.processFilter(bitmap);
     }
 
-    /**
-     * Resets image edit controls to normal when new filter
-     * is selected
-     */
     private void resetControls() {
         if (editImageFragment != null) {
             editImageFragment.resetControls();
@@ -213,7 +209,6 @@ public class ImageFiltersActivity extends AppCompatActivity implements FiltersLi
         }
     }
 
-    // load the default image from assets on app launch
     private void loadImage(String imageUri) {
         originalImage = BitmapUtils.getBitmapFromPath(imageUri, 300, 300);
         filteredImage = originalImage.copy(Bitmap.Config.ARGB_8888, true);
@@ -265,10 +260,6 @@ public class ImageFiltersActivity extends AppCompatActivity implements FiltersLi
             finalImage = originalImage.copy(Bitmap.Config.ARGB_8888, true);
             imagePreview.setImageBitmap(originalImage);
             bitmap.recycle();
-
-            //OPTIMIZE THIS
-
-            //OPTIMIZE THIS
 
             // render selected image thumbnails
             filtersListFragment.prepareThumbnail(originalImage);
@@ -332,13 +323,5 @@ public class ImageFiltersActivity extends AppCompatActivity implements FiltersLi
                     }
                 }).check();
 
-    }
-
-    // opening image in default image viewer app
-    private void openImage(String path) {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(path), "image/*");
-        startActivity(intent);
     }
 }

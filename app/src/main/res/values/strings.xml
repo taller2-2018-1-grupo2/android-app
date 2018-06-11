@@ -9,7 +9,7 @@
     <string name="prompt_name">Nombre</string>
     <string name="action_login">Iniciar sesion</string>
     <string name="action_signin">Crear una nueva cuenta</string>
-    <string name="action_edit_profile">Aplicar cambios</string>
+    <string name="action_edit_profile">Listo</string>
     <string name="error_invalid_login">Usuario o password incorrecto</string>
     <string name="error_invalid_signin">Ocurrió un error al registrar al usuario</string>
     <string name="error_invalid_passwords">La contraseñas deben ser iguales</string>

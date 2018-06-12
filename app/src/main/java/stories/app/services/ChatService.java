@@ -11,11 +11,33 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Map;
+
 import stories.app.R;
 import stories.app.activities.DirectMessagesActivity;
+import stories.app.activities.FriendshipRequestsReceivedActivity;
 import stories.app.utils.LocalStorage;
 
 public class ChatService extends FirebaseMessagingService {
+
+    private enum NotificationType {
+        MESSAGE("message"), FRIENDSHIPREQUEST("friendship_request");
+
+        private String name;
+
+        NotificationType(String name) {
+            this.name = name;
+        }
+
+        public static NotificationType getTypeByName(String name) {
+            for (NotificationType notificationType : NotificationType.values()) {
+                if (notificationType.name.equals(name)) {
+                    return notificationType;
+                }
+            }
+            return NotificationType.MESSAGE;
+        }
+    }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -24,14 +46,30 @@ public class ChatService extends FirebaseMessagingService {
 
             String titulo = remoteMessage.getNotification().getTitle();
             String texto = remoteMessage.getNotification().getBody();
+            Map<String, String> data = remoteMessage.getData();
+            NotificationType notificationType;
+            if (data.containsKey("notification_type")) {
+                notificationType = NotificationType.getTypeByName(data.get("notification_type"));
+            } else {
+                notificationType = NotificationType.MESSAGE;
+            }
 
             //Opcional: mostrar la notificación en la barra de estado
-            showNotification(titulo, texto);
+            showNotification(titulo, texto, notificationType);
         }
     }
 
-    private void showNotification(String title, String text) {
-        Intent intent = new Intent(this, DirectMessagesActivity.class);
+    private void showNotification(String title, String text, NotificationType notificationType) {
+        Intent intent;
+        switch (notificationType) {
+            case FRIENDSHIPREQUEST:
+                intent = new Intent(this, FriendshipRequestsReceivedActivity.class);
+                break;
+            case MESSAGE:
+            default:
+                intent = new Intent(this, DirectMessagesActivity.class);
+                break;
+        }
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this)

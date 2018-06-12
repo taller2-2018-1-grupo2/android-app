@@ -19,6 +19,7 @@
     <string name="messages_menu">Mensajes directos</string>
     <string name="friendship_menu">Solicitudes de amistad</string>
     <string name="profile_menu">Perfil</string>
+    <string name="stories_map">Ver en Mapa</string>
 
 
     <!-- Strings related to Create Story -->
@@ -55,5 +56,6 @@
     <string name="filter_normal">Normal</string>
     <string name="action_save">GUARDAR</string>
     <string name="action_open">ABRIR</string>
+    <string name="title_activity_stories_map">Map</string>
 
 </resources>

@@ -67,6 +67,10 @@ public class HomeActivity extends AppCompatActivity {
                 navigationIntent = new Intent(HomeActivity.this, DirectMessagesActivity.class);
                 startActivity(navigationIntent);
                 return true;
+            case R.id.stories_map:
+                navigationIntent = new Intent(HomeActivity.this, StoriesMapActivity.class);
+                startActivity(navigationIntent);
+                return true;
 //            case R.id.chat:
 //                navigationIntent = new Intent(HomeActivity.this, ChatActivity.class);
 //                startActivity(navigationIntent);

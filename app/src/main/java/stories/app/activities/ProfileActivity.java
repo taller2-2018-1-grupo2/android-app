@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -42,7 +43,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        setTitle("Mi Perfil");
+        setTitle("Editar Perfil");
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         Button applyChangesButton = this.findViewById(R.id.applyChangesButton);
         ApplyChangesClickHandler clickHandler = new ApplyChangesClickHandler(this);
@@ -50,6 +52,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         ImageView profilePicture = this.findViewById(R.id.profile_pic);
         profilePicture.setOnClickListener(new ProfilePicClickHandler());
+
+        TextView changeProfilePicButton = this.findViewById(R.id.change_pic);
+        changeProfilePicButton.setOnClickListener(new ProfilePicClickHandler());
 
         new GetUserDataTask().execute();
     }

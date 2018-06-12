@@ -297,10 +297,6 @@ public class ImageFiltersActivity extends AppCompatActivity implements FiltersLi
                         if (report.areAllPermissionsGranted()) {
                             final String path = BitmapUtils.insertImage(getContentResolver(), finalImage, System.currentTimeMillis() + "_profile.jpg", null);
                             if (!TextUtils.isEmpty(path)) {
-                                Snackbar snackbar = Snackbar
-                                        .make(coordinatorLayout, "Image uploaded successfully", Snackbar.LENGTH_LONG);
-
-                                snackbar.show();
                                 Intent data = new Intent();
                                 data.setData(Uri.parse(path));
                                 setResult(RESULT_OK, data);

@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -17,18 +16,8 @@ import java.io.OutputStream;
 
 public class BitmapUtils {
 
-    public static String getBitmapPath(Context context, Uri path){
-        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-        Cursor cursor = context.getContentResolver().query(path, filePathColumn, null, null, null);
-        cursor.moveToFirst();
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String picturePath = cursor.getString(columnIndex);
-        cursor.close();
-        return picturePath;
-    }
-
     public static Bitmap getBitmapFromGallery(Context context, Uri path, int width, int height) {
-        String picturePath = getBitmapPath(context, path);
+        String picturePath = FileUtils.getFilePathFromUri(context, path);
         return getBitmapFromPath(picturePath, width, height);
     }
 

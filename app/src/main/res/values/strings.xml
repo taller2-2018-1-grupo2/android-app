@@ -24,7 +24,6 @@
     <!-- Strings related to Create Story -->
     <string name="prompt_title">Título</string>
     <string name="prompt_description">Descripción</string>
-    <string name="action_uploadFile">Subir archivo</string>
     <string name="label_visibility_public">Pública</string>
     <string name="label_visibility_private">Privada</string>
     <string name="label_isQuickStory">Es una historia rápida</string>

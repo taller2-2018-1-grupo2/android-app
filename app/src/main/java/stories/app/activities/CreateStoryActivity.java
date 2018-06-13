@@ -3,9 +3,9 @@ package stories.app.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +19,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Calendar;
+import java.util.function.Supplier;
 
 import stories.app.R;
 import stories.app.activities.images.ImageFiltersActivity;
 import stories.app.models.Story;
+import stories.app.services.LocationService;
 import stories.app.services.StoryService;
 import stories.app.utils.FileUtils;
 import stories.app.utils.LocalStorage;
@@ -31,8 +33,10 @@ public class CreateStoryActivity extends AppCompatActivity {
 
     private static final int START_FILE_UPLOAD = 5;
     private static final int FINISH_IMAGE_FILTER = 6;
-    private enum SUPPORTED_IMAGE_FORMATS{ jpeg, jpg, png };
-    private enum SUPPORTED_VIDEO_FORMATS{ mov, mp4 };
+    private enum SUPPORTED_IMAGE_FORMATS { jpeg, jpg, png };
+    private enum SUPPORTED_VIDEO_FORMATS { mov, mp4 };
+    private LocationService locationService = new LocationService();
+    private StoryService storyService = new StoryService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,8 @@ public class CreateStoryActivity extends AppCompatActivity {
 
         Button createStoryButton = this.findViewById(R.id.createStoryButton);
         createStoryButton.setOnClickListener(new CreateStoryHandler());
+
+        this.locationService.startLocationUpdates(this);
     }
 
     private boolean isSupportedImage(String fileExtension) {
@@ -99,8 +105,7 @@ public class CreateStoryActivity extends AppCompatActivity {
     }
 
     private void uploadStory(String filePath) {
-        Snackbar snackbar = Snackbar
-                .make(findViewById(R.id.createStoryLayout), "Uploading story...", Snackbar.LENGTH_INDEFINITE);
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.createStoryLayout), "Uploading story...", Snackbar.LENGTH_INDEFINITE);
         ViewGroup contentLay = (ViewGroup) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text).getParent();
         ProgressBar item = new ProgressBar(this);
         item.setIndeterminate(true);
@@ -122,10 +127,7 @@ public class CreateStoryActivity extends AppCompatActivity {
         story.isQuickStory = isQuickStory.isSelected();
         story.visibility = visibilityType;
         story.timestamp = Calendar.getInstance().getTime().toString();
-
-        // TODO: get current or last location
-        story.location = "40.714224,-73.961452";
-
+        story.location = this.locationService.getLocation();
         story.uploadedFilename = new File(filePath).getName();
 
         new CreateStoryTask(filePath).execute(story);

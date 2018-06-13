@@ -29,6 +29,7 @@ import stories.app.R;
 import stories.app.models.User;
 import stories.app.services.AuthenticationService;
 import stories.app.services.ChatInstanceIDService;
+import stories.app.services.LocationService;
 import stories.app.utils.Base64UtilityClass;
 
 public class LogInActivity extends AppCompatActivity {
@@ -45,6 +46,9 @@ public class LogInActivity extends AppCompatActivity {
         mCallbackManager = CallbackManager.Factory.create();
 
         LoginButton fbLoginButton = findViewById(R.id.fb_login_button);
+
+        // Call location service to request permissions to get the location
+        new LocationService().checkPermissions(this);
 
         // Set the initial permissions to request from the user while logging in
         fbLoginButton.setReadPermissions(Arrays.asList(EMAIL));

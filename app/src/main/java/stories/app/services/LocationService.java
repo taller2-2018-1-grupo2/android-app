@@ -35,8 +35,52 @@ public class LocationService {
 
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
-        this.locationListenerGPS = new MobileLocationListener(newLocation -> this.locationGPS = newLocation);
-        this.locationListenerNetwork = new MobileLocationListener(newLocation -> this.locationNetwork = newLocation);
+        this.locationListenerGPS = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                locationGPS = location;
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+
+        this.locationListenerNetwork = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                locationNetwork = location;
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+
+        //this.locationListenerGPS = new MobileLocationListener(newLocation -> this.locationGPS = newLocation);
+        //this.locationListenerNetwork = new MobileLocationListener(newLocation -> this.locationNetwork = newLocation);
 
         if (this.checkPermissions(activity)) {
             this.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this.locationListenerGPS);
@@ -83,7 +127,7 @@ public class LocationService {
         return this.hasPermissions;
     }
 
-    public class MobileLocationListener implements LocationListener {
+    /*public class MobileLocationListener implements LocationListener {
 
         private Consumer<Location> locationChangedCallback;
 
@@ -109,5 +153,5 @@ public class LocationService {
         public void onProviderDisabled(String s) {
 
         }
-    }
+    }*/
 }

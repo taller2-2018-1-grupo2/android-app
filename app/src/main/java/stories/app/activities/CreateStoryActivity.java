@@ -24,7 +24,11 @@ import java.util.function.Supplier;
 import stories.app.R;
 import stories.app.activities.images.ImageFiltersActivity;
 import stories.app.models.Story;
+<<<<<<< Updated upstream
 import stories.app.services.LocationService;
+=======
+import stories.app.services.FileService;
+>>>>>>> Stashed changes
 import stories.app.services.StoryService;
 import stories.app.utils.FileUtils;
 import stories.app.utils.LocalStorage;
@@ -128,9 +132,13 @@ public class CreateStoryActivity extends AppCompatActivity {
         story.visibility = visibilityType;
         story.timestamp = Calendar.getInstance().getTime().toString();
         story.location = this.locationService.getLocation();
-        story.uploadedFilename = new File(filePath).getName();
-
-        new CreateStoryTask(filePath).execute(story);
+        try {
+            Story newStory = new CreateStoryTask().execute(story).get();
+            new UploadFileTask(filePath).execute(newStory.id);
+        }
+        catch(Exception e){
+            startFileUpload("There was an error uploading the file.");
+        }
     }
 
     protected class CreateStoryHandler implements View.OnClickListener {
@@ -154,44 +162,31 @@ public class CreateStoryActivity extends AppCompatActivity {
     }
 
     protected class CreateStoryTask extends AsyncTask<Story, Void, Story> {
-        private String filePath;
-        private String encodedFile;
         private StoryService storyService = new StoryService();
 
-        public CreateStoryTask(String filePath){
-            this.filePath = filePath;
-        }
-
-        private byte[] loadFileAsBytesArray(File file) throws Exception {
-            int length = (int) file.length();
-            BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file));
-            byte[] bytes = new byte[length];
-            reader.read(bytes, 0, length);
-            reader.close();
-            return bytes;
-        }
-
-        private String getUploadedFile(File file){
-            try {
-                byte[] byteArrayImage = loadFileAsBytesArray(file);
-                String encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
-                return encodedImage;
-            } catch(Exception e){
-                return "";
-            }
-        }
+        public CreateStoryTask() {}
 
         protected void onPreExecute() {
             Button createStoryButton = findViewById(R.id.createStoryButton);
             createStoryButton.setEnabled(false);
-            File file = new File(this.filePath);
-            this.encodedFile = getUploadedFile(file);
         }
 
         protected Story doInBackground(Story... params) {
             Story storyToUpload = params[0];
-            storyToUpload.uploadedFile = this.encodedFile;
             return storyService.createStory(storyToUpload);
+        }
+    }
+
+    protected class UploadFileTask extends AsyncTask<String, Void, Story> {
+        private File file;
+        private FileService fileService = new FileService();
+
+        public UploadFileTask(String filePath) {
+            this.file = new File(filePath);
+        }
+
+        protected Story doInBackground(String... storyId) {
+            return fileService.uploadFileToStory(storyId[0], this.file);
         }
 
         protected void onPostExecute(Story result) {

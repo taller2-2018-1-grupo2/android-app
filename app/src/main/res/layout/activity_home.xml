@@ -20,6 +20,14 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat" />
 
+        <Button
+            android:id="@+id/refreshButton"
+            style="@style/FirebaseUI.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            tools:text="Refrescar" />
+
         <ListView
             android:id="@+id/storiesList"
             android:layout_width="match_parent"

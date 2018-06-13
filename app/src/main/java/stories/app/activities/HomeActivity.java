@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -27,6 +29,9 @@ public class HomeActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
+        Button refreshButton = (Button) findViewById(R.id.refreshButton);
+        refreshButton.setOnClickListener(new RefreshButtonOnClickHandler());
 
         // Retrieve all stories visibles to the user
         new GetStoriesVisiblesToUserTask().execute(LocalStorage.getUser().id);
@@ -89,6 +94,13 @@ public class HomeActivity extends AppCompatActivity {
 
             ListView storiesList = (ListView) findViewById(R.id.storiesList);
             storiesList.setAdapter(new StoriesAdapter(HomeActivity.this, result));
+        }
+    }
+
+    protected class RefreshButtonOnClickHandler implements View.OnClickListener {
+        public void onClick(View v){
+            // Retrieve all stories visibles to the user
+            new GetStoriesVisiblesToUserTask().execute(LocalStorage.getUser().id);
         }
     }
 }

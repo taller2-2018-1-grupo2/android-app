@@ -121,6 +121,7 @@ public class CreateStoryActivity extends AppCompatActivity {
         String visibilityType = selectedVisibilityId == R.id.createStoryVisibilityIsPublic ? "public" : "private";
 
         Story story = new Story();
+
         story.userId = LocalStorage.getUser().id;
         story.title = title.getText().toString();
         story.description = description.getText().toString();

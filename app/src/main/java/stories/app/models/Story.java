@@ -17,6 +17,9 @@ public class Story {
     public String timestamp;
     public String uploadedFile;
     public String uploadedFilename;
+    public String username;
+    public String name;
+    public String profilePic;
 
     //outgoing and incoming stories are different, consider refactor
     public static Story fromJsonObject(JSONObject storyJson) throws JSONException {
@@ -30,6 +33,9 @@ public class Story {
         story.fileUrl = storyJson.getString("file_url");
         story.location = storyJson.getString("location");
         story.timestamp = storyJson.getString("timestamp");
+        story.username = storyJson.has("username") ? storyJson.getString("username") : "";
+        story.name = storyJson.has("name") ? storyJson.getString("name") : "";
+        story.profilePic = storyJson.has("profile_pic") ? storyJson.getString("profile_pic") : "";
 
         return story;
     }

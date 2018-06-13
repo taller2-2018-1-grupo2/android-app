@@ -24,7 +24,7 @@ public class StoryService extends BaseService {
         HttpURLConnection client = null;
 
         try {
-            URL url = new URL(Constants.appServerURI + "/stories");
+            URL url = new URL(Constants.appServerURI + "/stories?user_id=" + userId);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("GET");
 

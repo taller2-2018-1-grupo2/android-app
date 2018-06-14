@@ -38,6 +38,7 @@ public class DirectMessagesActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         messageList = (ListView) findViewById(R.id.messages_list_view);
 
         this.messagingService = new MessagingService();

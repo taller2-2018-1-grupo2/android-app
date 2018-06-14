@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,20 +14,14 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Calendar;
-import java.util.function.Supplier;
 
 import stories.app.R;
 import stories.app.activities.images.ImageFiltersActivity;
 import stories.app.models.Story;
-<<<<<<< Updated upstream
-import stories.app.services.LocationService;
-=======
 import stories.app.services.FileService;
->>>>>>> Stashed changes
+import stories.app.services.LocationService;
 import stories.app.services.StoryService;
 import stories.app.utils.FileUtils;
 import stories.app.utils.LocalStorage;
@@ -37,10 +30,10 @@ public class CreateStoryActivity extends AppCompatActivity {
 
     private static final int START_FILE_UPLOAD = 5;
     private static final int FINISH_IMAGE_FILTER = 6;
-    private enum SUPPORTED_IMAGE_FORMATS { jpeg, jpg, png };
-    private enum SUPPORTED_VIDEO_FORMATS { mov, mp4 };
+    private enum SUPPORTED_IMAGE_FORMATS { jpeg, jpg, png }
+    private enum SUPPORTED_VIDEO_FORMATS { mov, mp4 }
+    private static final int MAX_FILE_SIZE_MB = 15;
     private LocationService locationService = new LocationService();
-    private StoryService storyService = new StoryService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +64,13 @@ public class CreateStoryActivity extends AppCompatActivity {
         return false;
     }
 
+    private boolean validatesFileSizeRestriction(String filePath){
+        File file = new File(filePath);
+        double fileBytes = file.length();
+        double fileMegabytes = (fileBytes / (1024 * 1024));
+        return fileMegabytes <= MAX_FILE_SIZE_MB;
+    }
+
     private boolean isSupportedFormat(String fileExtension){
         return isSupportedImage(fileExtension) || isSupportedVideo(fileExtension);
     }
@@ -84,15 +84,17 @@ public class CreateStoryActivity extends AppCompatActivity {
                 String fileExtension = filePath.substring(filePath.lastIndexOf(".") + 1);
 
                 if (isSupportedFormat(fileExtension)){
-                    if (isSupportedImage(fileExtension)){
-                        //check filesize restriction
-                        Intent navigationIntent = new Intent(CreateStoryActivity.this, ImageFiltersActivity.class);
-                        navigationIntent.putExtra("imageUri", filePath);
-                        startActivityForResult(navigationIntent, FINISH_IMAGE_FILTER);
+                    if (validatesFileSizeRestriction(filePath)) {
+                        if (isSupportedImage(fileExtension)) {
+                            Intent navigationIntent = new Intent(CreateStoryActivity.this, ImageFiltersActivity.class);
+                            navigationIntent.putExtra("imageUri", filePath);
+                            startActivityForResult(navigationIntent, FINISH_IMAGE_FILTER);
+                        } else {
+                            uploadStory(filePath);
+                        }
                     }
                     else{
-                        //check filesize restriction
-                        uploadStory(filePath);
+                        startFileUpload("File selected is bigger than " + MAX_FILE_SIZE_MB + " MB");
                     }
                 }
                 else{
@@ -157,7 +159,8 @@ public class CreateStoryActivity extends AppCompatActivity {
 
     private void startFileUpload() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setTypeAndNormalize("image/jpeg, image/jpg, image/png, video/mp4");
+        photoPickerIntent.setType("image/*, video/*");
+        //photoPickerIntent.setTypeAndNormalize("image/jpeg, image/jpg, image/png, video/mp4");
         startActivityForResult(photoPickerIntent, START_FILE_UPLOAD);
     }
 

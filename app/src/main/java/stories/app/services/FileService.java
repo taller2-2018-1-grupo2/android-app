@@ -1,19 +1,24 @@
 package stories.app.services;
 
+import android.util.Log;
+
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import stories.app.models.Story;
 import stories.app.utils.Constants;
 
-public class FileService extends BaseService {
+public class FileService{
 
     private HttpURLConnection client;
     private DataOutputStream request;
@@ -53,6 +58,8 @@ public class FileService extends BaseService {
     }
 
     private Story finish() throws Exception {
+        String response ="";
+
         request.writeBytes(this.crlf);
         request.writeBytes(this.twoHyphens + this.boundary +
                 this.twoHyphens + this.crlf);
@@ -60,13 +67,32 @@ public class FileService extends BaseService {
         request.flush();
         request.close();
 
-        JSONObject result = this.getResponseResult(client);
+        // checks server's status code first
+        int status = client.getResponseCode();
+        if (status == HttpURLConnection.HTTP_OK) {
+            InputStream responseStream = new
+                    BufferedInputStream(client.getInputStream());
 
-        if (result == null) {
-            return null;
+            BufferedReader responseStreamReader =
+                    new BufferedReader(new InputStreamReader(responseStream));
+
+            String line = "";
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ((line = responseStreamReader.readLine()) != null) {
+                stringBuilder.append(line).append("\n");
+            }
+            responseStreamReader.close();
+
+            response = stringBuilder.toString();
+            client.disconnect();
+        } else {
+            throw new IOException("Server returned non-OK status: " + status);
         }
 
-        Story newStory = Story.fromJsonObject(result);
+        JSONObject jsonResponse = new JSONObject(response);
+        Story newStory = Story.fromJsonObject(jsonResponse);
+
         return newStory;
     }
 
@@ -93,6 +119,7 @@ public class FileService extends BaseService {
             addFilePart("file", file);
             return finish();
         } catch (Exception exception) {
+            Log.e(exception.getClass().getName(), exception.getMessage(), exception);
             return null;
         } finally {
             if (client != null) {

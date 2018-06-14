@@ -124,21 +124,17 @@ public class CreateStoryActivity extends AppCompatActivity {
         contentLay.addView(item,0);
         snackbar.show();
 
-        EditText title = findViewById(R.id.createStoryTitle);
-        EditText description = findViewById(R.id.createStoryDescription);
-        CheckBox isQuickStory = findViewById(R.id.createStoryIsQuickStory);
-        RadioGroup visibility = findViewById(R.id.createStoryVisibility);
-
-        int selectedVisibilityId = visibility.getCheckedRadioButtonId();
-        String visibilityType = selectedVisibilityId == R.id.createStoryVisibilityIsPublic ? "public" : "private";
+        EditText createStoryTitle = findViewById(R.id.createStoryTitle);
+        EditText createStoryDescription = findViewById(R.id.createStoryDescription);
+        CheckBox createStoryIsQuickStory = findViewById(R.id.createStoryIsQuickStory);
+        RadioGroup createStoryVisibility = findViewById(R.id.createStoryVisibility);
 
         Story story = new Story();
-
         story.userId = LocalStorage.getUser().id;
-        story.title = title.getText().toString();
-        story.description = description.getText().toString();
-        story.isQuickStory = isQuickStory.isSelected();
-        story.visibility = visibilityType;
+        story.title = createStoryTitle.getText().toString();
+        story.description = createStoryDescription.getText().toString();
+        story.isQuickStory = createStoryIsQuickStory.isChecked();
+        story.visibility = createStoryVisibility.getCheckedRadioButtonId() == R.id.createStoryVisibilityIsPublic ? "public" : "private";
         story.timestamp = Calendar.getInstance().getTime().toString();
         story.location = this.locationService.getLocation();
 
@@ -170,7 +166,9 @@ public class CreateStoryActivity extends AppCompatActivity {
         private StoryService storyService = new StoryService();
         private String mFilePath;
 
-        public CreateStoryTask(String filePath) { this.mFilePath = filePath;}
+        public CreateStoryTask(String filePath) {
+            this.mFilePath = filePath;
+        }
 
         protected void onPreExecute() {
             Button createStoryButton = findViewById(R.id.createStoryButton);

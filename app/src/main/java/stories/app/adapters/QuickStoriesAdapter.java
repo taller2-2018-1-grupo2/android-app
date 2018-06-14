@@ -1,14 +1,19 @@
 package stories.app.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,12 +24,14 @@ import stories.app.models.Story;
 
 public class QuickStoriesAdapter extends RecyclerView.Adapter<QuickStoriesAdapter.ViewHolder> {
 
+    private Context context;
     private ArrayList<Story> mData;
     private LayoutInflater mInflater;
     private QuickStoriesAdapter.ItemClickListener mClickListener;
 
     // Data is passed into the constructor
     public QuickStoriesAdapter(Context context, ArrayList<Story> data) {
+        this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
@@ -42,12 +49,14 @@ public class QuickStoriesAdapter extends RecyclerView.Adapter<QuickStoriesAdapte
     public void onBindViewHolder(QuickStoriesAdapter.ViewHolder holder, int position) {
         Story story = mData.get(position);
         if (story.fileUrl != null && story.fileUrl.length() > 0) {
-            try{
-                Uri fileUri = Uri.parse(story.fileUrl);
-                holder.storyImageView.setImageURI(fileUri);
-            } catch(Exception e) {
+            try {
+                Picasso.get().load(story.fileUrl).into(holder.storyImageView);
+            } catch (Exception e) {
                 // The FileUri cannot be parsed.
-                // Swallow the exception
+                // Swallow the exception and load a placeholder
+                Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.storyImageView);
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
             }
         }
     }

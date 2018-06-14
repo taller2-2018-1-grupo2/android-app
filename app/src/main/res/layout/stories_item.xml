@@ -18,15 +18,20 @@
     <TextView
         android:id="@+id/stories_item_description"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:maxHeight="70dp"
         android:textColor="@color/textPrimary"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." />
 
     <ImageView
         android:id="@+id/stories_item_fileUrl"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
         tools:src="@drawable/profile_placeholder" />
 </LinearLayout>

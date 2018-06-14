@@ -33,6 +33,7 @@ public class HomeActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         ImageButton refreshButton = (ImageButton) findViewById(R.id.refreshStories);
         refreshButton.setOnClickListener(new RefreshButtonOnClickHandler());

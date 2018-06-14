@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,15 +14,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Calendar;
-import java.util.function.Supplier;
 
 import stories.app.R;
 import stories.app.activities.images.ImageFiltersActivity;
 import stories.app.models.Story;
+import stories.app.services.FileService;
 import stories.app.services.LocationService;
 import stories.app.services.StoryService;
 import stories.app.utils.FileUtils;
@@ -33,10 +30,10 @@ public class CreateStoryActivity extends AppCompatActivity {
 
     private static final int START_FILE_UPLOAD = 5;
     private static final int FINISH_IMAGE_FILTER = 6;
-    private enum SUPPORTED_IMAGE_FORMATS { jpeg, jpg, png };
-    private enum SUPPORTED_VIDEO_FORMATS { mov, mp4 };
+    private enum SUPPORTED_IMAGE_FORMATS { jpeg, jpg, png }
+    private enum SUPPORTED_VIDEO_FORMATS { mov, mp4 }
+    private static final int MAX_FILE_SIZE_MB = 15;
     private LocationService locationService = new LocationService();
-    private StoryService storyService = new StoryService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +64,13 @@ public class CreateStoryActivity extends AppCompatActivity {
         return false;
     }
 
+    private boolean validatesFileSizeRestriction(String filePath){
+        File file = new File(filePath);
+        double fileBytes = file.length();
+        double fileMegabytes = (fileBytes / (1024 * 1024));
+        return fileMegabytes <= MAX_FILE_SIZE_MB;
+    }
+
     private boolean isSupportedFormat(String fileExtension){
         return isSupportedImage(fileExtension) || isSupportedVideo(fileExtension);
     }
@@ -80,15 +84,17 @@ public class CreateStoryActivity extends AppCompatActivity {
                 String fileExtension = filePath.substring(filePath.lastIndexOf(".") + 1);
 
                 if (isSupportedFormat(fileExtension)){
-                    if (isSupportedImage(fileExtension)){
-                        //check filesize restriction
-                        Intent navigationIntent = new Intent(CreateStoryActivity.this, ImageFiltersActivity.class);
-                        navigationIntent.putExtra("imageUri", filePath);
-                        startActivityForResult(navigationIntent, FINISH_IMAGE_FILTER);
+                    if (validatesFileSizeRestriction(filePath)) {
+                        if (isSupportedImage(fileExtension)) {
+                            Intent navigationIntent = new Intent(CreateStoryActivity.this, ImageFiltersActivity.class);
+                            navigationIntent.putExtra("imageUri", filePath);
+                            startActivityForResult(navigationIntent, FINISH_IMAGE_FILTER);
+                        } else {
+                            uploadStory(filePath);
+                        }
                     }
                     else{
-                        //check filesize restriction
-                        uploadStory(filePath);
+                        startFileUpload("File selected is bigger than " + MAX_FILE_SIZE_MB + " MB");
                     }
                 }
                 else{
@@ -129,9 +135,13 @@ public class CreateStoryActivity extends AppCompatActivity {
         story.visibility = visibilityType;
         story.timestamp = Calendar.getInstance().getTime().toString();
         story.location = this.locationService.getLocation();
-        story.uploadedFilename = new File(filePath).getName();
-
-        new CreateStoryTask(filePath).execute(story);
+        try {
+            Story newStory = new CreateStoryTask().execute(story).get();
+            new UploadFileTask(filePath).execute(newStory.id);
+        }
+        catch(Exception e){
+            startFileUpload("There was an error uploading the file.");
+        }
     }
 
     protected class CreateStoryHandler implements View.OnClickListener {
@@ -150,49 +160,37 @@ public class CreateStoryActivity extends AppCompatActivity {
 
     private void startFileUpload() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setTypeAndNormalize("image/jpeg, image/jpg, image/png, video/mp4");
+        photoPickerIntent.setType("image/*, video/*");
+        //photoPickerIntent.setTypeAndNormalize("image/jpeg, image/jpg, image/png, video/mp4");
         startActivityForResult(photoPickerIntent, START_FILE_UPLOAD);
     }
 
     protected class CreateStoryTask extends AsyncTask<Story, Void, Story> {
-        private String filePath;
-        private String encodedFile;
         private StoryService storyService = new StoryService();
 
-        public CreateStoryTask(String filePath){
-            this.filePath = filePath;
-        }
-
-        private byte[] loadFileAsBytesArray(File file) throws Exception {
-            int length = (int) file.length();
-            BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file));
-            byte[] bytes = new byte[length];
-            reader.read(bytes, 0, length);
-            reader.close();
-            return bytes;
-        }
-
-        private String getUploadedFile(File file){
-            try {
-                byte[] byteArrayImage = loadFileAsBytesArray(file);
-                String encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
-                return encodedImage;
-            } catch(Exception e){
-                return "";
-            }
-        }
+        public CreateStoryTask() {}
 
         protected void onPreExecute() {
             Button createStoryButton = findViewById(R.id.createStoryButton);
             createStoryButton.setEnabled(false);
-            File file = new File(this.filePath);
-            this.encodedFile = getUploadedFile(file);
         }
 
         protected Story doInBackground(Story... params) {
             Story storyToUpload = params[0];
-            storyToUpload.uploadedFile = this.encodedFile;
             return storyService.createStory(storyToUpload);
+        }
+    }
+
+    protected class UploadFileTask extends AsyncTask<String, Void, Story> {
+        private File file;
+        private FileService fileService = new FileService();
+
+        public UploadFileTask(String filePath) {
+            this.file = new File(filePath);
+        }
+
+        protected Story doInBackground(String... storyId) {
+            return fileService.uploadFileToStory(storyId[0], this.file);
         }
 
         protected void onPostExecute(Story result) {

@@ -1,8 +1,13 @@
 package stories.app.activities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +34,7 @@ import stories.app.R;
 import stories.app.models.User;
 import stories.app.services.AuthenticationService;
 import stories.app.services.ChatInstanceIDService;
+import stories.app.services.LocationService;
 import stories.app.utils.Base64UtilityClass;
 
 public class LogInActivity extends AppCompatActivity {
@@ -45,6 +51,34 @@ public class LogInActivity extends AppCompatActivity {
         mCallbackManager = CallbackManager.Factory.create();
 
         LoginButton fbLoginButton = findViewById(R.id.fb_login_button);
+
+        int cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        int readfilePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int writefilePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int fileLocationPermissions = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+        int coarseLocationPermissions = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        boolean hasAllPermissions =
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+            if (!hasAllPermissions) {
+                // Requests permissions
+                ActivityCompat.requestPermissions(
+                this,
+                    new String[] {
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    },
+                1
+                );
+            }
 
         // Set the initial permissions to request from the user while logging in
         fbLoginButton.setReadPermissions(Arrays.asList(EMAIL));

@@ -28,4 +28,8 @@
         android:icon="@drawable/ic_account_circle"
         app:showAsAction="always"
         android:title="@string/profile_menu"/>
+    <item
+        android:id="@+id/stories_map"
+        app:showAsAction="never"
+        android:title="@string/stories_map"/>
 </menu>

@@ -19,6 +19,7 @@
     <string name="messages_menu">Mensajes directos</string>
     <string name="friendship_menu">Solicitudes de amistad</string>
     <string name="profile_menu">Perfil</string>
+    <string name="stories_map">Ver en Mapa</string>
 
 
     <!-- Strings related to Create Story -->
@@ -26,8 +27,8 @@
     <string name="prompt_description">Descripción</string>
     <string name="label_visibility_public">Pública</string>
     <string name="label_visibility_private">Privada</string>
-    <string name="label_isQuickStory">Es una historia rápida</string>
-    <string name="action_createStory">Crear historia</string>
+    <string name="label_isQuickStory">História Rápida</string>
+    <string name="action_selectImage">Cargar Imagen</string>
 
     <!-- Strings related to Create Message -->
     <string name="message_destination">Destinatario</string>
@@ -55,5 +56,6 @@
     <string name="filter_normal">Normal</string>
     <string name="action_save">GUARDAR</string>
     <string name="action_open">ABRIR</string>
+    <string name="title_activity_stories_map">Map</string>
 
 </resources>

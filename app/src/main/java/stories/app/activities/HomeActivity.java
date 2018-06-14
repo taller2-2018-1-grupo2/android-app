@@ -1,17 +1,23 @@
 package stories.app.activities;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
 import stories.app.R;
+import stories.app.adapters.QuickStoriesAdapter;
 import stories.app.adapters.StoriesAdapter;
 import stories.app.models.Story;
 import stories.app.services.StoryService;
@@ -27,6 +33,9 @@ public class HomeActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
+        ImageButton refreshButton = (ImageButton) findViewById(R.id.refreshStories);
+        refreshButton.setOnClickListener(new RefreshButtonOnClickHandler());
 
         // Retrieve all stories visibles to the user
         new GetStoriesVisiblesToUserTask().execute(LocalStorage.getUser().id);
@@ -67,6 +76,10 @@ public class HomeActivity extends AppCompatActivity {
                 navigationIntent = new Intent(HomeActivity.this, DirectMessagesActivity.class);
                 startActivity(navigationIntent);
                 return true;
+            case R.id.stories_map:
+                navigationIntent = new Intent(HomeActivity.this, StoriesMapActivity.class);
+                startActivity(navigationIntent);
+                return true;
 //            case R.id.chat:
 //                navigationIntent = new Intent(HomeActivity.this, ChatActivity.class);
 //                startActivity(navigationIntent);
@@ -87,8 +100,33 @@ public class HomeActivity extends AppCompatActivity {
 
         protected void onPostExecute(ArrayList<Story> result) {
 
+            // Split result between regular stories and quick stories
+            ArrayList<Story> regularStories = new ArrayList<Story>();
+            ArrayList<Story> quickStories = new ArrayList<Story>();
+
+            for(int i = 0; i < result.size(); i++) {
+                Story story = result.get(i);
+                if (story.isQuickStory) {
+                    quickStories.add(story);
+                } else {
+                    regularStories.add(story);
+                }
+            }
+
+            // Display regular stories
             ListView storiesList = (ListView) findViewById(R.id.storiesList);
-            storiesList.setAdapter(new StoriesAdapter(HomeActivity.this, result));
+            storiesList.setAdapter(new StoriesAdapter(HomeActivity.this, regularStories));
+
+            // Display quick stories
+            RecyclerView quickStoriesList = (RecyclerView) findViewById(R.id.quickStoriesList);
+            quickStoriesList.setAdapter(new QuickStoriesAdapter(HomeActivity.this, quickStories));
+        }
+    }
+
+    protected class RefreshButtonOnClickHandler implements View.OnClickListener {
+        public void onClick(View v){
+            // Retrieve all stories visibles to the user
+            new GetStoriesVisiblesToUserTask().execute(LocalStorage.getUser().id);
         }
     }
 }

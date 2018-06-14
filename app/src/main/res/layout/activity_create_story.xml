@@ -1,69 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/createStoryLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:id="@+id/createStoryLayout"
     tools:context=".activities.CreateStoryActivity">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat">
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            style="@style/DefaultTitleStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crear Historia"
+            android:textColor="@color/textPrimary"
+            android:textSize="25sp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        android:text="Titulo"
+        android:textColor="@color/textPrimary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.054"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.151" />
 
     <EditText
         android:id="@+id/createStoryTitle"
-        android:layout_width="match_parent"
+        android:layout_width="330dp"
         android:layout_height="wrap_content"
-        android:ems="10"
         android:hint="@string/prompt_title"
-        android:inputType="text" />
+        android:inputType="text"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.226" />
 
-        <EditText
-            android:id="@+id/createStoryDescription"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:ems="10"
-            android:hint="@string/prompt_description"
-            android:inputType="textMultiLine" />
+    <TextView
+        android:id="@+id/email_label"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:paddingRight="5dp"
+        android:text="Descripción"
+        android:textColor="@color/textPrimary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.123"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.325" />
 
-        <RadioGroup
-            android:id="@+id/createStoryVisibility"
+    <EditText
+        android:id="@+id/createStoryDescription"
+        android:layout_width="330dp"
+        android:layout_height="140dp"
+        android:gravity="bottom"
+        android:hint="@string/prompt_description"
+        android:inputType="textMultiLine"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.498" />
+
+    <RadioGroup
+        android:id="@+id/createStoryVisibility"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:checkedButton="@+id/createStoryVisibilityIsPublic"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.682">
+
+        <RadioButton
+            android:id="@+id/createStoryVisibilityIsPublic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:checkedButton="@+id/createStoryVisibilityIsPublic"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:fontFamily="@font/raleway"
+            android:text="@string/label_visibility_public"
+            android:textSize="24sp" />
 
-            <RadioButton
-                android:id="@+id/createStoryVisibilityIsPublic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/label_visibility_public" />
-
-            <RadioButton
-                android:id="@+id/createStoryVisibilitIsPrivate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/label_visibility_private" />
-        </RadioGroup>
-
-        <CheckBox
-            android:id="@+id/createStoryIsQuickStory"
-            android:layout_width="match_parent"
+        <RadioButton
+            android:id="@+id/createStoryVisibilitIsPrivate"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/label_isQuickStory" />
+            android:layout_weight="1"
+            android:fontFamily="@font/raleway"
+            android:text="@string/label_visibility_private"
+            android:textSize="24sp" />
+    </RadioGroup>
 
-        <Button
-            android:id="@+id/createStoryButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/action_createStory" />
+    <CheckBox
+        android:id="@+id/createStoryIsQuickStory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/raleway"
+        android:text="@string/label_isQuickStory"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.77" />
 
-    </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
+    <Button
+        android:id="@+id/createStoryButton"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:text="@string/action_selectImage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.878" />
+
+</android.support.constraint.ConstraintLayout>

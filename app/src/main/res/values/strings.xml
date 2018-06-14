@@ -27,8 +27,8 @@
     <string name="prompt_description">Descripción</string>
     <string name="label_visibility_public">Pública</string>
     <string name="label_visibility_private">Privada</string>
-    <string name="label_isQuickStory">Es una historia rápida</string>
-    <string name="action_createStory">Crear historia</string>
+    <string name="label_isQuickStory">História Rápida</string>
+    <string name="action_selectImage">Cargar Imagen</string>
 
     <!-- Strings related to Create Message -->
     <string name="message_destination">Destinatario</string>

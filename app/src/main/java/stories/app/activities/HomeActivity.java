@@ -104,12 +104,14 @@ public class HomeActivity extends AppCompatActivity {
             ArrayList<Story> regularStories = new ArrayList<Story>();
             ArrayList<Story> quickStories = new ArrayList<Story>();
 
-            for(int i = 0; i < result.size(); i++) {
-                Story story = result.get(i);
-                if (story.isQuickStory) {
-                    quickStories.add(story);
-                } else {
-                    regularStories.add(story);
+            if (result != null) {
+                for (int i = 0; i < result.size(); i++) {
+                    Story story = result.get(i);
+                    if (story.isQuickStory) {
+                        quickStories.add(story);
+                    } else {
+                        regularStories.add(story);
+                    }
                 }
             }
 
@@ -124,7 +126,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     protected class RefreshButtonOnClickHandler implements View.OnClickListener {
-        public void onClick(View v){
+        public void onClick(View v) {
             // Retrieve all stories visibles to the user
             new GetStoriesVisiblesToUserTask().execute(LocalStorage.getUser().id);
         }

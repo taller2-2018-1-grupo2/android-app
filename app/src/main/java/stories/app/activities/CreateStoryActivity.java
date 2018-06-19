@@ -141,13 +141,8 @@ public class CreateStoryActivity extends AppCompatActivity {
         story.visibility = visibilityType;
         story.timestamp = Calendar.getInstance().getTime().toString();
         story.location = this.locationService.getLocation();
-        try {
-            Story newStory = new CreateStoryTask().execute(story).get();
-            new UploadFileTask(filePath).execute(newStory.id);
-        }
-        catch(Exception e){
-            startFileUpload("There was an error uploading the file.");
-        }
+
+        new CreateStoryTask(filePath).execute(story);
     }
 
     protected class CreateStoryHandler implements View.OnClickListener {
@@ -173,8 +168,9 @@ public class CreateStoryActivity extends AppCompatActivity {
 
     protected class CreateStoryTask extends AsyncTask<Story, Void, Story> {
         private StoryService storyService = new StoryService();
+        private String mFilePath;
 
-        public CreateStoryTask() {}
+        public CreateStoryTask(String filePath) { this.mFilePath = filePath;}
 
         protected void onPreExecute() {
             Button createStoryButton = findViewById(R.id.createStoryButton);
@@ -185,29 +181,64 @@ public class CreateStoryActivity extends AppCompatActivity {
             Story storyToUpload = params[0];
             return storyService.createStory(storyToUpload);
         }
+
+        protected void onPostExecute(Story newStory) {
+            if (newStory != null) {
+                new UploadFileTask(this.mFilePath).execute(newStory.id);
+            } else {
+                String messageToDisplay = "Error al subir la historia. Intente de nuevo.";
+                Snackbar snackbar = Snackbar
+                        .make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
+                snackbar.show();
+
+                Button createStoryButton = findViewById(R.id.createStoryButton);
+                createStoryButton.setEnabled(true);
+            }
+        }
     }
 
     protected class UploadFileTask extends AsyncTask<String, Void, Story> {
         private File file;
         private FileService fileService = new FileService();
+        private String mStoryID;
 
         public UploadFileTask(String filePath) {
             this.file = new File(filePath);
         }
 
         protected Story doInBackground(String... storyId) {
+            this.mStoryID = storyId[0];
             return fileService.uploadFileToStory(storyId[0], this.file);
         }
 
         protected void onPostExecute(Story result) {
-            Button createStoryButton = findViewById(R.id.createStoryButton);
-            createStoryButton.setEnabled(true);
-
             if (result != null) {
                 // Navigate to Home page
                 Intent navigationIntent = new Intent(CreateStoryActivity.this, HomeActivity.class);
                 startActivity(navigationIntent);
+                Button createStoryButton = findViewById(R.id.createStoryButton);
+                createStoryButton.setEnabled(true);
+            } else {
+                new DeleteStoryTask().execute(this.mStoryID);
             }
+        }
+    }
+
+    protected class DeleteStoryTask extends AsyncTask<String, Void, String> {
+        private StoryService storyService = new StoryService();
+
+        protected String doInBackground(String... storyId) {
+            return storyService.deleteStory(storyId[0]);
+        }
+
+        protected void onPostExecute(String result) {
+            String messageToDisplay = "Error al subir la historia. Intente de nuevo.";
+            Snackbar snackbar = Snackbar
+                    .make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
+            snackbar.show();
+
+            Button createStoryButton = findViewById(R.id.createStoryButton);
+            createStoryButton.setEnabled(true);
         }
     }
 }

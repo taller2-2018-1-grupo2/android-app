@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/stories_item_user_pic"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:contentDescription="Story image"
             android:scaleType="centerCrop"
             tools:src="@drawable/profile_placeholder" />

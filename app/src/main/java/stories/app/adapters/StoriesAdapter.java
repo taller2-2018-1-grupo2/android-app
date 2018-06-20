@@ -1,60 +1,53 @@
 package stories.app.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.net.Uri;
-import android.provider.MediaStore;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 
 import stories.app.R;
 import stories.app.models.Story;
 
-public class StoriesAdapter extends ArrayAdapter<Story> {
+public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHolder> {
 
     private Context context;
+    private ArrayList<Story> mData;
+    private LayoutInflater mInflater;
 
-    public StoriesAdapter(Context context, ArrayList<Story> stories) {
-        super(context, R.layout.stories_item, stories);
+    public StoriesAdapter(Context context, ArrayList<Story> data) {
         this.context = context;
+        this.mInflater = LayoutInflater.from(context);
+        this.mData = data;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.stories_item, parent, false);
-            Story story = this.getItem(position);
+    public StoriesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = mInflater.inflate(R.layout.stories_item, parent, false);
+        return new StoriesAdapter.ViewHolder(view);
+    }
 
-            ImageView storyImage = (ImageView) convertView.findViewById(R.id.stories_item_fileUrl);
-            this.setImageFromUrl(story.fileUrl, storyImage, R.drawable.story_image_placeholder);
+    @Override
+    public int getItemCount() {
+        return this.mData.size();
+    }
 
-            ImageView storyUserImage = (ImageView) convertView.findViewById(R.id.stories_item_user_pic);
-            this.setImageFromUrl(story.profilePic, storyUserImage, R.drawable.profile_placeholder);
+    @Override
+    public void onBindViewHolder(StoriesAdapter.ViewHolder holder, int position) {
+        Story story = this.mData.get(position);
 
-            TextView username = (TextView) convertView.findViewById(R.id.stories_item_user_name);
-            username.setText(story.username + ": ");
-
-            TextView title = (TextView) convertView.findViewById(R.id.stories_item_title);
-            title.setText(story.title);
-
-            TextView description = (TextView) convertView.findViewById(R.id.stories_item_description);
-            description.setText(story.description);
-        }
-
-        return convertView;
+        this.setImageFromUrl(story.fileUrl, holder.storyImage, R.drawable.story_image_placeholder);
+        this.setImageFromUrl(story.fileUrl, holder.storyUserImage, R.drawable.profile_placeholder);
+        holder.username.setText(story.username + ": ");
+        holder.title.setText(story.title);
+        holder.description.setText(story.description);
     }
 
     private void setImageFromUrl(String url, ImageView imageView, int placeholderResId) {
@@ -80,6 +73,23 @@ public class StoriesAdapter extends ArrayAdapter<Story> {
             Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(imageView);
             Log.e("Error", e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView storyImage;
+        ImageView storyUserImage;
+        TextView username;
+        TextView title;
+        TextView description;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+            this.storyImage = itemView.findViewById(R.id.stories_item_fileUrl);
+            this.storyUserImage = itemView.findViewById(R.id.stories_item_user_pic);
+            this.username =itemView.findViewById(R.id.stories_item_user_name);
+            this.title = itemView.findViewById(R.id.stories_item_title);
+            this.description = itemView.findViewById(R.id.stories_item_description);
         }
     }
 }

@@ -117,7 +117,7 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             // Display regular stories
-            ListView storiesList = (ListView) findViewById(R.id.storiesList);
+            RecyclerView storiesList = (RecyclerView) findViewById(R.id.storiesList);
             storiesList.setAdapter(new StoriesAdapter(HomeActivity.this, regularStories));
 
             // Display quick stories

@@ -79,19 +79,15 @@
 
         </LinearLayout>
 
-        <LinearLayout
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/storiesList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <ListView
-                android:id="@+id/storiesList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/stories_item" />
-
-        </LinearLayout>
+            android:orientation="vertical"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/stories_item" />/>
 
 
     </LinearLayout>

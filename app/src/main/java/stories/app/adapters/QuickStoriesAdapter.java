@@ -1,24 +1,17 @@
 package stories.app.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import stories.app.R;
 import stories.app.models.Story;
 
@@ -29,7 +22,6 @@ public class QuickStoriesAdapter extends RecyclerView.Adapter<QuickStoriesAdapte
     private LayoutInflater mInflater;
     private QuickStoriesAdapter.ItemClickListener mClickListener;
 
-    // Data is passed into the constructor
     public QuickStoriesAdapter(Context context, ArrayList<Story> data) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
@@ -37,56 +29,51 @@ public class QuickStoriesAdapter extends RecyclerView.Adapter<QuickStoriesAdapte
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        int recyclerRow = R.layout.stories_item_quick;
-        View view = mInflater.inflate(recyclerRow, parent, false);
+    public QuickStoriesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = mInflater.inflate(R.layout.stories_item_quick, parent, false);
         return new QuickStoriesAdapter.ViewHolder(view);
     }
 
-
-    // Binds the data to the TextView in each row
-    @Override
-    public void onBindViewHolder(QuickStoriesAdapter.ViewHolder holder, int position) {
-        Story story = mData.get(position);
-        if (story.fileUrl != null && story.fileUrl.length() > 0) {
-            try {
-                Picasso
-                    .get()
-                    .load(story.fileUrl)
-                    .placeholder(R.drawable.story_image_quick_placeholder)
-                    .into(holder.storyImageView);
-            } catch (Exception e) {
-                // The FileUri cannot be parsed.
-                // Swallow the exception and load a placeholder
-                Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.storyImageView);
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-        }
-    }
-
-    // total number of rows
     @Override
     public int getItemCount() {
         return this.mData.size();
     }
 
-    // convenience method for getting data at click position
+    @Override
+    public void onBindViewHolder(QuickStoriesAdapter.ViewHolder holder, int position) {
+        Story story = this.mData.get(position);
+        this.setImageFromUrl(story.fileUrl, holder.storyImageView, R.drawable.story_image_quick_placeholder);
+    }
+
+    private void setImageFromUrl(String url, ImageView imageView, int placeholderResId) {
+        try {
+            if (url != null && url.length() > 0) {
+                Picasso.get().load(url).placeholder(placeholderResId).into(imageView);
+            } else {
+                // Load the placeholder instead
+                Picasso.get().load(placeholderResId).placeholder(placeholderResId).into(imageView);
+            }
+        } catch (Exception e) {
+            // The FileUri cannot be parsed.
+            // Swallow the exception and load a placeholder
+            Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(imageView);
+            Log.e("Error", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public Story getItem(int id) {
         return this.mData.get(id);
     }
 
-    // allows clicks events to be caught
     public void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
-    // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
 
-    // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView storyImageView;
 

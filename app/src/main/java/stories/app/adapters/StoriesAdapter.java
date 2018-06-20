@@ -41,9 +41,12 @@ public class StoriesAdapter extends ArrayAdapter<Story> {
             Story story = this.getItem(position);
 
             if (story.fileUrl != null && story.fileUrl.length() > 0) {
-
                 try {
-                    Picasso.get().load(story.fileUrl).into(imageView);
+                    Picasso
+                        .get()
+                        .load(story.fileUrl)
+                        .placeholder(R.drawable.story_image_placeholder)
+                        .into(imageView);
                 } catch (Exception e) {
                     // The FileUri cannot be parsed.
                     // Swallow the exception and load a placeholder

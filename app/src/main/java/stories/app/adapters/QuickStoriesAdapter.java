@@ -50,7 +50,11 @@ public class QuickStoriesAdapter extends RecyclerView.Adapter<QuickStoriesAdapte
         Story story = mData.get(position);
         if (story.fileUrl != null && story.fileUrl.length() > 0) {
             try {
-                Picasso.get().load(story.fileUrl).into(holder.storyImageView);
+                Picasso
+                    .get()
+                    .load(story.fileUrl)
+                    .placeholder(R.drawable.story_image_quick_placeholder)
+                    .into(holder.storyImageView);
             } catch (Exception e) {
                 // The FileUri cannot be parsed.
                 // Swallow the exception and load a placeholder

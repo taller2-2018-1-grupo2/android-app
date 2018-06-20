@@ -36,25 +36,16 @@ public class StoriesAdapter extends ArrayAdapter<Story> {
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.stories_item, parent, false);
-
-            ImageView imageView = (ImageView) convertView.findViewById(R.id.stories_item_fileUrl);
             Story story = this.getItem(position);
 
-            if (story.fileUrl != null && story.fileUrl.length() > 0) {
-                try {
-                    Picasso
-                        .get()
-                        .load(story.fileUrl)
-                        .placeholder(R.drawable.story_image_placeholder)
-                        .into(imageView);
-                } catch (Exception e) {
-                    // The FileUri cannot be parsed.
-                    // Swallow the exception and load a placeholder
-                    Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(imageView);
-                    Log.e("Error", e.getMessage());
-                    e.printStackTrace();
-                }
-            }
+            ImageView storyImage = (ImageView) convertView.findViewById(R.id.stories_item_fileUrl);
+            this.setImageFromUrl(story.fileUrl, storyImage, R.drawable.story_image_placeholder);
+
+            ImageView storyUserImage = (ImageView) convertView.findViewById(R.id.stories_item_user_pic);
+            this.setImageFromUrl(story.profilePic, storyUserImage, R.drawable.profile_placeholder);
+
+            TextView username = (TextView) convertView.findViewById(R.id.stories_item_user_name);
+            username.setText(story.username + ": ");
 
             TextView title = (TextView) convertView.findViewById(R.id.stories_item_title);
             title.setText(story.title);
@@ -64,5 +55,31 @@ public class StoriesAdapter extends ArrayAdapter<Story> {
         }
 
         return convertView;
+    }
+
+    private void setImageFromUrl(String url, ImageView imageView, int placeholderResId) {
+        try {
+
+            if (url != null && url.length() > 0) {
+                Picasso
+                    .get()
+                    .load(url)
+                    .placeholder(placeholderResId)
+                    .into(imageView);
+            } else {
+                // Load the placeholder instead
+                Picasso
+                    .get()
+                    .load(placeholderResId)
+                    .placeholder(placeholderResId)
+                    .into(imageView);
+            }
+        } catch (Exception e) {
+            // The FileUri cannot be parsed.
+            // Swallow the exception and load a placeholder
+            Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(imageView);
+            Log.e("Error", e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

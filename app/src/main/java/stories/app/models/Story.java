@@ -1,8 +1,10 @@
 package stories.app.models;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Story {
@@ -20,6 +22,47 @@ public class Story {
     public String username;
     public String name;
     public String profilePic;
+    public JSONArray likes;
+
+    public Boolean isLikedByUser(String userId) {
+        Boolean likedByUser = false;
+
+        for(int i = 0; i < this.likes.length(); i++) {
+            try {
+                if (userId == this.likes.getString(i)) {
+                    likedByUser = true;
+                    break;
+                }
+            } catch(JSONException e) {
+                // swallow
+            }
+        }
+
+        return likedByUser;
+    }
+
+    public void addLike(String userId) {
+        this.likes.put(userId);
+    }
+
+    public void removeLike(String userId) {
+        int userIdIndex = -1;
+
+        for(int i = 0; i < this.likes.length(); i++) {
+            try {
+                if (userId == this.likes.getString(i)) {
+                    userIdIndex = i;
+                    break;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (userIdIndex != -1 && userIdIndex < this.likes.length()) {
+            this.likes.remove(userIdIndex);
+        }
+    }
 
     //outgoing and incoming stories are different, consider refactor
     public static Story fromJsonObject(JSONObject storyJson) throws JSONException {
@@ -37,6 +80,8 @@ public class Story {
         story.name = storyJson.has("name") ? storyJson.getString("name") : "";
         story.profilePic = storyJson.has("profile_pic") ? storyJson.getString("profile_pic") : "";
 
+        story.likes = storyJson.has("likes") ?storyJson.getJSONArray("likes") : new JSONArray();
+
         return story;
     }
 
@@ -53,6 +98,7 @@ public class Story {
         storyJson.put("visibility", story.visibility);
         storyJson.put("location", story.location);
         storyJson.put("timestamp", story.timestamp);
+        storyJson.put("likes", story.likes);
 
         return storyJson;
     }

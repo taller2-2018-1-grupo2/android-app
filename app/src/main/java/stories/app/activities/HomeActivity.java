@@ -40,11 +40,6 @@ public class HomeActivity extends AppCompatActivity {
 
         // Retrieve all stories visibles to the user
         new GetStoriesVisiblesToUserTask().execute(LocalStorage.getUser().id);
-
-        if (getIntent().getExtras() != null) {
-            String from_username = getIntent().getExtras().getString("from_username");
-            String to_username = getIntent().getExtras().getString("to_username");
-        }
     }
 
     @Override

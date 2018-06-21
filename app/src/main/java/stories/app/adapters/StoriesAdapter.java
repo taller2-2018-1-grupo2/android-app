@@ -11,10 +11,13 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 import stories.app.R;
 import stories.app.models.Story;
+import stories.app.utils.LocalStorage;
 
 public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHolder> {
 
@@ -48,6 +51,9 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         holder.username.setText(story.username + ": ");
         holder.title.setText(story.title);
         holder.description.setText(story.description);
+
+        holder.setLikeCount(story);
+        holder.updateLikeButton(story);
     }
 
     private void setImageFromUrl(String url, ImageView imageView, int placeholderResId) {
@@ -82,6 +88,10 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         TextView username;
         TextView title;
         TextView description;
+        TextView likeCount;
+
+        ImageView likeButton;
+        ImageView commentsButton;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -90,6 +100,69 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             this.username =itemView.findViewById(R.id.stories_item_user_name);
             this.title = itemView.findViewById(R.id.stories_item_title);
             this.description = itemView.findViewById(R.id.stories_item_description);
+            this.likeCount = itemView.findViewById(R.id.stories_item_like_count);
+
+            this.likeButton = itemView.findViewById(R.id.stories_item_like_button);
+        }
+
+        private void setLikeCount(Story story) {
+            String likesText = "No likes";
+
+            if (story.likes.length() == 1) {
+                likesText = "1 like";
+            }
+
+            if (story.likes.length() > 1) {
+                likesText = story.likes.length() + " likes";
+            }
+
+            this.likeCount.setText(likesText);
+        }
+
+        private void updateLikeButton(Story story) {
+            String currentUserId = LocalStorage.getUser().id;
+
+            // If the story belongs to the user, disable the button
+            if (story.userId == currentUserId) {
+                this.likeButton.setEnabled(false);
+                this.likeButton.setImageResource(R.drawable.ic_story_like_disabled);
+                return;
+            }
+
+            // Change the resource depending if the story was liked by the user or not
+            // Otherwise, mark it
+            int likeIcon = story.isLikedByUser(currentUserId)
+                    ? R.drawable.ic_story_like_liked
+                    : R.drawable.ic_story_like_likeable;
+
+            this.likeButton.setImageResource(likeIcon);
+            this.likeButton.setEnabled(true);
+            this.likeButton.setOnClickListener(new LikeButtonOnClickHandler(story, this));
+        }
+    }
+
+    protected class LikeButtonOnClickHandler implements View.OnClickListener {
+        private Story story;
+        private StoriesAdapter.ViewHolder holder;
+
+        LikeButtonOnClickHandler(Story story, StoriesAdapter.ViewHolder holder) {
+            this.story = story;
+            this.holder = holder;
+        }
+
+        public void onClick(View v) {
+            String currentUserId = LocalStorage.getUser().id;
+
+            if (this.story.isLikedByUser(currentUserId)) {
+                this.story.removeLike(currentUserId);
+            } else {
+                this.story.addLike(currentUserId);
+            }
+
+            this.holder.setLikeCount(this.story);
+            this.holder.updateLikeButton(this.story);
+
+            // TODO: Update story in the backend
         }
     }
 }

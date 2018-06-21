@@ -79,6 +79,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
         TextView usernameTextView;
         TextView nameTextView;
         ImageView actionButton;
+        ImageView sendMessageButton;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -90,6 +91,14 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
                 case "users":
                     actionButton = itemView.findViewById(R.id.add_user);
                     actionButton.setOnClickListener(this);
+
+                    sendMessageButton = itemView.findViewById(R.id.send_message);
+                    sendMessageButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            mClickListener.onSendMessageClick(view, getAdapterPosition());
+                        }
+                    });
                     break;
                 case "friends":
                     break;
@@ -123,5 +132,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
+
+        void onSendMessageClick(View view, int position);
     }
 }

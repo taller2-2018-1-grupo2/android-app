@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -16,12 +15,12 @@ import java.util.Map;
 import stories.app.R;
 import stories.app.activities.DirectMessagesActivity;
 import stories.app.activities.FriendshipRequestsReceivedActivity;
-import stories.app.utils.LocalStorage;
+import stories.app.activities.HomeActivity;
 
 public class ChatService extends FirebaseMessagingService {
 
     private enum NotificationType {
-        MESSAGE("message"), FRIENDSHIPREQUEST("friendship_request");
+        MESSAGE("message"), FRIENDSHIP_REQUEST("friendship_request"), STORY("story");
 
         private String name;
 
@@ -62,7 +61,10 @@ public class ChatService extends FirebaseMessagingService {
     private void showNotification(String title, String text, NotificationType notificationType) {
         Intent intent;
         switch (notificationType) {
-            case FRIENDSHIPREQUEST:
+            case STORY:
+                intent = new Intent(this, HomeActivity.class);
+                break;
+            case FRIENDSHIP_REQUEST:
                 intent = new Intent(this, FriendshipRequestsReceivedActivity.class);
                 break;
             case MESSAGE:

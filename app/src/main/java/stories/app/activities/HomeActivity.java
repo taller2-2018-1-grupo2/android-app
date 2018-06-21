@@ -33,6 +33,7 @@ public class HomeActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         ImageButton refreshButton = (ImageButton) findViewById(R.id.refreshStories);
         refreshButton.setOnClickListener(new RefreshButtonOnClickHandler());
@@ -116,7 +117,7 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             // Display regular stories
-            ListView storiesList = (ListView) findViewById(R.id.storiesList);
+            RecyclerView storiesList = (RecyclerView) findViewById(R.id.storiesList);
             storiesList.setAdapter(new StoriesAdapter(HomeActivity.this, regularStories));
 
             // Display quick stories

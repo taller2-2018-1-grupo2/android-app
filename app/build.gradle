@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "stories.app"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -17,10 +17,6 @@ android {
         }
     }
     productFlavors {
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -48,7 +44,13 @@ dependencies {
     // dexter M permissions
     implementation 'com.karumi:dexter:4.1.0'
 
-    /****************DEPENDENCIES FOR IMAGE FILTERS****************/
+    /****************END DEPENDENCIES FOR IMAGE FILTERS****************/
+
+    /*****************DEPENDENCIES FOR IMAGE LOADING******************/
+
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    /*****************END DEPENDENCIES FOR IMAGE FILTERS******************/
+
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

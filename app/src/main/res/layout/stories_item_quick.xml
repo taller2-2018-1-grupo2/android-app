@@ -2,15 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="10dp"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/stories_item_quick_fileUrl"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_margin="5dp"
         android:contentDescription="Story image"
+        android:scaleType="centerCrop"
         tools:src="@drawable/profile_placeholder" />
 </LinearLayout>

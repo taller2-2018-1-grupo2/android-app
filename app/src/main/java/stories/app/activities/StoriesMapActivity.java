@@ -101,18 +101,22 @@ public class StoriesMapActivity extends AppCompatActivity implements OnMapReadyC
             stories = result;
 
             for (int i = 0; i < stories.size(); i++) {
-                String[] latLngSplit = stories.get(i).location.split(",");
-                LatLng storyLatLng = new LatLng(Double.parseDouble(latLngSplit[0]), Double.parseDouble(latLngSplit[1]));
+                Story story = stories.get(i);
+                if (!story.location.isEmpty()) {
+                    String[] latLngSplit = story.location.split(",");
 
-                String snippet = stories.get(i).name + "," + stories.get(i).username;
+                    LatLng storyLatLng = new LatLng(Double.parseDouble(latLngSplit[0]), Double.parseDouble(latLngSplit[1]));
+                    String snippet = story.name + "," + story.username;
 
-                mMap.addMarker(new MarkerOptions()
-                        .position(storyLatLng)
-                        .title(stories.get(i).profilePic)
-                        .snippet(snippet));
+                    mMap.addMarker(new MarkerOptions()
+                            .position(storyLatLng)
+                            .title(story.profilePic)
+                            .snippet(snippet));
 
-                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+                }
             }
+
+            mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
         }
     }
 

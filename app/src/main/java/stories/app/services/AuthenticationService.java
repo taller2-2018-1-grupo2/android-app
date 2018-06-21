@@ -48,6 +48,9 @@ public class AuthenticationService extends BaseService {
             // Temporary until we find a solution to the code above, which doesn't work for username.
             LocalStorage.setUsername(username);
 
+            // Saving token for future sends
+            LocalStorage.setToken(result.getJSONObject("token").getString("token"));
+
             return user;
         } catch(Exception exception) {
             return null;
@@ -88,6 +91,9 @@ public class AuthenticationService extends BaseService {
             // Same as in Login method. Inconsistencies with code above.
             JSONObject jsonUser = result.getJSONObject("user");
             LocalStorage.setUsername(jsonUser.getString("username"));
+
+            // Saving token for future sends
+            LocalStorage.setToken(result.getJSONObject("token").getString("token"));
 
             return signedInUser;
         } catch(Exception exception) {

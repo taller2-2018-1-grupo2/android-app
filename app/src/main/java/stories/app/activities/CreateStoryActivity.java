@@ -23,6 +23,7 @@ import stories.app.activities.images.ImageFiltersActivity;
 import stories.app.models.Story;
 import stories.app.services.FileService;
 import stories.app.services.LocationService;
+import stories.app.services.ServiceStatusCode;
 import stories.app.services.StoryService;
 import stories.app.utils.FileUtils;
 import stories.app.utils.LocalStorage;
@@ -197,7 +198,7 @@ public class CreateStoryActivity extends AppCompatActivity {
         }
     }
 
-    protected class UploadFileTask extends AsyncTask<String, Void, Story> {
+    protected class UploadFileTask extends AsyncTask<String, Void, Integer> {
         private File file;
         private FileService fileService = new FileService();
         private String mStoryID;
@@ -206,13 +207,13 @@ public class CreateStoryActivity extends AppCompatActivity {
             this.file = new File(filePath);
         }
 
-        protected Story doInBackground(String... storyId) {
+        protected Integer doInBackground(String... storyId) {
             this.mStoryID = storyId[0];
             return fileService.uploadFileToStory(storyId[0], this.file);
         }
 
-        protected void onPostExecute(Story result) {
-            if (result != null) {
+        protected void onPostExecute(Integer result) {
+            if (result == ServiceStatusCode.SUCCESS) {
                 // Navigate to Home page
                 Intent navigationIntent = new Intent(CreateStoryActivity.this, HomeActivity.class);
                 startActivity(navigationIntent);
@@ -220,6 +221,21 @@ public class CreateStoryActivity extends AppCompatActivity {
                 createStoryButton.setEnabled(true);
             } else {
                 new DeleteStoryTask().execute(this.mStoryID);
+                if (result == ServiceStatusCode.UNAUTHORIZED) {
+                    Intent navigationIntent = new Intent(CreateStoryActivity.this, LogInActivity.class);
+                    startActivity(navigationIntent);
+                    Button createStoryButton = findViewById(R.id.createStoryButton);
+                    createStoryButton.setEnabled(true);
+                }
+                else{
+                    String messageToDisplay = "Error al subir la historia. Intente de nuevo.";
+                    Snackbar snackbar = Snackbar
+                            .make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
+                    snackbar.show();
+
+                    Button createStoryButton = findViewById(R.id.createStoryButton);
+                    createStoryButton.setEnabled(true);
+                }
             }
         }
     }
@@ -229,16 +245,6 @@ public class CreateStoryActivity extends AppCompatActivity {
 
         protected String doInBackground(String... storyId) {
             return storyService.deleteStory(storyId[0]);
-        }
-
-        protected void onPostExecute(String result) {
-            String messageToDisplay = "Error al subir la historia. Intente de nuevo.";
-            Snackbar snackbar = Snackbar
-                    .make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
-            snackbar.show();
-
-            Button createStoryButton = findViewById(R.id.createStoryButton);
-            createStoryButton.setEnabled(true);
         }
     }
 }

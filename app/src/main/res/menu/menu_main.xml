@@ -20,7 +20,7 @@
         android:title="@string/messages_menu"/>
     <item
         android:id="@+id/friendship_requests"
-        android:icon="@drawable/ic_menu_allfriends"
+        android:icon="@android:drawable/ic_search_category_default"
         app:showAsAction="always"
         android:title="@string/friendship_menu"/>
     <item

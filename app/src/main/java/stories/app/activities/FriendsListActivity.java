@@ -70,6 +70,10 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
 
     }
 
+    @Override
+    public void onSendMessageClick(View v, int position) {
+    }
+
     protected class GetFriendsTask extends AsyncTask<String, Void, ArrayList<HashMap<String,String>>> {
         private FriendsService friendsService = new FriendsService();
 

@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import stories.app.R;
 import stories.app.models.Message;
@@ -25,6 +26,8 @@ public class DirectMessagesCreateActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        setTitle("Enviar Mensaje Nuevo");
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         Button sendMessageButton = this.findViewById(R.id.sendMessageButton);
         sendMessageButton.setOnClickListener(new DirectMessagesCreateActivity.SendMessageHandler());
@@ -47,7 +50,6 @@ public class DirectMessagesCreateActivity extends AppCompatActivity {
 
     protected class SendMessageTask extends AsyncTask<Message, Void, Message> {
         private MessagingService messagingService = new MessagingService();
-        private ChatService chatService = new ChatService();
 
         protected void onPreExecute() {
             Button sendMessageButton = findViewById(R.id.sendMessageButton);
@@ -62,9 +64,13 @@ public class DirectMessagesCreateActivity extends AppCompatActivity {
             Button sendMessageButton = findViewById(R.id.sendMessageButton);
             sendMessageButton.setEnabled(true);
 
-            if (result != null) {
-                // Navigate to Home page
-                Intent navigationIntent = new Intent(DirectMessagesCreateActivity.this, DirectMessagesActivity.class);
+            TextView sendMessageResult = findViewById(R.id.sendMessageResult);
+
+            if (result == null) {
+                sendMessageResult.setText(R.string.error_invalid_message);
+            } else {
+                Intent navigationIntent = new Intent(DirectMessagesCreateActivity.this, DirectMessagesConversationActivity.class);
+                navigationIntent.putExtra("friendUsername", result.to_username);
                 startActivity(navigationIntent);
             }
         }

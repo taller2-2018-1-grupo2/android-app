@@ -77,6 +77,10 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
         task.execute(recyclerViewAdapter.getItem(position).get("username"));
     }
 
+    @Override
+    public void onSendMessageClick(View v, int position) {
+    }
+
     protected class GetFriendshipRequestsReceived extends AsyncTask<String, Void, ArrayList<HashMap<String,String>>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
 

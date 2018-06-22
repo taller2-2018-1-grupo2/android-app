@@ -25,6 +25,7 @@
         android:paddingTop="6dp"
         android:textColor="@color/textPrimary"
         android:textSize="15sp"
+        android:text="Gonzalo Merino"
         android:textStyle="bold" />
 
     <TextView
@@ -35,6 +36,7 @@
         android:layout_centerHorizontal="true"
         android:paddingBottom="7dp"
         android:textSize="14sp"
+        android:text="gmerino92"
         android:textStyle="italic" />
 
     <ImageView

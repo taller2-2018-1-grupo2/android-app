@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import stories.app.models.Message;
+import stories.app.models.responses.ConversationResponse;
 import stories.app.models.responses.DirectMessageResponse;
 import stories.app.utils.Constants;
 
@@ -17,7 +18,7 @@ public class MessagingService {
     private Gson gson = new Gson();
 
 
-    public DirectMessageResponse getUserMessages(String username) {
+    public ConversationResponse getUserMessages(String username) {
         HttpURLConnection client = null;
         try {
             URL url = new URL(Constants.appServerURI + "/direct_message/" + username);
@@ -38,7 +39,7 @@ public class MessagingService {
             }
             String result = sb.toString();
 
-            DirectMessageResponse messages = gson.fromJson(result, DirectMessageResponse.class);
+            ConversationResponse messages = gson.fromJson(result, ConversationResponse.class);
 
             return messages;
         } catch (Exception exception) {

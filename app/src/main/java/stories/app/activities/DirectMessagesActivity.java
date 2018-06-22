@@ -22,7 +22,9 @@ import stories.app.adapters.ConversationsRecyclerViewAdapter;
 import stories.app.adapters.DirectMessagesAdapter;
 import stories.app.adapters.MessageHolder;
 import stories.app.adapters.MessagesRecyclerViewAdapter;
+import stories.app.models.ConversationDMResponse;
 import stories.app.models.Message;
+import stories.app.models.responses.ConversationResponse;
 import stories.app.services.MessagingService;
 import stories.app.utils.LocalStorage;
 
@@ -32,7 +34,7 @@ public class DirectMessagesActivity extends AppCompatActivity implements Convers
     private RecyclerView recyclerView;
     private ConversationsRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private ArrayList<Message> dataset = new ArrayList<Message>();
+    private ArrayList<ConversationDMResponse> dataset = new ArrayList<ConversationDMResponse>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,7 @@ public class DirectMessagesActivity extends AppCompatActivity implements Convers
         recyclerView = findViewById(R.id.conversations_recycler_view);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewAdapter = new ConversationsRecyclerViewAdapter(this, dataset, "conversation_list");
+        recyclerViewAdapter = new ConversationsRecyclerViewAdapter(this, dataset);
         recyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
@@ -89,15 +91,15 @@ public class DirectMessagesActivity extends AppCompatActivity implements Convers
         return super.onOptionsItemSelected(item);
     }
 
-    protected class GetUserMessagesTask extends AsyncTask<String, Void, ArrayList<Message>> {
+    protected class GetUserMessagesTask extends AsyncTask<String, Void, ArrayList<ConversationDMResponse>> {
         protected void onPreExecute() {
         }
 
-        protected ArrayList<Message> doInBackground(String... params) {
+        protected ArrayList<ConversationDMResponse> doInBackground(String... params) {
             return messagingService.getUserMessages(params[0]).direct_messages;
         }
 
-        protected void onPostExecute(ArrayList<Message> result) {
+        protected void onPostExecute(ArrayList<ConversationDMResponse> result) {
             if(result != null) {
                 dataset.clear();
                 for (int i = 0; i < result.size(); i++) {

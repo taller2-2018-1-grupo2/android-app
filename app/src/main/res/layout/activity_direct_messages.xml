@@ -11,10 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary_material_light"
-        android:textColor="@color/textPrimary"
         android:elevation="4dp"
+        android:textColor="@color/textPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat" >
+        app:popupTheme="@style/ThemeOverlay.AppCompat">
 
         <TextView
             android:id="@+id/toolbar_title"
@@ -22,35 +22,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chat"
-            android:textSize="25sp"
-            android:textColor="@color/textPrimary"/>
+            android:textColor="@color/textPrimary"
+            android:textSize="25sp" />
 
     </android.support.v7.widget.Toolbar>
-
-    <SearchView
-        android:id="@+id/messages_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.108"></SearchView>
-
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/conversations_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="500dp"
+        android:layout_marginTop="15dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.807" />
 
 </android.support.constraint.ConstraintLayout>

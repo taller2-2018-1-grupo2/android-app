@@ -12,22 +12,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import stories.app.R;
+import stories.app.models.ConversationDMResponse;
 import stories.app.models.Message;
+import stories.app.utils.Base64UtilityClass;
 
 public class ConversationsRecyclerViewAdapter extends RecyclerView.Adapter<ConversationsRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Message> mData;
+    private ArrayList<ConversationDMResponse> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     private String type;
-    private static String DATE_FORMAT = "dd MMM yyyy HH:mm";
+    private static String DATE_FORMAT = "dd MMM HH:mm";
 
     // data is passed into the constructor
-    public ConversationsRecyclerViewAdapter(Context context, ArrayList<Message> data, String type) {
+    public ConversationsRecyclerViewAdapter(Context context, ArrayList<ConversationDMResponse> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
-        this.type = type;
     }
 
     // inflates the row layout from xml when needed
@@ -35,11 +37,7 @@ public class ConversationsRecyclerViewAdapter extends RecyclerView.Adapter<Conve
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int recyclerRow;
 
-        if (type == "chat") {
-            recyclerRow = R.layout.recycler_row_messages;
-        } else {
-            recyclerRow = R.layout.recycler_row_conversations;
-        }
+        recyclerRow = R.layout.recycler_row_conversations;
 
         View view = mInflater.inflate(recyclerRow, parent, false);
         return new ConversationsRecyclerViewAdapter.ViewHolder(view);
@@ -48,20 +46,19 @@ public class ConversationsRecyclerViewAdapter extends RecyclerView.Adapter<Conve
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String username, message;
+        String name, message, profilePicString;
         Long timestamp;
 
-        if (type == "chat") {
-            username = mData.get(position).from_username;
-            message = mData.get(position).message;
-            timestamp = mData.get(position).timestamp;
-        } else {
-            username = mData.get(position).to_username;
-            message = mData.get(position).message;
-            timestamp = mData.get(position).timestamp;
+        name = mData.get(position).name;
+        message = mData.get(position).message;
+        timestamp = mData.get(position).timestamp;
+        profilePicString = mData.get(position).profile_pic;
+
+        if (!profilePicString.isEmpty()) {
+            holder.profilePicImageView.setImageBitmap(Base64UtilityClass.toBitmap(profilePicString));
         }
 
-        holder.usernameTextView.setText(username);
+        holder.nameTextView.setText(name);
         holder.messageTextView.setText(message);
         holder.timestampTextView.setText(new SimpleDateFormat(DATE_FORMAT).format(new Date(timestamp)));
     }
@@ -75,16 +72,17 @@ public class ConversationsRecyclerViewAdapter extends RecyclerView.Adapter<Conve
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView usernameTextView;
+        TextView nameTextView;
         TextView messageTextView;
         TextView timestampTextView;
-        LinearLayout conversationRow;
+        CircleImageView profilePicImageView;
 
         ViewHolder(View itemView) {
             super(itemView);
-            usernameTextView = itemView.findViewById(R.id.message_item_title);
+            nameTextView = itemView.findViewById(R.id.message_item_title);
             messageTextView = itemView.findViewById(R.id.message_item_text);
             timestampTextView = itemView.findViewById(R.id.message_item_timestamp);
+            profilePicImageView = itemView.findViewById(R.id.message_item_profile_pic);
 
             itemView.setOnClickListener(this);
         }
@@ -96,7 +94,7 @@ public class ConversationsRecyclerViewAdapter extends RecyclerView.Adapter<Conve
     }
 
     // convenience method for getting data at click position
-    public Message getItem(int id) {
+    public ConversationDMResponse getItem(int id) {
         return mData.get(id);
     }
 

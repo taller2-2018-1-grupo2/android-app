@@ -71,9 +71,9 @@ public class MessagingService {
             }
             String result = sb.toString();
 
-            DirectMessageResponse messages = gson.fromJson(result, DirectMessageResponse.class);
+            DirectMessageResponse response = gson.fromJson(result, DirectMessageResponse.class);
 
-            return messages;
+            return response;
         } catch (Exception exception) {
             return null;
         } finally {

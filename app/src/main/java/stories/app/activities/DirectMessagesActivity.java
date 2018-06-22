@@ -18,6 +18,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import java.util.ArrayList;
 
 import stories.app.R;
+import stories.app.adapters.ConversationsRecyclerViewAdapter;
 import stories.app.adapters.DirectMessagesAdapter;
 import stories.app.adapters.MessageHolder;
 import stories.app.adapters.MessagesRecyclerViewAdapter;
@@ -25,11 +26,11 @@ import stories.app.models.Message;
 import stories.app.services.MessagingService;
 import stories.app.utils.LocalStorage;
 
-public class DirectMessagesActivity extends AppCompatActivity implements MessagesRecyclerViewAdapter.ItemClickListener{
+public class DirectMessagesActivity extends AppCompatActivity implements ConversationsRecyclerViewAdapter.ItemClickListener{
 
     private MessagingService messagingService;
     private RecyclerView recyclerView;
-    private MessagesRecyclerViewAdapter recyclerViewAdapter;
+    private ConversationsRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private ArrayList<Message> dataset = new ArrayList<Message>();
 
@@ -49,7 +50,7 @@ public class DirectMessagesActivity extends AppCompatActivity implements Message
         recyclerView = findViewById(R.id.conversations_recycler_view);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewAdapter = new MessagesRecyclerViewAdapter(this, dataset, "conversation_list");
+        recyclerViewAdapter = new ConversationsRecyclerViewAdapter(this, dataset, "conversation_list");
         recyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(recyclerViewAdapter);
 

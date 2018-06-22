@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorError">#ed666b</color>
     <color name="accent_material_light">#ed666b</color>
+    <color name="sent_message_bubble">#8ec28f</color>
     <color name="textPrimary">#24282a</color>
     <color name="textColorSecondary">#24282a</color>
     <color name="primary_dark_material_light">#757575</color>

@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,18 +19,22 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import stories.app.R;
 import stories.app.adapters.ConversationMessagesAdapter;
 import stories.app.adapters.MessagesRecyclerViewAdapter;
 import stories.app.adapters.UsersRecyclerViewAdapter;
 import stories.app.models.Message;
 import stories.app.models.User;
+import stories.app.models.UserDMResponse;
+import stories.app.models.responses.DirectMessageResponse;
 import stories.app.services.ChatInstanceIDService;
 import stories.app.services.ChatService;
 import stories.app.services.MessagingService;
+import stories.app.utils.Base64UtilityClass;
 import stories.app.utils.LocalStorage;
 
-public class DirectMessagesConversationActivity extends AppCompatActivity implements MessagesRecyclerViewAdapter.ItemClickListener{
+public class DirectMessagesConversationActivity extends AppCompatActivity {
 
     private MessagingService messagingService;
     private String friendUsername;
@@ -39,6 +45,10 @@ public class DirectMessagesConversationActivity extends AppCompatActivity implem
     private final Handler handler = new Handler();
     private final int delay = 3000;
     public Runnable fetchConversationMessages;
+    private boolean infoAlreadySet = false;
+
+    private LayoutInflater mInflater;
+    private ActionBar mActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +64,16 @@ public class DirectMessagesConversationActivity extends AppCompatActivity implem
         Intent myIntent = getIntent();
         friendUsername = myIntent.getStringExtra("friendUsername");
 
-        setTitle(friendUsername);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        TextView toolbarTitle = (TextView) this.findViewById(R.id.toolbar_title);
-        toolbarTitle.setText(friendUsername);
+        mActionBar = getSupportActionBar();
+        mActionBar.setDisplayShowHomeEnabled(false);
+        mActionBar.setDisplayShowTitleEnabled(false);
+        mInflater = LayoutInflater.from(this);
 
         // set up the RecyclerView
         recyclerView = findViewById(R.id.messages_recycler_view);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewAdapter = new MessagesRecyclerViewAdapter(this, dataset, "chat");
-        recyclerViewAdapter.setClickListener(this);
+        recyclerViewAdapter = new MessagesRecyclerViewAdapter(this, dataset);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         // Retrieve all visible messages to the user
@@ -88,6 +97,7 @@ public class DirectMessagesConversationActivity extends AppCompatActivity implem
     protected void onPause() {
         super.onPause();
         handler.removeCallbacks(fetchConversationMessages);
+        infoAlreadySet = false;
     }
 
     protected class SendMessageClickHandler implements View.OnClickListener {
@@ -102,10 +112,6 @@ public class DirectMessagesConversationActivity extends AppCompatActivity implem
 
             new SendMessageTask().execute(message);
         }
-    }
-
-    @Override
-    public void onItemClick(View view, int position) {
     }
 
     protected class SendMessageTask extends AsyncTask<Message, Void, Message> {
@@ -131,21 +137,43 @@ public class DirectMessagesConversationActivity extends AppCompatActivity implem
         }
     }
 
-    protected class FetchConversationTask extends AsyncTask<String, Void, ArrayList<Message>> {
+    protected class FetchConversationTask extends AsyncTask<String, Void, DirectMessageResponse> {
         protected void onPreExecute() {
         }
 
-        protected ArrayList<Message> doInBackground(String... params) {
-            return messagingService.getConversationMessages(params[0], params[1]).direct_messages;
+        protected DirectMessageResponse doInBackground(String... params) {
+            return messagingService.getConversationMessages(params[0], params[1]);
         }
 
-        protected void onPostExecute(ArrayList<Message> result) {
+        protected void onPostExecute(DirectMessageResponse result) {
             if(result != null) {
                 dataset.clear();
-                for (int i = 0; i < result.size(); i++) {
-                    dataset.add(result.get(i));
+                for (int i = 0; i < result.direct_messages.size(); i++) {
+                    dataset.add(result.direct_messages.get(i));
                 }
                 recyclerViewAdapter.notifyDataSetChanged();
+                LinearLayoutManager rvLayoutManager = (LinearLayoutManager) recyclerViewLayoutManager;
+                rvLayoutManager.setStackFromEnd(true);
+
+                if (!infoAlreadySet) {
+                    View mCustomView = mInflater.inflate(R.layout.dm_custom_toolbar, null);
+
+                    UserDMResponse user = result.user;
+                    TextView toolbarNameView = mCustomView.findViewById(R.id.toolbar_name);
+                    TextView toolbarUsernameView = mCustomView.findViewById(R.id.toolbar_username);
+                    CircleImageView toolbarProfilePicView = mCustomView.findViewById(R.id.toolbar_profile_pic);
+
+                    toolbarNameView.setText(user.name);
+                    toolbarUsernameView.setText(user.username);
+
+                    if (!user.profile_pic.isEmpty()) {
+                        toolbarProfilePicView.setImageBitmap(Base64UtilityClass.toBitmap(user.profile_pic));
+                    }
+
+                    mActionBar.setCustomView(mCustomView);
+                    mActionBar.setDisplayShowCustomEnabled(true);
+                    infoAlreadySet = true;
+                }
             }
         }
     }

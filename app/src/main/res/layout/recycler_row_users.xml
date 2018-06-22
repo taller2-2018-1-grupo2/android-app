@@ -18,10 +18,11 @@
 
     <TextView
         android:id="@+id/full_name"
-        android:layout_width="230dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="7dp"
+        android:layout_toEndOf="@+id/recycler_view_row_profile_pic"
         android:paddingTop="6dp"
         android:textColor="@color/textPrimary"
         android:textSize="15sp"
@@ -29,14 +30,25 @@
 
     <TextView
         android:id="@+id/username"
-        android:layout_width="230dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/recycler_view_row_profile_pic"
-        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="7dp"
+        android:layout_toEndOf="@+id/recycler_view_row_profile_pic"
         android:paddingBottom="7dp"
         android:textSize="14sp"
         android:textStyle="italic" />
 
+    <ImageView
+        android:id="@+id/send_message"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/add_user"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:padding="2dp"
+        app:srcCompat="@drawable/ic_menu_send" />
 
     <ImageView
         android:id="@+id/add_user"

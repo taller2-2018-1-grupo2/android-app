@@ -59,7 +59,6 @@ public class HomeActivity extends AppCompatActivity {
                 navigationIntent = new Intent(HomeActivity.this, CreateStoryActivity.class);
                 startActivity(navigationIntent);
                 return true;
-
             case R.id.profile_menu:
                 navigationIntent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(navigationIntent);

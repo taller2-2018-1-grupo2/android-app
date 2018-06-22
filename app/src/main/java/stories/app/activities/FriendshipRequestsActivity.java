@@ -102,6 +102,13 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
         task.execute(recyclerViewAdapter.getItem(position).get("username"));
     }
 
+    @Override
+    public void onSendMessageClick(View v, int position) {
+        Intent navigationIntent = new Intent(FriendshipRequestsActivity.this, DirectMessagesConversationActivity.class);
+        navigationIntent.putExtra("friendUsername", recyclerViewAdapter.getItem(position).get("username"));
+        startActivity(navigationIntent);
+    }
+
     protected class GetUsersTask extends AsyncTask<String, Void, ArrayList<HashMap<String,String>>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
 

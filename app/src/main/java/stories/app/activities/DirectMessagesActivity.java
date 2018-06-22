@@ -18,17 +18,23 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import java.util.ArrayList;
 
 import stories.app.R;
+import stories.app.adapters.ConversationsRecyclerViewAdapter;
 import stories.app.adapters.DirectMessagesAdapter;
 import stories.app.adapters.MessageHolder;
+import stories.app.adapters.MessagesRecyclerViewAdapter;
+import stories.app.models.ConversationDMResponse;
 import stories.app.models.Message;
+import stories.app.models.responses.ConversationResponse;
 import stories.app.services.MessagingService;
 import stories.app.utils.LocalStorage;
 
-public class DirectMessagesActivity extends AppCompatActivity {
+public class DirectMessagesActivity extends AppCompatActivity implements ConversationsRecyclerViewAdapter.ItemClickListener{
 
     private MessagingService messagingService;
-    private DirectMessagesAdapter directMessagesAdapter;
-    private ListView messageList;
+    private RecyclerView recyclerView;
+    private ConversationsRecyclerViewAdapter recyclerViewAdapter;
+    private RecyclerView.LayoutManager recyclerViewLayoutManager;
+    private ArrayList<ConversationDMResponse> dataset = new ArrayList<ConversationDMResponse>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +45,27 @@ public class DirectMessagesActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        messageList = (ListView) findViewById(R.id.messages_list_view);
 
         this.messagingService = new MessagingService();
 
+        // set up the RecyclerView
+        recyclerView = findViewById(R.id.conversations_recycler_view);
+        recyclerViewLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(recyclerViewLayoutManager);
+        recyclerViewAdapter = new ConversationsRecyclerViewAdapter(this, dataset);
+        recyclerViewAdapter.setClickListener(this);
+        recyclerView.setAdapter(recyclerViewAdapter);
+
         // Retrieve all visible messages to the user
         new GetUserMessagesTask().execute(LocalStorage.getUser().username);
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        Intent intent = new Intent(DirectMessagesActivity.this, DirectMessagesConversationActivity.class);
+        intent.putExtra("friendUsername", recyclerViewAdapter.getItem(position)._id);
+        //based on item add info to intent
+        startActivity(intent);
     }
 
     @Override
@@ -62,34 +83,30 @@ public class DirectMessagesActivity extends AppCompatActivity {
             navigationIntent = new Intent(DirectMessagesActivity.this, DirectMessagesCreateActivity.class);
             startActivity(navigationIntent);
             return true;
-
+        } else if (itemId == R.id.user_search) {
+            navigationIntent = new Intent(DirectMessagesActivity.this, FriendshipRequestsActivity.class);
+            startActivity(navigationIntent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    protected class GetUserMessagesTask extends AsyncTask<String, Void, ArrayList<Message>> {
+    protected class GetUserMessagesTask extends AsyncTask<String, Void, ArrayList<ConversationDMResponse>> {
         protected void onPreExecute() {
         }
 
-        protected ArrayList<Message> doInBackground(String... params) {
+        protected ArrayList<ConversationDMResponse> doInBackground(String... params) {
             return messagingService.getUserMessages(params[0]).direct_messages;
         }
 
-        protected void onPostExecute(ArrayList<Message> result) {
-            directMessagesAdapter = new DirectMessagesAdapter(DirectMessagesActivity.this, result);
-            messageList.setAdapter(directMessagesAdapter);
-            messageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapter, View v, int position, long itemId) {
-                    // ItemClicked item = adapter.getItemAtPosition(position);
-                    Message message = (Message) messageList.getAdapter().getItem(position);
-
-                    Intent intent = new Intent(DirectMessagesActivity.this, DirectMessagesConversationActivity.class);
-                    intent.putExtra("friendUsername", message._id);
-                    //based on item add info to intent
-                    startActivity(intent);
+        protected void onPostExecute(ArrayList<ConversationDMResponse> result) {
+            if(result != null) {
+                dataset.clear();
+                for (int i = 0; i < result.size(); i++) {
+                    dataset.add(result.get(i));
                 }
-            });
+                recyclerViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 

@@ -5,7 +5,6 @@ import stories.app.models.User;
 public class LocalStorage {
 
     private static User user;
-    private static String username;
 
     public static void setUser(User user) {
         LocalStorage.user = user;

@@ -41,29 +41,6 @@ public class Story {
         return likedByUser;
     }
 
-    public void addLike(String userId) {
-        this.likes.put(userId);
-    }
-
-    public void removeLike(String userId) {
-        int userIdIndex = -1;
-
-        for(int i = 0; i < this.likes.length(); i++) {
-            try {
-                if (userId.equals(this.likes.getString(i))) {
-                    userIdIndex = i;
-                    break;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (userIdIndex != -1 && userIdIndex < this.likes.length()) {
-            this.likes.remove(userIdIndex);
-        }
-    }
-
     //outgoing and incoming stories are different, consider refactor
     public static Story fromJsonObject(JSONObject storyJson) throws JSONException {
         Story story = new Story();

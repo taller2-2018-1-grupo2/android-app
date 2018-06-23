@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import stories.app.models.Story;
+import stories.app.models.User;
 import stories.app.utils.Constants;
 import stories.app.utils.LocalStorage;
 
@@ -126,6 +127,49 @@ public class StoryService extends BaseService {
         }
     }
 
+    public Story addComment(String storyId, User user, String commentText) {
+        HttpURLConnection client = null;
+
+        try {
+            URL url = new URL(Constants.appServerURI + "/stories/" + storyId);
+            client = (HttpURLConnection) url.openConnection();
+            client.setRequestMethod("PATCH");
+            client.setRequestProperty("Content-Type", "application/json");
+            client.setRequestProperty("Accept", "application/json");
+
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("op", "add");
+            requestBody.put("path", "/comments");
+
+            JSONObject value = new JSONObject();
+            value.put("user_id", user.id);
+            value.put("username", user.username);
+            value.put("text", commentText);
+            requestBody.put("value", value);
+
+            OutputStream outputStream = client.getOutputStream();
+            outputStream.write(requestBody.toString().getBytes("UTF-8"));
+            outputStream.close();
+
+            client.connect();
+
+            JSONObject result = this.getResponseResult(client);
+
+            if (result == null) {
+                return null;
+            }
+
+            Story newStory = Story.fromJsonObject(result);
+            return newStory;
+        } catch (Exception exception) {
+            return null;
+        } finally {
+            if (client != null) {
+                client.disconnect();
+            }
+        }
+    }
+
     public String deleteStory(String storyID) {
         HttpURLConnection client = null;
 
@@ -149,20 +193,8 @@ public class StoryService extends BaseService {
 
             return response;
 
-        } catch(MalformedURLException error) {
+        } catch(Exception error) {
             //Handles an incorrectly entered URL
-            return null;
-        }
-        catch(SocketTimeoutException error) {
-            //Handles URL access timeout.
-            return null;
-        }
-        catch (IOException error) {
-            //Handles input and output errors
-            return null;
-        }
-        catch (JSONException error) {
-            //Handles JSON errors
             return null;
         }
         finally {

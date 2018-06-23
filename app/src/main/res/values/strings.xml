@@ -22,7 +22,6 @@
     <string name="stories_map">Ver en Mapa</string>
     <string name="logout">Cerrar sesión</string>
 
-
     <!-- Strings related to Create Story -->
     <string name="prompt_title">Título</string>
     <string name="prompt_description">Descripción</string>
@@ -40,8 +39,12 @@
     <string name="facebook_app_id">1039303862894248</string>
     <string name="fb_login_protocol_scheme">fb1039303862894248</string>
 
-    <!-- Strings related to Images Filters -->
+    <!-- Strings related to Stories in Home -->
+    <string name="new_comment">Agregar un comentario...</string>
 
+
+
+    <!-- Strings related to Images Filters -->
     <string name="activity_title_main">Filtros</string>
     <string name="action_settings">Settings</string>
     <string name="filters">FILTROS</string>
@@ -52,7 +55,6 @@
     <string name="lbl_saturation">SATURACION</string>
     <string name="tab_filters">FILTROS</string>
     <string name="tab_edit">EDITAR</string>
-
 
     <string name="roboto_medium">sans-serif-medium</string>
     <string name="filter_normal">Normal</string>

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import stories.app.R;
 import stories.app.models.Story;
+import stories.app.models.User;
 import stories.app.services.StoryService;
 import stories.app.utils.LocalStorage;
 
@@ -56,8 +57,14 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         holder.description.setText(story.description);
         holder.description.setVisibility(story.description.length() > 0 ? View.VISIBLE : View.GONE);
 
+        // Likes
         holder.setLikeCount(story);
         holder.updateLikeButton(story);
+
+        // Comments
+        User currentUser = LocalStorage.getUser();
+        this.setImageFromUrl(currentUser.profilePic, holder.newCommentUserPic, R.drawable.profile_placeholder);
+        holder.postCommentButton.setOnClickListener(new PostCommentButtonOnClickHandler(story, holder));
     }
 
     private void setImageFromUrl(String url, ImageView imageView, int placeholderResId) {
@@ -95,7 +102,10 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         TextView likeCount;
 
         ImageView likeButton;
-        ImageView commentsButton;
+
+        ImageView newCommentUserPic;
+        TextView newComment;
+        ImageView postCommentButton;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -107,6 +117,10 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             this.likeCount = itemView.findViewById(R.id.stories_item_like_count);
 
             this.likeButton = itemView.findViewById(R.id.stories_item_like_button);
+
+            this.newCommentUserPic = itemView.findViewById(R.id.stories_item_new_comment_userpic);
+            this.newComment = itemView.findViewById(R.id.stories_item_new_comment_text);
+            this.postCommentButton = itemView.findViewById(R.id.stories_item_new_comment_button);
         }
 
         private void setLikeCount(Story story) {
@@ -156,14 +170,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
         public void onClick(View v) {
             String currentUserId = LocalStorage.getUser().id;
-            String operation = "";
-            if (this.story.isLikedByUser(currentUserId)) {
-                this.story.removeLike(currentUserId);
-                operation = "remove";
-            } else {
-                this.story.addLike(currentUserId);
-                operation = "add";
-            }
+            String operation = this.story.isLikedByUser(currentUserId) ? "remove" : "add";
 
             // Update story in the backend
             new UpdateStoryLikesToUserTask(this.holder).execute(this.story.id, currentUserId, operation);
@@ -194,6 +201,59 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             // Update like button (UI) with new story
             this.holder.setLikeCount(newStory);
             this.holder.updateLikeButton(newStory);
+        }
+    }
+
+    protected class PostCommentButtonOnClickHandler implements View.OnClickListener {
+        private Story story;
+        private StoriesAdapter.ViewHolder holder;
+
+        PostCommentButtonOnClickHandler(Story story, StoriesAdapter.ViewHolder holder) {
+            this.story = story;
+            this.holder = holder;
+        }
+
+        public void onClick(View v) {
+            User currentUser = LocalStorage.getUser();
+            String commentText = this.holder.newComment.getText().toString();
+
+            if (commentText.length() > 0) {
+                // Update story in the backend
+                new AddStoryCommentTask(this.holder).execute(this.story.id, currentUser, commentText);
+            }
+        }
+    }
+
+    protected class AddStoryCommentTask extends AsyncTask<Object, Void, Story> {
+        private StoryService storyService;
+        private StoriesAdapter.ViewHolder holder;
+
+        public AddStoryCommentTask(StoriesAdapter.ViewHolder holder) {
+            this.storyService = new StoryService();
+            this.holder = holder;
+        }
+
+        protected void onPreExecute() {
+            // Disable Post comment elements in the UI
+            this.holder.newComment.setEnabled(false);
+            this.holder.postCommentButton.setEnabled(false);
+            this.holder.postCommentButton.setImageResource(R.drawable.ic_story_comment_disabled);
+        }
+
+        protected Story doInBackground(Object... params) {
+            String storyId = (String)params[0];
+            User user = (User)params[1];
+            String commentText = (String)params[2];
+            return storyService.addComment(storyId, user, commentText);
+        }
+
+        protected void onPostExecute(Story newStory) {
+
+            // Enable Post comment elements in the UI and clean up the field
+            this.holder.newComment.setText("");
+            this.holder.newComment.setEnabled(true);
+            this.holder.postCommentButton.setEnabled(true);
+            this.holder.postCommentButton.setImageResource(R.drawable.ic_story_comment);
         }
     }
 }

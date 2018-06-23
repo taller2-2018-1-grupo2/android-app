@@ -1,16 +1,13 @@
 package stories.app.services;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import stories.app.models.User;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.utils.Constants;
 import stories.app.utils.LocalStorage;
 
@@ -18,7 +15,7 @@ public class AuthenticationService extends BaseService {
 
     private String URL = Constants.appServerURI;
 
-    public User loginUser(String username, String password) {
+    public ServiceResponse<User> loginUser(String username, String password) {
         HttpURLConnection client = null;
 
         try {
@@ -51,9 +48,9 @@ public class AuthenticationService extends BaseService {
             // Saving token for future sends
             LocalStorage.setToken(result.getJSONObject("token").getString("token"));
 
-            return user;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, user);
         } catch(Exception exception) {
-            return null;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
             if(client != null) {
                 client.disconnect();
@@ -61,7 +58,7 @@ public class AuthenticationService extends BaseService {
         }
     }
 
-    public User signinUser(User user, String password) {
+    public ServiceResponse<User> signinUser(User user, String password) {
         HttpURLConnection client = null;
 
         try {
@@ -95,9 +92,9 @@ public class AuthenticationService extends BaseService {
             // Saving token for future sends
             LocalStorage.setToken(result.getJSONObject("token").getString("token"));
 
-            return signedInUser;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, signedInUser);
         } catch(Exception exception) {
-            return null;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
             if(client != null) {
                 client.disconnect();
@@ -105,7 +102,7 @@ public class AuthenticationService extends BaseService {
         }
     }
 
-    public User fbLoginUser(String username, String name, String pictureURL, String email, String firebaseToken) {
+    public ServiceResponse<User> fbLoginUser(String username, String name, String pictureURL, String email, String firebaseToken) {
         HttpURLConnection client = null;
 
         try {
@@ -140,9 +137,9 @@ public class AuthenticationService extends BaseService {
             JSONObject jsonUser = result.getJSONObject("user");
             LocalStorage.setUsername(jsonUser.getString("username"));
 
-            return user;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, user);
         } catch(Exception exception) {
-            return null;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
             if(client != null) {
                 client.disconnect();

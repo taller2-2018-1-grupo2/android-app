@@ -14,13 +14,14 @@ import java.util.Map;
 
 import stories.app.R;
 import stories.app.activities.DirectMessagesActivity;
+import stories.app.activities.FriendsListActivity;
 import stories.app.activities.FriendshipRequestsReceivedActivity;
 import stories.app.activities.HomeActivity;
 
 public class ChatService extends FirebaseMessagingService {
 
     private enum NotificationType {
-        MESSAGE("message"), FRIENDSHIP_REQUEST("friendship_request"), STORY("story");
+        MESSAGE("message"), FRIENDSHIP_REQUEST("friendship_request"), FRIENDSHIP_REQUEST_ACCEPTED("friendship_request_accepted"), STORY("story");
 
         private String name;
 
@@ -66,6 +67,9 @@ public class ChatService extends FirebaseMessagingService {
                 break;
             case FRIENDSHIP_REQUEST:
                 intent = new Intent(this, FriendshipRequestsReceivedActivity.class);
+                break;
+            case FRIENDSHIP_REQUEST_ACCEPTED:
+                intent = new Intent(this, FriendsListActivity.class);
                 break;
             case MESSAGE:
             default:

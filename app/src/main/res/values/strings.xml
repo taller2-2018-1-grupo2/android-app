@@ -20,6 +20,7 @@
     <string name="friendship_menu">Solicitudes de amistad</string>
     <string name="profile_menu">Perfil</string>
     <string name="stories_map">Ver en Mapa</string>
+    <string name="logout">Cerrar sesión</string>
 
 
     <!-- Strings related to Create Story -->

@@ -75,6 +75,10 @@ public class HomeActivity extends AppCompatActivity {
                 navigationIntent = new Intent(HomeActivity.this, StoriesMapActivity.class);
                 startActivity(navigationIntent);
                 return true;
+            case R.id.logout:
+                navigationIntent = new Intent(HomeActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
+                return true;
 //            case R.id.chat:
 //                navigationIntent = new Intent(HomeActivity.this, ChatActivity.class);
 //                startActivity(navigationIntent);

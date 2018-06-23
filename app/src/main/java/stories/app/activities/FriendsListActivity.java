@@ -1,5 +1,6 @@
 package stories.app.activities;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -90,6 +91,10 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
                     dataset.add(result.get(i));
                 }
                 recyclerViewAdapter.notifyDataSetChanged();
+            }
+            else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(FriendsListActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
             }
         }
     }

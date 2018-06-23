@@ -163,6 +163,9 @@ public class ProfileActivity extends AppCompatActivity {
                 } catch (JSONException error) {
                     //Handle JSON Exceptions
                 }
+            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(ProfileActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
             }
         }
     }
@@ -202,6 +205,10 @@ public class ProfileActivity extends AppCompatActivity {
                 applyChangesButton.setEnabled(true);
 
                 Toast.makeText(this.context, "Datos Actualizados.", Toast.LENGTH_SHORT).show();
+            }
+            else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(ProfileActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
             }
         }
     }

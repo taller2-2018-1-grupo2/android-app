@@ -126,6 +126,10 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
                 }
                 recyclerViewAdapter.notifyDataSetChanged();
             }
+            else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(FriendshipRequestsActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
+            }
         }
     }
 
@@ -162,6 +166,9 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
                     }
                     recyclerViewAdapter.notifyDataSetChanged();
                 }
+            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(FriendshipRequestsActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
             }
         }
     }

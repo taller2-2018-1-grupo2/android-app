@@ -119,6 +119,9 @@ public class HomeActivity extends AppCompatActivity {
                 // Display quick stories
                 RecyclerView quickStoriesList = (RecyclerView) findViewById(R.id.quickStoriesList);
                 quickStoriesList.setAdapter(new QuickStoriesAdapter(HomeActivity.this, quickStories));
+            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(HomeActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
             }
         }
     }

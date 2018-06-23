@@ -172,6 +172,9 @@ public class DirectMessagesConversationActivity extends AppCompatActivity {
                         infoAlreadySet = true;
                     }
                 }
+            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(DirectMessagesConversationActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
             }
         }
     }

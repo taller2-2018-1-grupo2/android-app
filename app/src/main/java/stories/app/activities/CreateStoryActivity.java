@@ -198,7 +198,7 @@ public class CreateStoryActivity extends AppCompatActivity {
         }
     }
 
-    protected class UploadFileTask extends AsyncTask<String, Void, ServiceResponse> {
+    protected class UploadFileTask extends AsyncTask<String, Void, ServiceResponse<Story>> {
         private File file;
         private FileService fileService = new FileService();
         private String mStoryID;
@@ -207,12 +207,12 @@ public class CreateStoryActivity extends AppCompatActivity {
             this.file = new File(filePath);
         }
 
-        protected ServiceResponse doInBackground(String... storyId) {
+        protected ServiceResponse<Story> doInBackground(String... storyId) {
             this.mStoryID = storyId[0];
             return fileService.uploadFileToStory(storyId[0], this.file);
         }
 
-        protected void onPostExecute(ServiceResponse response) {
+        protected void onPostExecute(ServiceResponse<Story> response) {
             ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
             if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
                 // Navigate to Home page

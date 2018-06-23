@@ -73,6 +73,10 @@ public class DirectMessagesCreateActivity extends AppCompatActivity {
                 navigationIntent.putExtra("friendUsername", result.to_username);
                 startActivity(navigationIntent);
             }
+            else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(DirectMessagesCreateActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
+            }
             else{
                 sendMessageResult.setText(R.string.error_invalid_message);
             }

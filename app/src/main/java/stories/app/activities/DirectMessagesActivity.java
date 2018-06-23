@@ -103,6 +103,9 @@ public class DirectMessagesActivity extends AppCompatActivity implements Convers
                     }
                     recyclerViewAdapter.notifyDataSetChanged();
                 }
+            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(DirectMessagesActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
             }
         }
     }

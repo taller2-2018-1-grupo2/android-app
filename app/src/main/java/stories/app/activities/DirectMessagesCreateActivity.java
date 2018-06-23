@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import stories.app.R;
 import stories.app.models.Message;
-import stories.app.services.ChatService;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.services.MessagingService;
 import stories.app.utils.LocalStorage;
 
@@ -48,7 +48,7 @@ public class DirectMessagesCreateActivity extends AppCompatActivity {
         }
     }
 
-    protected class SendMessageTask extends AsyncTask<Message, Void, Message> {
+    protected class SendMessageTask extends AsyncTask<Message, Void, ServiceResponse<Message>> {
         private MessagingService messagingService = new MessagingService();
 
         protected void onPreExecute() {
@@ -56,22 +56,29 @@ public class DirectMessagesCreateActivity extends AppCompatActivity {
             sendMessageButton.setEnabled(false);
         }
 
-        protected Message doInBackground(Message... params) {
+        protected ServiceResponse<Message> doInBackground(Message... params) {
             return messagingService.sendMessage(params[0]);
         }
 
-        protected void onPostExecute(Message result) {
+        protected void onPostExecute(ServiceResponse<Message> response) {
             Button sendMessageButton = findViewById(R.id.sendMessageButton);
             sendMessageButton.setEnabled(true);
 
             TextView sendMessageResult = findViewById(R.id.sendMessageResult);
 
-            if (result == null) {
-                sendMessageResult.setText(R.string.error_invalid_message);
-            } else {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS){
+                Message result = response.getServiceResponse();
                 Intent navigationIntent = new Intent(DirectMessagesCreateActivity.this, DirectMessagesConversationActivity.class);
                 navigationIntent.putExtra("friendUsername", result.to_username);
                 startActivity(navigationIntent);
+            }
+            else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(DirectMessagesCreateActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
+            }
+            else{
+                sendMessageResult.setText(R.string.error_invalid_message);
             }
         }
     }

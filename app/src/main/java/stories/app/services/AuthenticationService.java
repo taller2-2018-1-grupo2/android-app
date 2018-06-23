@@ -1,16 +1,13 @@
 package stories.app.services;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import stories.app.models.User;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.utils.Constants;
 import stories.app.utils.LocalStorage;
 
@@ -18,7 +15,7 @@ public class AuthenticationService extends BaseService {
 
     private String URL = Constants.appServerURI;
 
-    public User loginUser(String username, String password) {
+    public ServiceResponse<User> loginUser(String username, String password) {
         HttpURLConnection client = null;
 
         try {
@@ -43,13 +40,16 @@ public class AuthenticationService extends BaseService {
             User userResult = User.fromJsonObject(result.getJSONObject("user"));
             LocalStorage.setUser(userResult);
 
+            // Saving token for future sends
+            LocalStorage.setToken(result.getJSONObject("token").getString("token"));
+
             // enviar firebase token al appServer para guardar nuevamente en DB (borrado en sign out)
             // sin firebase token, las notificaciones no llegan
             ChatInstanceIDService.sendRegistrationToServer(ChatInstanceIDService.FIREBASE_TOKEN);
 
             return userResult;
         } catch(Exception exception) {
-            return null;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
             if(client != null) {
                 client.disconnect();
@@ -57,7 +57,7 @@ public class AuthenticationService extends BaseService {
         }
     }
 
-    public User signinUser(User user, String password) {
+    public ServiceResponse<User> signinUser(User user, String password) {
         HttpURLConnection client = null;
 
         try {
@@ -81,9 +81,12 @@ public class AuthenticationService extends BaseService {
             User userResult = User.fromJsonObject(result.getJSONObject("user"));
             LocalStorage.setUser(userResult);
 
-            return userResult;
+            // Saving token for future sends
+            LocalStorage.setToken(result.getJSONObject("token").getString("token"));
+
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, userResult);
         } catch(Exception exception) {
-            return null;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
             if(client != null) {
                 client.disconnect();
@@ -91,7 +94,7 @@ public class AuthenticationService extends BaseService {
         }
     }
 
-    public User fbLoginUser(String username, String name, String pictureURL, String email, String firebaseToken) {
+    public ServiceResponse<User> fbLoginUser(String username, String name, String pictureURL, String email, String firebaseToken) {
         HttpURLConnection client = null;
 
         try {
@@ -119,9 +122,9 @@ public class AuthenticationService extends BaseService {
             User userResult = User.fromJsonObject(result.getJSONObject("user"));
             LocalStorage.setUser(userResult);
 
-            return userResult;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, userResult);
         } catch(Exception exception) {
-            return null;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
             if(client != null) {
                 client.disconnect();

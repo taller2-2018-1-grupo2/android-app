@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import stories.app.R;
 import stories.app.models.User;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.services.AuthenticationService;
 import stories.app.services.ChatInstanceIDService;
 import stories.app.utils.TextValidator;
@@ -198,7 +199,7 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
-    protected class SignInUserTask extends AsyncTask<Object, Void, User> {
+    protected class SignInUserTask extends AsyncTask<Object, Void, ServiceResponse<User>> {
         private AuthenticationService authenticationService = new AuthenticationService();
 
         protected void onPreExecute() {
@@ -206,22 +207,24 @@ public class SignInActivity extends AppCompatActivity {
             signInButton.setEnabled(false);
         }
 
-        protected User doInBackground(Object... params) {
+        protected ServiceResponse<User> doInBackground(Object... params) {
             return authenticationService.signinUser((User) params[0], (String) params[1]);
         }
 
-        protected void onPostExecute(User result) {
+        protected void onPostExecute(ServiceResponse<User> response) {
             Button signInButton = findViewById(R.id.signInButton);
             signInButton.setEnabled(true);
 
             TextView signInResult = findViewById(R.id.signInResult);
 
-            if (result == null) {
-                signInResult.setText(R.string.error_invalid_signin);
-            } else {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS){
                 // Navigate to Home page
                 Intent navigationIntent = new Intent(SignInActivity.this, HomeActivity.class);
                 startActivity(navigationIntent);
+            }
+            else{
+                signInResult.setText(R.string.error_invalid_signin);
             }
         }
     }

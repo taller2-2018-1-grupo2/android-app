@@ -1,5 +1,6 @@
 package stories.app.adapters;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -43,6 +44,7 @@ public class QuickStoriesAdapter extends RecyclerView.Adapter<QuickStoriesAdapte
     public void onBindViewHolder(QuickStoriesAdapter.ViewHolder holder, int position) {
         Story story = this.mData.get(position);
         this.setImageFromUrl(story.fileUrl, holder.storyImageView, R.drawable.story_image_quick_placeholder);
+        holder.storyImageView.setOnClickListener(holder);
     }
 
     private void setImageFromUrl(String url, ImageView imageView, int placeholderResId) {
@@ -84,7 +86,20 @@ public class QuickStoriesAdapter extends RecyclerView.Adapter<QuickStoriesAdapte
 
         @Override
         public void onClick(View view) {
-            // do nothing
+            LayoutInflater inflater = LayoutInflater.from(view.getContext());
+            View storyDialog = inflater.inflate(R.layout.stories_dialog, null);
+            final Dialog dialog = new Dialog(view.getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen); //default fullscreen titlebar
+
+            ImageView image = (ImageView)storyDialog.findViewById(R.id.stories_dialog_image);
+            image.setImageDrawable(storyImageView.getDrawable());
+            image.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View paramView) {
+                    dialog.cancel();
+                }
+            });
+
+            dialog.setContentView(storyDialog);
+            dialog.show();
         }
     }
 }

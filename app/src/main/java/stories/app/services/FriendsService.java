@@ -1,7 +1,5 @@
 package stories.app.services;
 
-import android.util.Pair;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,25 +14,34 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import stories.app.models.responses.ServiceResponse;
 import stories.app.utils.Constants;
+import stories.app.utils.LocalStorage;
 
 public class FriendsService {
 
     private String URL = Constants.appServerURI;
 
-    public ArrayList<HashMap<String, String>> getFriends(String userID) {
+    public ServiceResponse<ArrayList<HashMap<String, String>>> getFriends(String userID) {
         HttpURLConnection client = null;
 
         try {
             java.net.URL url = new URL(URL + "/users/friends/" + userID);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("GET");
+            String token = String.format("Bearer %s", LocalStorage.getToken());
+            client.setRequestProperty("Authorization", token);
 
             client.connect();
 
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
             BufferedReader br;
 
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+            if (200 <= statusCode && statusCode <= 299) {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream()));
             } else {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
@@ -62,7 +69,7 @@ public class FriendsService {
                 friends.add(map);
             }
 
-            return friends;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, friends);
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
@@ -70,7 +77,7 @@ public class FriendsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "MalformedURLException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
@@ -78,7 +85,7 @@ public class FriendsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "SocketTimeoutException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch (IOException error) {
             //Handles input and output errors
@@ -86,7 +93,7 @@ public class FriendsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "IOException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch (JSONException error) {
             //Handles input and output errors
@@ -94,7 +101,7 @@ public class FriendsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "JSONException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         finally {
             if(client != null) {

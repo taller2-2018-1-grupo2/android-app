@@ -11,7 +11,7 @@
         android:id="@+id/stories_item_quick_fileUrl"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:contentDescription="Story image"
+        android:contentDescription="Story quick image"
         android:scaleType="centerCrop"
         tools:src="@drawable/profile_placeholder" />
 </LinearLayout>

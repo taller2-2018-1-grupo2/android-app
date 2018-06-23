@@ -1,10 +1,10 @@
 package stories.app.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +21,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import stories.app.R;
+import stories.app.activities.LogInActivity;
 import stories.app.models.Story;
 import stories.app.models.User;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.services.StoryService;
 import stories.app.utils.LocalStorage;
 
@@ -205,17 +207,19 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             String operation = this.story.isLikedByUser(currentUserId) ? "remove" : "add";
 
             // Update story in the backend
-            new UpdateStoryLikesToUserTask(this.holder).execute(this.story.id, currentUserId, operation);
+            new UpdateStoryLikesToUserTask(this.holder, v.getContext()).execute(this.story.id, currentUserId, operation);
         }
     }
 
-    protected class UpdateStoryLikesToUserTask extends AsyncTask<String, Void, Story> {
+    protected class UpdateStoryLikesToUserTask extends AsyncTask<String, Void, ServiceResponse<Story>> {
         private StoryService storyService;
         private StoriesAdapter.ViewHolder holder;
+        private Context context;
 
-        public UpdateStoryLikesToUserTask(StoriesAdapter.ViewHolder holder) {
+        public UpdateStoryLikesToUserTask(StoriesAdapter.ViewHolder holder, Context context) {
             this.storyService = new StoryService();
             this.holder = holder;
+            this.context = context;
         }
 
         protected void onPreExecute() {
@@ -224,15 +228,21 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             this.holder.likeButton.setEnabled(false);
         }
 
-        protected Story doInBackground(String... params) {
+        protected ServiceResponse<Story> doInBackground(String... params) {
             return storyService.updateLikes(params[0], params[1], params[2]);
         }
 
-        protected void onPostExecute(Story newStory) {
-
-            // Update like button (UI) with new story
-            this.holder.setLikeCount(newStory);
-            this.holder.updateLikeButton(newStory);
+        protected void onPostExecute(ServiceResponse<Story> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
+                Story newStory = response.getServiceResponse();
+                // Update like button (UI) with new story
+                this.holder.setLikeCount(newStory);
+                this.holder.updateLikeButton(newStory);
+            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(context, LogInActivity.class);
+                context.startActivity(navigationIntent);
+            }
         }
     }
 
@@ -251,18 +261,20 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
             if (commentText.length() > 0) {
                 // Update story in the backend
-                new AddStoryCommentTask(this.holder).execute(this.story.id, currentUser, commentText);
+                new AddStoryCommentTask(this.holder, v.getContext()).execute(this.story.id, currentUser, commentText);
             }
         }
     }
 
-    protected class AddStoryCommentTask extends AsyncTask<Object, Void, Story> {
+    protected class AddStoryCommentTask extends AsyncTask<Object, Void, ServiceResponse<Story>> {
         private StoryService storyService;
         private StoriesAdapter.ViewHolder holder;
+        private Context context;
 
-        public AddStoryCommentTask(StoriesAdapter.ViewHolder holder) {
+        public AddStoryCommentTask(StoriesAdapter.ViewHolder holder, Context context) {
             this.storyService = new StoryService();
             this.holder = holder;
+            this.context = context;
         }
 
         protected void onPreExecute() {
@@ -272,21 +284,29 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             this.holder.postCommentButton.setImageResource(R.drawable.ic_story_comment_disabled);
         }
 
-        protected Story doInBackground(Object... params) {
+        protected ServiceResponse<Story> doInBackground(Object... params) {
             String storyId = (String)params[0];
             User user = (User)params[1];
             String commentText = (String)params[2];
             return storyService.addComment(storyId, user, commentText);
         }
 
-        protected void onPostExecute(Story newStory) {
-            this.holder.updateComments(newStory.comments);
+        protected void onPostExecute(ServiceResponse<Story> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
 
-            // Enable Post comment elements in the UI and clean up the field
-            this.holder.newComment.setText("");
-            this.holder.newComment.setEnabled(true);
-            this.holder.postCommentButton.setEnabled(true);
-            this.holder.postCommentButton.setImageResource(R.drawable.ic_story_comment);
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS){
+                Story newStory = response.getServiceResponse();
+                this.holder.updateComments(newStory.comments);
+
+                // Enable Post comment elements in the UI and clean up the field
+                this.holder.newComment.setText("");
+                this.holder.newComment.setEnabled(true);
+                this.holder.postCommentButton.setEnabled(true);
+                this.holder.postCommentButton.setImageResource(R.drawable.ic_story_comment);
+            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(context, LogInActivity.class);
+                context.startActivity(navigationIntent);
+            }
         }
     }
 }

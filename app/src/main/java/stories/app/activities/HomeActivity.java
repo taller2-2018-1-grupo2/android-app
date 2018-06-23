@@ -1,7 +1,6 @@
 package stories.app.activities;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,9 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 
@@ -20,6 +17,7 @@ import stories.app.R;
 import stories.app.adapters.QuickStoriesAdapter;
 import stories.app.adapters.StoriesAdapter;
 import stories.app.models.Story;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.services.ChatInstanceIDService;
 import stories.app.services.StoryService;
 import stories.app.utils.LocalStorage;
@@ -93,40 +91,48 @@ public class HomeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected class GetStoriesVisiblesToUserTask extends AsyncTask<String, Void, ArrayList<Story>> {
+    protected class GetStoriesVisiblesToUserTask extends AsyncTask<String, Void, ServiceResponse<ArrayList<Story>>> {
         private StoryService storyService = new StoryService();
 
         protected void onPreExecute() {
         }
 
-        protected ArrayList<Story> doInBackground(String... params) {
+        protected ServiceResponse<ArrayList<Story>> doInBackground(String... params) {
             return storyService.getStoriesVisiblesToUser(params[0]);
         }
 
-        protected void onPostExecute(ArrayList<Story> result) {
+        protected void onPostExecute(ServiceResponse<ArrayList<Story>> response) {
 
-            // Split result between regular stories and quick stories
-            ArrayList<Story> regularStories = new ArrayList<Story>();
-            ArrayList<Story> quickStories = new ArrayList<Story>();
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
 
-            if (result != null) {
-                for (int i = 0; i < result.size(); i++) {
-                    Story story = result.get(i);
-                    if (story.isQuickStory) {
-                        quickStories.add(story);
-                    } else {
-                        regularStories.add(story);
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
+                ArrayList<Story> result = response.getServiceResponse();
+
+                // Split result between regular stories and quick stories
+                ArrayList<Story> regularStories = new ArrayList<Story>();
+                ArrayList<Story> quickStories = new ArrayList<Story>();
+
+                if (result != null) {
+                    for (int i = 0; i < result.size(); i++) {
+                        Story story = result.get(i);
+                        if (story.isQuickStory) {
+                            quickStories.add(story);
+                        } else {
+                            regularStories.add(story);
+                        }
                     }
                 }
+                // Display regular stories
+                RecyclerView storiesList = (RecyclerView) findViewById(R.id.storiesList);
+                storiesList.setAdapter(new StoriesAdapter(HomeActivity.this, regularStories));
+
+                // Display quick stories
+                RecyclerView quickStoriesList = (RecyclerView) findViewById(R.id.quickStoriesList);
+                quickStoriesList.setAdapter(new QuickStoriesAdapter(HomeActivity.this, quickStories));
+            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(HomeActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
             }
-
-            // Display regular stories
-            RecyclerView storiesList = (RecyclerView) findViewById(R.id.storiesList);
-            storiesList.setAdapter(new StoriesAdapter(HomeActivity.this, regularStories));
-
-            // Display quick stories
-            RecyclerView quickStoriesList = (RecyclerView) findViewById(R.id.quickStoriesList);
-            quickStoriesList.setAdapter(new QuickStoriesAdapter(HomeActivity.this, quickStories));
         }
     }
 

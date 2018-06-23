@@ -32,6 +32,7 @@ import java.util.Arrays;
 
 import stories.app.R;
 import stories.app.models.User;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.services.AuthenticationService;
 import stories.app.services.ChatInstanceIDService;
 import stories.app.services.LocationService;
@@ -159,7 +160,7 @@ public class LogInActivity extends AppCompatActivity {
         }
     }
 
-    protected class LoginUserTask extends AsyncTask<String, Void, User> {
+    protected class LoginUserTask extends AsyncTask<String, Void, ServiceResponse<User>> {
         private AuthenticationService authenticationService = new AuthenticationService();
 
         protected void onPreExecute() {
@@ -167,26 +168,27 @@ public class LogInActivity extends AppCompatActivity {
             loginButton.setEnabled(false);
         }
 
-        protected User doInBackground(String... params) {
+        protected ServiceResponse<User> doInBackground(String... params) {
             return authenticationService.loginUser(params[0], params[1]);
         }
 
-        protected void onPostExecute(User result) {
+        protected void onPostExecute(ServiceResponse<User> response) {
             Button loginButton = findViewById(R.id.loginButton);
             loginButton.setEnabled(true);
 
             TextView loginResult = findViewById(R.id.loginResult);
 
-            if (result == null) {
-                loginResult.setText(R.string.error_invalid_login);
-            } else {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
                 Intent navigationIntent = new Intent(LogInActivity.this, HomeActivity.class);
                 startActivity(navigationIntent);
+            } else {
+                loginResult.setText(R.string.error_invalid_login);
             }
         }
     }
 
-    protected class FacebookLoginUserTask extends AsyncTask<String, Void, User> {
+    protected class FacebookLoginUserTask extends AsyncTask<String, Void, ServiceResponse<User>> {
         private AuthenticationService authenticationService = new AuthenticationService();
 
         protected void onPreExecute() {
@@ -194,22 +196,23 @@ public class LogInActivity extends AppCompatActivity {
             fbLoginButton.setEnabled(false);
         }
 
-        protected User doInBackground(String... params) {
+        protected ServiceResponse<User> doInBackground(String... params) {
             return authenticationService.fbLoginUser(params[0], params[1], params[2], params[3], params[4]);
         }
 
-        protected void onPostExecute(User result) {
+        protected void onPostExecute(ServiceResponse<User> response) {
             Button fbLoginButton = findViewById(R.id.fb_login_button);
             fbLoginButton.setEnabled(true);
 
             TextView loginResult = findViewById(R.id.loginResult);
 
-            if (result == null) {
-                loginResult.setText(R.string.error_invalid_login);
-            } else {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS){
                 Intent navigationIntent = new Intent(LogInActivity.this, HomeActivity.class);
                 startActivity(navigationIntent);
                 LoginManager.getInstance().logOut();
+            } else {
+                loginResult.setText(R.string.error_invalid_login);
             }
         }
     }

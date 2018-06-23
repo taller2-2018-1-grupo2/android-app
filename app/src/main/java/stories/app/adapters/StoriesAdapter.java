@@ -52,7 +52,9 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         this.setImageFromUrl(story.fileUrl, holder.storyUserImage, R.drawable.profile_placeholder);
         holder.username.setText(story.username + ": ");
         holder.title.setText(story.title);
+
         holder.description.setText(story.description);
+        holder.description.setVisibility(story.description.length() > 0 ? View.VISIBLE : View.GONE);
 
         holder.setLikeCount(story);
         holder.updateLikeButton(story);

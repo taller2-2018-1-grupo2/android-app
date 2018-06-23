@@ -40,7 +40,7 @@ public class ChatCreateActivity extends AppCompatActivity {
             EditText messageText = findViewById(R.id.chatText);
 
             Message message = new Message();
-            message.from_username = LocalStorage.getUsername();
+            message.from_username = LocalStorage.getUser().username;
             message.to_username = destination.getText().toString();
             message.message = messageText.getText().toString();
             message.timestamp = System.currentTimeMillis();

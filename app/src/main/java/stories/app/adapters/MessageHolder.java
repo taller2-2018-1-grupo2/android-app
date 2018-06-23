@@ -23,7 +23,7 @@ public class MessageHolder extends RecyclerView.ViewHolder {
     public void setMessageUsername(Message message) {
         TextView messageUsername = (TextView) mView.findViewById(R.id.message_item_title);
         StringBuilder sb = new StringBuilder();
-        if (LocalStorage.getUsername().equals(message.from_username)) {
+        if (LocalStorage.getUser().username.equals(message.from_username)) {
             sb.append("To: ");
             sb.append(message.to_username);
         } else {

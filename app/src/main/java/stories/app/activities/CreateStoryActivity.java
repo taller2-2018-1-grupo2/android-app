@@ -17,6 +17,7 @@ import android.widget.RadioGroup;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import stories.app.R;
 import stories.app.activities.images.ImageFiltersActivity;
@@ -25,6 +26,7 @@ import stories.app.services.FileService;
 import stories.app.services.LocationService;
 import stories.app.models.responses.ServiceResponse;
 import stories.app.services.StoryService;
+import stories.app.utils.Dates;
 import stories.app.utils.FileUtils;
 import stories.app.utils.LocalStorage;
 
@@ -136,7 +138,7 @@ public class CreateStoryActivity extends AppCompatActivity {
         story.description = createStoryDescription.getText().toString();
         story.isQuickStory = createStoryIsQuickStory.isChecked();
         story.visibility = createStoryVisibility.getCheckedRadioButtonId() == R.id.createStoryVisibilityIsPublic ? "public" : "private";
-        story.timestamp = Calendar.getInstance().getTime().toString();
+        story.timestamp = Dates.getCurrentUtcTime();
         story.location = this.locationService.getLocation();
 
         new CreateStoryTask(filePath).execute(story);

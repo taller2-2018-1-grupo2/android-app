@@ -11,7 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import stories.app.R;
 import stories.app.adapters.QuickStoriesAdapter;
@@ -20,6 +24,7 @@ import stories.app.models.Story;
 import stories.app.models.responses.ServiceResponse;
 import stories.app.services.ChatInstanceIDService;
 import stories.app.services.StoryService;
+import stories.app.utils.Dates;
 import stories.app.utils.LocalStorage;
 
 public class HomeActivity extends AppCompatActivity {
@@ -116,7 +121,10 @@ public class HomeActivity extends AppCompatActivity {
                     for (int i = 0; i < result.size(); i++) {
                         Story story = result.get(i);
                         if (story.isQuickStory) {
-                            quickStories.add(story);
+                            // Display only 10 fresh stories (<4hs)
+                            if (quickStories.size() < 10 && Dates.isFresh(story.timestamp)) {
+                                quickStories.add(story);
+                            }
                         } else {
                             regularStories.add(story);
                         }

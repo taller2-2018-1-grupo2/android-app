@@ -17,6 +17,7 @@ import java.net.URL;
 
 import stories.app.exceptions.UserUnauthorizedException;
 import stories.app.models.Story;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.utils.Constants;
 import stories.app.utils.LocalStorage;
 
@@ -59,7 +60,7 @@ public class FileService{
         request.write(bytes);
     }
 
-    private int finish() throws Exception {
+    private ServiceResponse<Story> finish() throws Exception {
         String response ="";
 
         request.writeBytes(this.crlf);
@@ -96,11 +97,10 @@ public class FileService{
 
         JSONObject jsonResponse = new JSONObject(response);
         Story newStory = Story.fromJsonObject(jsonResponse);
-
-        return ServiceStatusCode.SUCCESS;
+        return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, newStory);
     }
 
-    public int uploadFileToStory(String storyId, File file){
+    public ServiceResponse<Story> uploadFileToStory(String storyId, File file){
         this.client = null;
 
         try {
@@ -126,10 +126,10 @@ public class FileService{
             return finish();
         } catch (UserUnauthorizedException exception) {
             Log.e(exception.getClass().getName(), exception.getMessage(), exception);
-            return ServiceStatusCode.UNAUTHORIZED;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
         } catch (Exception exception) {
             Log.e(exception.getClass().getName(), exception.getMessage(), exception);
-            return ServiceStatusCode.ERROR;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
             if (client != null) {
                 client.disconnect();

@@ -23,7 +23,7 @@ import stories.app.activities.images.ImageFiltersActivity;
 import stories.app.models.Story;
 import stories.app.services.FileService;
 import stories.app.services.LocationService;
-import stories.app.services.ServiceStatusCode;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.services.StoryService;
 import stories.app.utils.FileUtils;
 import stories.app.utils.LocalStorage;
@@ -163,7 +163,7 @@ public class CreateStoryActivity extends AppCompatActivity {
         startActivityForResult(photoPickerIntent, START_FILE_UPLOAD);
     }
 
-    protected class CreateStoryTask extends AsyncTask<Story, Void, Story> {
+    protected class CreateStoryTask extends AsyncTask<Story, Void, ServiceResponse<Story>> {
         private StoryService storyService = new StoryService();
         private String mFilePath;
 
@@ -176,13 +176,15 @@ public class CreateStoryActivity extends AppCompatActivity {
             createStoryButton.setEnabled(false);
         }
 
-        protected Story doInBackground(Story... params) {
+        protected ServiceResponse<Story> doInBackground(Story... params) {
             Story storyToUpload = params[0];
             return storyService.createStory(storyToUpload);
         }
 
-        protected void onPostExecute(Story newStory) {
-            if (newStory != null) {
+        protected void onPostExecute(ServiceResponse<Story> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS){
+                Story newStory = response.getServiceResponse();
                 new UploadFileTask(this.mFilePath).execute(newStory.id);
             } else {
                 String messageToDisplay = "Error al subir la historia. Intente de nuevo.";
@@ -196,7 +198,7 @@ public class CreateStoryActivity extends AppCompatActivity {
         }
     }
 
-    protected class UploadFileTask extends AsyncTask<String, Void, Integer> {
+    protected class UploadFileTask extends AsyncTask<String, Void, ServiceResponse> {
         private File file;
         private FileService fileService = new FileService();
         private String mStoryID;
@@ -205,13 +207,14 @@ public class CreateStoryActivity extends AppCompatActivity {
             this.file = new File(filePath);
         }
 
-        protected Integer doInBackground(String... storyId) {
+        protected ServiceResponse doInBackground(String... storyId) {
             this.mStoryID = storyId[0];
             return fileService.uploadFileToStory(storyId[0], this.file);
         }
 
-        protected void onPostExecute(Integer result) {
-            if (result == ServiceStatusCode.SUCCESS) {
+        protected void onPostExecute(ServiceResponse response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
                 // Navigate to Home page
                 Intent navigationIntent = new Intent(CreateStoryActivity.this, HomeActivity.class);
                 startActivity(navigationIntent);
@@ -219,7 +222,7 @@ public class CreateStoryActivity extends AppCompatActivity {
                 createStoryButton.setEnabled(true);
             } else {
                 new DeleteStoryTask().execute(this.mStoryID);
-                if (result == ServiceStatusCode.UNAUTHORIZED) {
+                if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
                     Intent navigationIntent = new Intent(CreateStoryActivity.this, LogInActivity.class);
                     startActivity(navigationIntent);
                     Button createStoryButton = findViewById(R.id.createStoryButton);
@@ -238,10 +241,10 @@ public class CreateStoryActivity extends AppCompatActivity {
         }
     }
 
-    protected class DeleteStoryTask extends AsyncTask<String, Void, String> {
+    protected class DeleteStoryTask extends AsyncTask<String, Void, ServiceResponse<String>> {
         private StoryService storyService = new StoryService();
 
-        protected String doInBackground(String... storyId) {
+        protected ServiceResponse<String> doInBackground(String... storyId) {
             return storyService.deleteStory(storyId[0]);
         }
     }

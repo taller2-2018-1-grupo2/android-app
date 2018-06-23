@@ -8,16 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -26,7 +20,7 @@ import java.util.HashMap;
 import stories.app.R;
 import stories.app.adapters.UsersRecyclerViewAdapter;
 import stories.app.services.FriendshipRequestsService;
-import stories.app.services.ProfileService;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.utils.LocalStorage;
 
 public class FriendshipRequestsActivity extends AppCompatActivity implements UsersRecyclerViewAdapter.ItemClickListener {
@@ -109,29 +103,33 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
         startActivity(navigationIntent);
     }
 
-    protected class GetUsersTask extends AsyncTask<String, Void, ArrayList<HashMap<String,String>>> {
+    protected class GetUsersTask extends AsyncTask<String, Void, ServiceResponse<ArrayList<HashMap<String,String>>>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
 
         protected void onPreExecute() {
         }
 
-        protected ArrayList<HashMap<String,String>> doInBackground(String... params) {
+        protected ServiceResponse<ArrayList<HashMap<String,String>>> doInBackground(String... params) {
             return friendshipRequestsService.getUsers(
                     params[0],
                     LocalStorage.getUser().id
             );
         }
 
-        protected void onPostExecute(ArrayList<HashMap<String,String>> result) {
-            dataset.clear();
-            for (int i = 0; i < result.size(); i++) {
-                dataset.add(result.get(i));
+        protected void onPostExecute(ServiceResponse<ArrayList<HashMap<String,String>>> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
+                ArrayList<HashMap<String,String>> result = response.getServiceResponse();
+                dataset.clear();
+                for (int i = 0; i < result.size(); i++) {
+                    dataset.add(result.get(i));
+                }
+                recyclerViewAdapter.notifyDataSetChanged();
             }
-            recyclerViewAdapter.notifyDataSetChanged();
         }
     }
 
-    protected class CreateFriendshipRequestTask extends AsyncTask<String, Void, String> {
+    protected class CreateFriendshipRequestTask extends AsyncTask<String, Void, ServiceResponse<String>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
 
         private Context context;
@@ -143,23 +141,27 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
         protected void onPreExecute() {
         }
 
-        protected String doInBackground(String... params) {
+        protected ServiceResponse<String> doInBackground(String... params) {
             return friendshipRequestsService.createFriendshipRequest(
                     LocalStorage.getUsername(),
                     params[0]
             );
         }
 
-        protected void onPostExecute(String result) {
-            if (result != "") {
-                Toast.makeText(this.context, "Enviaste una solicitud de amistad a: " + result, Toast.LENGTH_SHORT).show();
+        protected void onPostExecute(ServiceResponse<String> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
+                String result = response.getServiceResponse();
+                if (result != "") {
+                    Toast.makeText(this.context, "Enviaste una solicitud de amistad a: " + result, Toast.LENGTH_SHORT).show();
 
-                for (int i = 0; i < dataset.size(); i++) {
-                    if (dataset.get(i).get("username") == result) {
-                        dataset.remove(i);
+                    for (int i = 0; i < dataset.size(); i++) {
+                        if (dataset.get(i).get("username") == result) {
+                            dataset.remove(i);
+                        }
                     }
+                    recyclerViewAdapter.notifyDataSetChanged();
                 }
-                recyclerViewAdapter.notifyDataSetChanged();
             }
         }
     }

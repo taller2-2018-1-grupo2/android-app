@@ -2,7 +2,6 @@ package stories.app.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,11 +21,11 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import stories.app.R;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.services.ProfileService;
 import stories.app.utils.Base64UtilityClass;
 import stories.app.utils.LocalStorage;
@@ -126,46 +124,50 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    protected class GetUserDataTask extends AsyncTask<String, Void, String> {
+    protected class GetUserDataTask extends AsyncTask<String, Void, ServiceResponse<String>> {
         private ProfileService profileService = new ProfileService();
 
         protected void onPreExecute() {
         }
 
-        protected String doInBackground(String... params) {
+        protected ServiceResponse<String> doInBackground(String... params) {
             return profileService.getUserData(LocalStorage.getUser().id);
         }
 
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(ServiceResponse<String> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS){
+                String result = response.getServiceResponse();
 
-            try {
+                try {
 
-                JSONObject jsonObject = new JSONObject(result);
-                String userJSON = jsonObject.getString("user");
+                    JSONObject jsonObject = new JSONObject(result);
+                    String userJSON = jsonObject.getString("user");
 
-                jsonObject = new JSONObject(userJSON);
+                    jsonObject = new JSONObject(userJSON);
 
-                EditText name = findViewById(R.id.name);
-                EditText email = findViewById(R.id.email);
+                    EditText name = findViewById(R.id.name);
+                    EditText email = findViewById(R.id.email);
 
-                name.setText(jsonObject.getString("name"));
-                email.setText(jsonObject.getString("email"));
+                    name.setText(jsonObject.getString("name"));
+                    email.setText(jsonObject.getString("email"));
 
-                String profilePicString = jsonObject.getString("profile_pic");
+                    String profilePicString = jsonObject.getString("profile_pic");
 
-                if (!profilePicString.isEmpty()) {
-                    CircleImageView profilePic = findViewById(R.id.profile_pic);
+                    if (!profilePicString.isEmpty()) {
+                        CircleImageView profilePic = findViewById(R.id.profile_pic);
 
-                    profilePic.setImageBitmap(Base64UtilityClass.toBitmap(profilePicString));
+                        profilePic.setImageBitmap(Base64UtilityClass.toBitmap(profilePicString));
+                    }
+
+                } catch (JSONException error) {
+                    //Handle JSON Exceptions
                 }
-
-            } catch (JSONException error) {
-                //Handle JSON Exceptions
             }
         }
     }
 
-    protected class UpdateUserDataTask extends AsyncTask<String, Void, Boolean> {
+    protected class UpdateUserDataTask extends AsyncTask<String, Void, ServiceResponse<Boolean>> {
         private ProfileService profileService = new ProfileService();
         private String profilePicString;
         private Context context;
@@ -184,7 +186,7 @@ public class ProfileActivity extends AppCompatActivity {
             this.profilePicString = Base64UtilityClass.toBase64String(bitmap);
         }
 
-        protected Boolean doInBackground(String... params) {
+        protected ServiceResponse<Boolean> doInBackground(String... params) {
             return profileService.updateUserData(
                     LocalStorage.getUser().id,
                     params[0],
@@ -193,11 +195,14 @@ public class ProfileActivity extends AppCompatActivity {
             );
         }
 
-        protected void onPostExecute(Boolean result) {
-            Button applyChangesButton = findViewById(R.id.applyChangesButton);
-            applyChangesButton.setEnabled(true);
+        protected void onPostExecute(ServiceResponse<Boolean> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
+                Button applyChangesButton = findViewById(R.id.applyChangesButton);
+                applyChangesButton.setEnabled(true);
 
-            Toast.makeText(this.context, "Datos Actualizados.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.context, "Datos Actualizados.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

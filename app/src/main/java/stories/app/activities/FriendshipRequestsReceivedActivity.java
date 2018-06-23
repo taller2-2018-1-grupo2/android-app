@@ -8,11 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +18,7 @@ import java.util.HashMap;
 import stories.app.R;
 import stories.app.adapters.UsersRecyclerViewAdapter;
 import stories.app.services.FriendshipRequestsService;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.utils.LocalStorage;
 
 public class FriendshipRequestsReceivedActivity extends AppCompatActivity implements UsersRecyclerViewAdapter.ItemClickListener{
@@ -81,28 +80,32 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
     public void onSendMessageClick(View v, int position) {
     }
 
-    protected class GetFriendshipRequestsReceived extends AsyncTask<String, Void, ArrayList<HashMap<String,String>>> {
+    protected class GetFriendshipRequestsReceived extends AsyncTask<String, Void, ServiceResponse<ArrayList<HashMap<String,String>>>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
 
         protected void onPreExecute() {
         }
 
-        protected ArrayList<HashMap<String,String>> doInBackground(String... params) {
+        protected ServiceResponse<ArrayList<HashMap<String,String>>> doInBackground(String... params) {
             return friendshipRequestsService.getFriendshipRequestsReceived(
                     LocalStorage.getUsername()
             );
         }
 
-        protected void onPostExecute(ArrayList<HashMap<String,String>> result) {
-            dataset.clear();
-            for (int i = 0; i < result.size(); i++) {
-                dataset.add(result.get(i));
+        protected void onPostExecute(ServiceResponse<ArrayList<HashMap<String,String>>> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
+                ArrayList<HashMap<String,String>> result = response.getServiceResponse();
+                dataset.clear();
+                for (int i = 0; i < result.size(); i++) {
+                    dataset.add(result.get(i));
+                }
+                recyclerViewAdapter.notifyDataSetChanged();
             }
-            recyclerViewAdapter.notifyDataSetChanged();
         }
     }
 
-    protected class AcceptFriendshipRequestTask extends AsyncTask<String, Void, String> {
+    protected class AcceptFriendshipRequestTask extends AsyncTask<String, Void, ServiceResponse<String>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
 
         private Context context;
@@ -114,21 +117,25 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
         protected void onPreExecute() {
         }
 
-        protected String doInBackground(String... params) {
+        protected ServiceResponse<String> doInBackground(String... params) {
             return friendshipRequestsService.acceptFriendshipRequest(
                     params[0],
                     LocalStorage.getUsername()
             );
         }
 
-        protected void onPostExecute(String result) {
-            if (result != "") {
-                for (int i = 0; i < dataset.size(); i++) {
-                    if (dataset.get(i).get("username") == result) {
-                        dataset.remove(i);
+        protected void onPostExecute(ServiceResponse<String> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
+                String result = response.getServiceResponse();
+                if (result != "") {
+                    for (int i = 0; i < dataset.size(); i++) {
+                        if (dataset.get(i).get("username") == result) {
+                            dataset.remove(i);
+                        }
                     }
+                    recyclerViewAdapter.notifyDataSetChanged();
                 }
-                recyclerViewAdapter.notifyDataSetChanged();
             }
         }
     }

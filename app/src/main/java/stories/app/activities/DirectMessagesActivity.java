@@ -10,21 +10,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import java.util.ArrayList;
 
 import stories.app.R;
 import stories.app.adapters.ConversationsRecyclerViewAdapter;
-import stories.app.adapters.DirectMessagesAdapter;
-import stories.app.adapters.MessageHolder;
-import stories.app.adapters.MessagesRecyclerViewAdapter;
 import stories.app.models.ConversationDMResponse;
-import stories.app.models.Message;
 import stories.app.models.responses.ConversationResponse;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.services.MessagingService;
 import stories.app.utils.LocalStorage;
 
@@ -91,21 +84,25 @@ public class DirectMessagesActivity extends AppCompatActivity implements Convers
         return super.onOptionsItemSelected(item);
     }
 
-    protected class GetUserMessagesTask extends AsyncTask<String, Void, ArrayList<ConversationDMResponse>> {
+    protected class GetUserMessagesTask extends AsyncTask<String, Void, ServiceResponse<ConversationResponse>> {
         protected void onPreExecute() {
         }
 
-        protected ArrayList<ConversationDMResponse> doInBackground(String... params) {
-            return messagingService.getUserMessages(params[0]).direct_messages;
+        protected ServiceResponse<ConversationResponse> doInBackground(String... params) {
+            return messagingService.getUserMessages(params[0]);
         }
 
-        protected void onPostExecute(ArrayList<ConversationDMResponse> result) {
-            if(result != null) {
-                dataset.clear();
-                for (int i = 0; i < result.size(); i++) {
-                    dataset.add(result.get(i));
+        protected void onPostExecute(ServiceResponse<ConversationResponse> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
+                ArrayList<ConversationDMResponse> result = response.getServiceResponse().direct_messages;
+                if (result != null) {
+                    dataset.clear();
+                    for (int i = 0; i < result.size(); i++) {
+                        dataset.add(result.get(i));
+                    }
+                    recyclerViewAdapter.notifyDataSetChanged();
                 }
-                recyclerViewAdapter.notifyDataSetChanged();
             }
         }
     }

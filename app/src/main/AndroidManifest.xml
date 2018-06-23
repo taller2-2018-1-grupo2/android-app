@@ -27,30 +27,63 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activities.LogInActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.HomeActivity" />
-        <activity android:name=".activities.SignInActivity" />
-        <activity android:name=".activities.ProfileActivity" />
-        <activity android:name=".activities.CreateStoryActivity" />
+        <activity android:name=".activities.HomeActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activities.SignInActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.ProfileActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.CreateStoryActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity
             android:name=".activities.FriendshipRequestsActivity"
-            android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".activities.FriendshipRequestsSentActivity" />
-        <activity android:name=".activities.FriendshipRequestsReceivedActivity" />
-        <activity android:name=".activities.DirectMessagesActivity" />
-        <activity android:name=".activities.DirectMessagesConversationActivity" />
-        <activity android:name=".activities.DirectMessagesCreateActivity" />
-        <activity android:name=".activities.ChatActivity" />
-        <activity android:name=".activities.ChatCreateActivity" />
-        <activity android:name=".activities.FriendsListActivity" />
-        <activity android:name=".activities.images.ImageFiltersActivity" />
-        <activity android:name=".activities.images.StoriesMapActivity" />
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.FriendshipRequestsSentActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.FriendshipRequestsReceivedActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.DirectMessagesActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.DirectMessagesConversationActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.DirectMessagesCreateActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.ChatActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.ChatCreateActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.FriendsListActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.images.ImageFiltersActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.StoriesMapActivity"
+            android:label="@string/title_activity_stories_map"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -94,9 +127,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".activities.StoriesMapActivity"
-            android:label="@string/title_activity_stories_map"></activity>
     </application>
 
 </manifest>

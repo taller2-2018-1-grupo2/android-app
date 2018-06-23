@@ -3,6 +3,7 @@ package stories.app.activities;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,9 @@ public class DirectMessagesActivity extends AppCompatActivity implements Convers
     private ConversationsRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private ArrayList<ConversationDMResponse> dataset = new ArrayList<ConversationDMResponse>();
+    private final Handler handler = new Handler();
+    private final int delay = 3000;
+    public Runnable fetchConversations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,22 @@ public class DirectMessagesActivity extends AppCompatActivity implements Convers
 
         // Retrieve all visible messages to the user
         new GetUserMessagesTask().execute(LocalStorage.getUser().username);
+
+        fetchConversations = new Runnable() {
+            public void run(){
+                // Retrieve all visible messages to the user
+                new GetUserMessagesTask().execute(LocalStorage.getUser().username);
+                handler.postDelayed(this, delay);
+            }
+        };
+
+        handler.postDelayed(fetchConversations, delay);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeCallbacks(fetchConversations);
     }
 
     @Override

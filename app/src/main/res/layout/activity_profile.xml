@@ -56,67 +56,33 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.532" />
 
-    <TextView
-        android:id="@+id/name_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nombre"
-        android:textColor="@color/textPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.055"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.616" />
-
     <EditText
         android:id="@+id/name"
-        android:layout_width="300dp"
+        android:layout_width="330dp"
         android:layout_height="wrap_content"
-        android:ems="14"
-        android:hint="Nombre"
+        android:ems="10"
+        android:hint="@string/prompt_name"
         android:inputType="text"
         android:text="Gonzalo Lucio Merino"
-        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.733"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.678" />
 
-    <TextView
-        android:id="@+id/email_label"
-        android:layout_width="230dp"
-        android:layout_height="wrap_content"
-        android:text="Correo electrónico"
-        android:textColor="@color/textPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.123"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.756" />
-
     <EditText
         android:id="@+id/email"
-        android:layout_width="300dp"
+        android:layout_width="330dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Email"
+        android:hint="@string/prompt_email"
         android:inputType="text|textEmailAddress"
         android:text="merino.gonza@gmail.com"
-        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.733"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.823" />
+        app:layout_constraintVertical_bias="0.778" />
 
     <Button
         android:id="@+id/applyChangesButton"

@@ -34,9 +34,14 @@ public class FriendsService {
 
             client.connect();
 
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
             BufferedReader br;
 
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+            if (200 <= statusCode && statusCode <= 299) {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream()));
             } else {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));

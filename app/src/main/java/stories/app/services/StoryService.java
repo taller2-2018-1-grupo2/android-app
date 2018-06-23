@@ -28,6 +28,11 @@ public class StoryService extends BaseService {
 
             client.connect();
 
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
             JSONObject result = this.getResponseResult(client);
             JSONArray storiesJson = result.getJSONArray("stories");
             ArrayList<Story> stories = new ArrayList<>();
@@ -67,6 +72,11 @@ public class StoryService extends BaseService {
 
             client.connect();
 
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
             JSONObject result = this.getResponseResult(client);
 
             if (result == null) {
@@ -103,11 +113,12 @@ public class StoryService extends BaseService {
                 JSONObject result = this.getResponseResult(client);
                 JSONObject story = result.getJSONObject("story");
                 response = story.getString("story_id");
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, response);
+            } else if (status == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
             } else {
                 return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
             }
-
-            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, response);
 
         } catch(Exception error) {
             return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);

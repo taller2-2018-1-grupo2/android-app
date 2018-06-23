@@ -30,8 +30,13 @@ public class MessagingService {
             client.setRequestProperty("Authorization", token);
             client.connect();
 
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
             BufferedReader br;
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+            if (200 <= statusCode && statusCode <= 299) {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream()));
             } else {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
@@ -65,8 +70,13 @@ public class MessagingService {
             client.setRequestProperty("Authorization", token);
             client.connect();
 
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
             BufferedReader br;
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+            if (200 <= statusCode && statusCode <= 299) {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream()));
             } else {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
@@ -110,10 +120,12 @@ public class MessagingService {
 
             client.connect();
 
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            } else if (200 <= statusCode && statusCode <= 299) {
                 return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, message);
-            }
-            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
+            } else return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } catch (Exception exception) {
             return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {

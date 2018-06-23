@@ -9,14 +9,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class LocationService {
 

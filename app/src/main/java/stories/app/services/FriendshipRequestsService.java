@@ -1,7 +1,5 @@
 package stories.app.services;
 
-import android.util.Pair;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,27 +14,36 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
+import stories.app.models.responses.ServiceResponse;
 import stories.app.utils.Constants;
+import stories.app.utils.LocalStorage;
 
 public class FriendshipRequestsService {
 
     private String URL = Constants.appServerURI;
 
-    public ArrayList<HashMap<String, String>> getUsers(String partialUsername, String userID) {
+    public ServiceResponse<ArrayList<HashMap<String, String>>> getUsers(String partialUsername, String userID) {
         HttpURLConnection client = null;
 
         try {
             URL url = new URL(URL + "/users/search/" + userID + "/" + partialUsername);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("GET");
+            String token = String.format("Bearer %s", LocalStorage.getToken());
+            client.setRequestProperty("Authorization", token);
 
             client.connect();
 
             BufferedReader br;
 
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+            int statusCode = client.getResponseCode();
+
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
+            if (200 <= statusCode && statusCode <= 299) {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream()));
             } else {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
@@ -52,11 +59,11 @@ public class FriendshipRequestsService {
             JSONObject jsonObject = new JSONObject(result);
             JSONArray jsonArray = jsonObject.getJSONArray("found_users");
 
-            ArrayList<HashMap<String,String>> users = new ArrayList<HashMap<String,String>>();
+            ArrayList<HashMap<String, String>> users = new ArrayList<HashMap<String, String>>();
 
-            for (int i=0; i < jsonArray.length(); i++) {
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject itemObject = jsonArray.getJSONObject(i);
-                HashMap<String,String> map = new HashMap<>();
+                HashMap<String, String> map = new HashMap<>();
                 map.put("username", itemObject.getString("username"));
                 map.put("profilePic", itemObject.getString("profile_pic"));
                 map.put("name", itemObject.getString("name"));
@@ -64,7 +71,7 @@ public class FriendshipRequestsService {
                 users.add(map);
             }
 
-            return users;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, users);
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
@@ -72,7 +79,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "MalformedURLException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
@@ -80,7 +87,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "SocketTimeoutException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch (IOException error) {
             //Handles input and output errors
@@ -88,7 +95,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "IOException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch (JSONException error) {
             //Handles input and output errors
@@ -96,7 +103,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "JSONException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         finally {
             if(client != null) {
@@ -105,7 +112,7 @@ public class FriendshipRequestsService {
         }
     }
 
-    public String createFriendshipRequest(String fromUsername, String toUsername) {
+    public ServiceResponse<String> createFriendshipRequest(String fromUsername, String toUsername) {
         HttpURLConnection client = null;
 
         try {
@@ -114,6 +121,8 @@ public class FriendshipRequestsService {
             client.setRequestMethod("POST");
             client.setRequestProperty("Content-Type", "application/json");
             client.setRequestProperty("Accept", "application/json");
+            String token = String.format("Bearer %s", LocalStorage.getToken());
+            client.setRequestProperty("Authorization", token);
 
             JSONObject credentials = new JSONObject();
             credentials.put("from_username",fromUsername);
@@ -127,7 +136,13 @@ public class FriendshipRequestsService {
 
             BufferedReader br;
 
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+            int statusCode = client.getResponseCode();
+
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
+            if (200 <= statusCode && statusCode <= 299) {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream()));
             } else {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
@@ -140,23 +155,10 @@ public class FriendshipRequestsService {
             }
             String result = sb.toString();
 
-            return toUsername;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, toUsername);
 
-        } catch(MalformedURLException error) {
-            //Handles an incorrectly entered URL
-            return "";
-        }
-        catch(SocketTimeoutException error) {
-            //Handles URL access timeout.
-            return "";
-        }
-        catch (IOException error) {
-            //Handles input and output errors
-            return "";
-        }
-        catch (JSONException error) {
-            //Handles input and output errors
-            return "";
+        } catch(Exception error) {
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, "");
         }
         finally {
             if(client != null) {
@@ -165,19 +167,27 @@ public class FriendshipRequestsService {
         }
     }
 
-    public ArrayList<HashMap<String,String>> getFriendshipRequestsReceived(String toUsername) {
+    public ServiceResponse<ArrayList<HashMap<String,String>>> getFriendshipRequestsReceived(String toUsername) {
         HttpURLConnection client = null;
 
         try {
             URL url = new URL(URL + "/friendship/request/received/" + toUsername);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("GET");
+            String token = String.format("Bearer %s", LocalStorage.getToken());
+            client.setRequestProperty("Authorization", token);
 
             client.connect();
 
             BufferedReader br;
 
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+            int statusCode = client.getResponseCode();
+
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
+            if (200 <= statusCode && statusCode <= 299) {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream()));
             } else {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
@@ -205,7 +215,7 @@ public class FriendshipRequestsService {
                 friendship_requests.add(map);
             }
 
-            return friendship_requests;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, friendship_requests);
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
@@ -213,7 +223,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "MalformedURLException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
@@ -221,7 +231,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "SocketTimeoutException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch (IOException error) {
             //Handles input and output errors
@@ -229,7 +239,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "IOException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch (JSONException error) {
             //Handles input and output errors
@@ -237,7 +247,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "JSONException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         finally {
             if(client != null) {
@@ -246,19 +256,26 @@ public class FriendshipRequestsService {
         }
     }
 
-    public ArrayList<HashMap<String,String>> getFriendshipRequestsSent(String fromUsername) {
+    public ServiceResponse<ArrayList<HashMap<String,String>>> getFriendshipRequestsSent(String fromUsername) {
         HttpURLConnection client = null;
 
         try {
             URL url = new URL(URL + "/friendship/request/sent/" + fromUsername);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("GET");
+            String token = String.format("Bearer %s", LocalStorage.getToken());
+            client.setRequestProperty("Authorization", token);
 
             client.connect();
 
             BufferedReader br;
 
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
+            if (200 <= statusCode && statusCode <= 299) {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream()));
             } else {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
@@ -286,7 +303,7 @@ public class FriendshipRequestsService {
                 friendship_requests.add(map);
             }
 
-            return friendship_requests;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, friendship_requests);
 
         } catch(MalformedURLException error) {
             //Handles an incorrectly entered URL
@@ -294,7 +311,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "MalformedURLException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch(SocketTimeoutException error) {
             //Handles URL access timeout.
@@ -302,7 +319,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "SocketTimeoutException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch (IOException error) {
             //Handles input and output errors
@@ -310,7 +327,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "IOException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         catch (JSONException error) {
             //Handles input and output errors
@@ -318,7 +335,7 @@ public class FriendshipRequestsService {
             HashMap<String,String> map = new HashMap<>();
             map.put("error", "JSONException");
             result.add(map);
-            return result;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, result);
         }
         finally {
             if(client != null) {
@@ -327,19 +344,26 @@ public class FriendshipRequestsService {
         }
     }
 
-    public String deleteFriendshipRequest(String fromUsername, String toUsername) {
+    public ServiceResponse<String> deleteFriendshipRequest(String fromUsername, String toUsername) {
         HttpURLConnection client = null;
 
         try {
             URL url = new URL(URL + "/friendship/request/" + fromUsername + "/" + toUsername);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("DELETE");
+            String token = String.format("Bearer %s", LocalStorage.getToken());
+            client.setRequestProperty("Authorization", token);
 
             client.connect();
 
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
             BufferedReader br;
 
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+            if (200 <= statusCode && statusCode <= 299) {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream()));
             } else {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
@@ -352,19 +376,10 @@ public class FriendshipRequestsService {
             }
             String result = sb.toString();
 
-            return toUsername;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, toUsername);
 
-        } catch(MalformedURLException error) {
-            //Handles an incorrectly entered URL
-            return "";
-        }
-        catch(SocketTimeoutException error) {
-            //Handles URL access timeout.
-            return "";
-        }
-        catch (IOException error) {
-            //Handles input and output errors
-            return "";
+        } catch(Exception error) {
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, "");
         }
         finally {
             if(client != null) {
@@ -373,7 +388,7 @@ public class FriendshipRequestsService {
         }
     }
 
-    public String acceptFriendshipRequest(String fromUsername, String toUsername) {
+    public ServiceResponse<String> acceptFriendshipRequest(String fromUsername, String toUsername) {
         HttpURLConnection client = null;
 
         try {
@@ -382,6 +397,8 @@ public class FriendshipRequestsService {
             client.setRequestMethod("POST");
             client.setRequestProperty("Content-Type", "application/json");
             client.setRequestProperty("Accept", "application/json");
+            String token = String.format("Bearer %s", LocalStorage.getToken());
+            client.setRequestProperty("Authorization", token);
 
             JSONObject credentials = new JSONObject();
             credentials.put("from_username",fromUsername);
@@ -393,9 +410,14 @@ public class FriendshipRequestsService {
 
             client.connect();
 
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
             BufferedReader br;
 
-            if (200 <= client.getResponseCode() && client.getResponseCode() <= 299) {
+            if (200 <= statusCode && statusCode <= 299) {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream()));
             } else {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
@@ -408,23 +430,10 @@ public class FriendshipRequestsService {
             }
             String result = sb.toString();
 
-            return fromUsername;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, fromUsername);
 
-        } catch(MalformedURLException error) {
-            //Handles an incorrectly entered URL
-            return "";
-        }
-        catch(SocketTimeoutException error) {
-            //Handles URL access timeout.
-            return "";
-        }
-        catch (IOException error) {
-            //Handles input and output errors
-            return "";
-        }
-        catch (JSONException error) {
-            //Handles input and output errors
-            return "";
+        } catch(Exception error) {
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR, "");
         }
         finally {
             if(client != null) {

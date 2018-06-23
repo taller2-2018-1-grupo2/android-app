@@ -23,6 +23,7 @@ import stories.app.activities.images.ImageFiltersActivity;
 import stories.app.models.Story;
 import stories.app.services.FileService;
 import stories.app.services.LocationService;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.services.StoryService;
 import stories.app.utils.FileUtils;
 import stories.app.utils.LocalStorage;
@@ -162,7 +163,7 @@ public class CreateStoryActivity extends AppCompatActivity {
         startActivityForResult(photoPickerIntent, START_FILE_UPLOAD);
     }
 
-    protected class CreateStoryTask extends AsyncTask<Story, Void, Story> {
+    protected class CreateStoryTask extends AsyncTask<Story, Void, ServiceResponse<Story>> {
         private StoryService storyService = new StoryService();
         private String mFilePath;
 
@@ -175,13 +176,15 @@ public class CreateStoryActivity extends AppCompatActivity {
             createStoryButton.setEnabled(false);
         }
 
-        protected Story doInBackground(Story... params) {
+        protected ServiceResponse<Story> doInBackground(Story... params) {
             Story storyToUpload = params[0];
             return storyService.createStory(storyToUpload);
         }
 
-        protected void onPostExecute(Story newStory) {
-            if (newStory != null) {
+        protected void onPostExecute(ServiceResponse<Story> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS){
+                Story newStory = response.getServiceResponse();
                 new UploadFileTask(this.mFilePath).execute(newStory.id);
             } else {
                 String messageToDisplay = "Error al subir la historia. Intente de nuevo.";
@@ -195,7 +198,7 @@ public class CreateStoryActivity extends AppCompatActivity {
         }
     }
 
-    protected class UploadFileTask extends AsyncTask<String, Void, Story> {
+    protected class UploadFileTask extends AsyncTask<String, Void, ServiceResponse<Story>> {
         private File file;
         private FileService fileService = new FileService();
         private String mStoryID;
@@ -204,13 +207,14 @@ public class CreateStoryActivity extends AppCompatActivity {
             this.file = new File(filePath);
         }
 
-        protected Story doInBackground(String... storyId) {
+        protected ServiceResponse<Story> doInBackground(String... storyId) {
             this.mStoryID = storyId[0];
             return fileService.uploadFileToStory(storyId[0], this.file);
         }
 
-        protected void onPostExecute(Story result) {
-            if (result != null) {
+        protected void onPostExecute(ServiceResponse<Story> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
                 // Navigate to Home page
                 Intent navigationIntent = new Intent(CreateStoryActivity.this, HomeActivity.class);
                 startActivity(navigationIntent);
@@ -218,25 +222,30 @@ public class CreateStoryActivity extends AppCompatActivity {
                 createStoryButton.setEnabled(true);
             } else {
                 new DeleteStoryTask().execute(this.mStoryID);
+                if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                    Intent navigationIntent = new Intent(CreateStoryActivity.this, LogInActivity.class);
+                    startActivity(navigationIntent);
+                    Button createStoryButton = findViewById(R.id.createStoryButton);
+                    createStoryButton.setEnabled(true);
+                }
+                else{
+                    String messageToDisplay = "Error al subir la historia. Intente de nuevo.";
+                    Snackbar snackbar = Snackbar
+                            .make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
+                    snackbar.show();
+
+                    Button createStoryButton = findViewById(R.id.createStoryButton);
+                    createStoryButton.setEnabled(true);
+                }
             }
         }
     }
 
-    protected class DeleteStoryTask extends AsyncTask<String, Void, String> {
+    protected class DeleteStoryTask extends AsyncTask<String, Void, ServiceResponse<String>> {
         private StoryService storyService = new StoryService();
 
-        protected String doInBackground(String... storyId) {
+        protected ServiceResponse<String> doInBackground(String... storyId) {
             return storyService.deleteStory(storyId[0]);
-        }
-
-        protected void onPostExecute(String result) {
-            String messageToDisplay = "Error al subir la historia. Intente de nuevo.";
-            Snackbar snackbar = Snackbar
-                    .make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
-            snackbar.show();
-
-            Button createStoryButton = findViewById(R.id.createStoryButton);
-            createStoryButton.setEnabled(true);
         }
     }
 }

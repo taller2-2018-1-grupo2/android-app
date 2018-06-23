@@ -8,7 +8,6 @@ public class User {
     public String username;
     public String name;
     public String email;
-    public String token;
     public String firebaseToken;
     public String profilePic;
 
@@ -18,7 +17,6 @@ public class User {
         user.username = userJson.has("username") ? userJson.getString("username") : "";
         user.name = userJson.has("name") ? userJson.getString("name") : "";
         user.email = userJson.has("email") ? userJson.getString("email") : "";
-        user.token = userJson.has("token") ? userJson.getJSONObject("token").getString("token") : "";
         user.firebaseToken = userJson.has("firebase_token") ? userJson.getString("firebase_token") : "";
         user.profilePic = userJson.has("profile_pic") ? userJson.getString("profile_pic") : "";
 

@@ -13,23 +13,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import stories.app.R;
-import stories.app.adapters.ConversationMessagesAdapter;
 import stories.app.adapters.MessagesRecyclerViewAdapter;
-import stories.app.adapters.UsersRecyclerViewAdapter;
 import stories.app.models.Message;
-import stories.app.models.User;
 import stories.app.models.UserDMResponse;
 import stories.app.models.responses.DirectMessageResponse;
-import stories.app.services.ChatInstanceIDService;
-import stories.app.services.ChatService;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.services.MessagingService;
 import stories.app.utils.Base64UtilityClass;
 import stories.app.utils.LocalStorage;
@@ -114,7 +108,7 @@ public class DirectMessagesConversationActivity extends AppCompatActivity {
         }
     }
 
-    protected class SendMessageTask extends AsyncTask<Message, Void, Message> {
+    protected class SendMessageTask extends AsyncTask<Message, Void, ServiceResponse<Message>> {
         private MessagingService messagingService = new MessagingService();
 
         protected void onPreExecute() {
@@ -122,11 +116,11 @@ public class DirectMessagesConversationActivity extends AppCompatActivity {
             sendMessageButton.setEnabled(false);
         }
 
-        protected Message doInBackground(Message... params) {
+        protected ServiceResponse<Message> doInBackground(Message... params) {
             return messagingService.sendMessage(params[0]);
         }
 
-        protected void onPostExecute(Message result) {
+        protected void onPostExecute(ServiceResponse<Message> result) {
             Button sendMessageButton = findViewById(R.id.send_message_button);
             sendMessageButton.setEnabled(true);
 
@@ -137,43 +131,50 @@ public class DirectMessagesConversationActivity extends AppCompatActivity {
         }
     }
 
-    protected class FetchConversationTask extends AsyncTask<String, Void, DirectMessageResponse> {
+    protected class FetchConversationTask extends AsyncTask<String, Void, ServiceResponse<DirectMessageResponse>> {
         protected void onPreExecute() {
         }
 
-        protected DirectMessageResponse doInBackground(String... params) {
+        protected ServiceResponse<DirectMessageResponse> doInBackground(String... params) {
             return messagingService.getConversationMessages(params[0], params[1]);
         }
 
-        protected void onPostExecute(DirectMessageResponse result) {
-            if(result != null) {
-                dataset.clear();
-                for (int i = 0; i < result.direct_messages.size(); i++) {
-                    dataset.add(result.direct_messages.get(i));
-                }
-                recyclerViewAdapter.notifyDataSetChanged();
-                LinearLayoutManager rvLayoutManager = (LinearLayoutManager) recyclerViewLayoutManager;
-                rvLayoutManager.setStackFromEnd(true);
-
-                if (!infoAlreadySet) {
-                    View mCustomView = mInflater.inflate(R.layout.dm_custom_toolbar, null);
-
-                    UserDMResponse user = result.user;
-                    TextView toolbarNameView = mCustomView.findViewById(R.id.toolbar_name);
-                    TextView toolbarUsernameView = mCustomView.findViewById(R.id.toolbar_username);
-                    CircleImageView toolbarProfilePicView = mCustomView.findViewById(R.id.toolbar_profile_pic);
-
-                    toolbarNameView.setText(user.name);
-                    toolbarUsernameView.setText(user.username);
-
-                    if (!user.profile_pic.isEmpty()) {
-                        toolbarProfilePicView.setImageBitmap(Base64UtilityClass.toBitmap(user.profile_pic));
+        protected void onPostExecute(ServiceResponse<DirectMessageResponse> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
+                DirectMessageResponse result = response.getServiceResponse();
+                if (result != null) {
+                    dataset.clear();
+                    for (int i = 0; i < result.direct_messages.size(); i++) {
+                        dataset.add(result.direct_messages.get(i));
                     }
+                    recyclerViewAdapter.notifyDataSetChanged();
+                    LinearLayoutManager rvLayoutManager = (LinearLayoutManager) recyclerViewLayoutManager;
+                    rvLayoutManager.setStackFromEnd(true);
 
-                    mActionBar.setCustomView(mCustomView);
-                    mActionBar.setDisplayShowCustomEnabled(true);
-                    infoAlreadySet = true;
+                    if (!infoAlreadySet) {
+                        View mCustomView = mInflater.inflate(R.layout.dm_custom_toolbar, null);
+
+                        UserDMResponse user = result.user;
+                        TextView toolbarNameView = mCustomView.findViewById(R.id.toolbar_name);
+                        TextView toolbarUsernameView = mCustomView.findViewById(R.id.toolbar_username);
+                        CircleImageView toolbarProfilePicView = mCustomView.findViewById(R.id.toolbar_profile_pic);
+
+                        toolbarNameView.setText(user.name);
+                        toolbarUsernameView.setText(user.username);
+
+                        if (!user.profile_pic.isEmpty()) {
+                            toolbarProfilePicView.setImageBitmap(Base64UtilityClass.toBitmap(user.profile_pic));
+                        }
+
+                        mActionBar.setCustomView(mCustomView);
+                        mActionBar.setDisplayShowCustomEnabled(true);
+                        infoAlreadySet = true;
+                    }
                 }
+            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(DirectMessagesConversationActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
             }
         }
     }

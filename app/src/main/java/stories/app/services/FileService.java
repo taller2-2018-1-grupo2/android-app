@@ -15,8 +15,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import stories.app.exceptions.UserUnauthorizedException;
 import stories.app.models.Story;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.utils.Constants;
+import stories.app.utils.LocalStorage;
 
 public class FileService{
 
@@ -57,7 +60,7 @@ public class FileService{
         request.write(bytes);
     }
 
-    private Story finish() throws Exception {
+    private ServiceResponse<Story> finish() throws Exception {
         String response ="";
 
         request.writeBytes(this.crlf);
@@ -86,17 +89,18 @@ public class FileService{
 
             response = stringBuilder.toString();
             client.disconnect();
+        } else if (status == HttpURLConnection.HTTP_UNAUTHORIZED) {
+            throw new UserUnauthorizedException("The user token has expired");
         } else {
             throw new IOException("Server returned non-OK status: " + status);
         }
 
         JSONObject jsonResponse = new JSONObject(response);
         Story newStory = Story.fromJsonObject(jsonResponse);
-
-        return newStory;
+        return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, newStory);
     }
 
-    public Story uploadFileToStory(String storyId, File file){
+    public ServiceResponse<Story> uploadFileToStory(String storyId, File file){
         this.client = null;
 
         try {
@@ -108,19 +112,24 @@ public class FileService{
             this.client.setDoInput(true);
 
             this.client.setRequestMethod("POST");
+            String token = String.format("Bearer %s", LocalStorage.getToken());
+            this.client.setRequestProperty("Authorization", token);
             this.client.setRequestProperty("Connection", "Keep-Alive");
             this.client.setRequestProperty("Cache-Control", "no-cache");
             this.client.setRequestProperty(
                     "Content-Type", "multipart/form-data;boundary=" + this.boundary);
 
-            request =  new DataOutputStream(this.client.getOutputStream());
+            request = new DataOutputStream(this.client.getOutputStream());
 
-            addFormField("filename",file.getName());
+            addFormField("filename", file.getName());
             addFilePart("file", file);
             return finish();
+        } catch (UserUnauthorizedException exception) {
+            Log.e(exception.getClass().getName(), exception.getMessage(), exception);
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
         } catch (Exception exception) {
             Log.e(exception.getClass().getName(), exception.getMessage(), exception);
-            return null;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
             if (client != null) {
                 client.disconnect();

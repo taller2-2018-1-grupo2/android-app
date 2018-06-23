@@ -1,20 +1,14 @@
 package stories.app.services;
 
-import android.util.Log;
-
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.google.gson.Gson;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import stories.app.models.Message;
 import stories.app.utils.Constants;
 import stories.app.utils.LocalStorage;
-
-import static android.content.ContentValues.TAG;
 
 public class ChatInstanceIDService extends FirebaseInstanceIdService {
 

@@ -87,26 +87,32 @@ public class StoriesMapActivity extends AppCompatActivity implements OnMapReadyC
             return storyService.getStoriesVisiblesToUser(params[0]);
         }
 
-        protected void onPostExecute(ArrayList<Story> result) {
-            stories = result;
+        protected void onPostExecute(ServiceResponse<ArrayList<Story>> response) {
+            ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
+                ArrayList<Story> stories = response.getServiceResponse();
 
-            for (int i = 0; i < stories.size(); i++) {
-                Story story = stories.get(i);
-                if (!story.location.isEmpty()) {
-                    String[] latLngSplit = story.location.split(",");
+                for (int i = 0; i < stories.size(); i++) {
+                    Story story = stories.get(i);
+                    if (!story.location.isEmpty()) {
+                        String[] latLngSplit = story.location.split(",");
 
-                    LatLng storyLatLng = new LatLng(Double.parseDouble(latLngSplit[0]), Double.parseDouble(latLngSplit[1]));
-                    String snippet = story.name + "," + story.username;
+                        LatLng storyLatLng = new LatLng(Double.parseDouble(latLngSplit[0]), Double.parseDouble(latLngSplit[1]));
+                        String snippet = story.name + "," + story.username;
 
-                    mMap.addMarker(new MarkerOptions()
-                            .position(storyLatLng)
-                            .title(story.profilePic)
-                            .snippet(snippet));
+                        mMap.addMarker(new MarkerOptions()
+                                .position(storyLatLng)
+                                .title(story.profilePic)
+                                .snippet(snippet));
 
+                    }
                 }
-            }
 
-            mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+                mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(StoriesMapActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
+            }
         }
     }
 

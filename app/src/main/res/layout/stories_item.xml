@@ -11,13 +11,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/stories_item_user_pic"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:contentDescription="Story image"
+            android:contentDescription="User pic"
             android:scaleType="centerCrop"
             tools:src="@drawable/profile_placeholder" />
 
@@ -53,7 +55,6 @@
             android:id="@+id/stories_item_fileUrl"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_marginBottom="5dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             tools:src="@drawable/profile_placeholder" />
@@ -64,6 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
             android:maxHeight="70dp"
             android:minHeight="0dp"
             android:textColor="@color/textPrimary"
@@ -71,11 +73,13 @@
 
     </LinearLayout>
 
-    <!-- Menu -->
+    <!-- Likes -->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="25dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
         android:gravity="center_vertical">
 
@@ -83,15 +87,7 @@
             android:id="@+id/stories_item_like_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
             android:src="@drawable/ic_story_like_likeable" />
-
-        <ImageView
-            android:id="@+id/stories_item_comments_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_story_comment" />
 
         <TextView
             android:id="@+id/stories_item_like_count"
@@ -104,4 +100,56 @@
             tools:text="27 likes" />
     </LinearLayout>
 
+    <!-- Comments -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/stories_item_comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/textPrimary"
+            tools:text="nanovazquez: Genial!\npepe: sii!" />
+    </LinearLayout>
+
+    <!-- New comment -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/stories_item_new_comment_userpic"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:contentDescription="User pic"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/profile_placeholder" />
+
+        <EditText
+            android:id="@+id/stories_item_new_comment_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:hint="@string/new_comment"
+            android:inputType="text"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/stories_item_new_comment_button"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_story_comment" />
+    </LinearLayout>
 </LinearLayout>

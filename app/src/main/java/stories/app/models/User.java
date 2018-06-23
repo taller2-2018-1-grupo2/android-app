@@ -32,6 +32,7 @@ public class User {
         userJson.put("name", user.name);
         userJson.put("email", user.email);
         userJson.put("firebase_token", user.firebaseToken);
+        userJson.put("profile_pic", user.profilePic);
 
         return userJson;
     }

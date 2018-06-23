@@ -39,7 +39,7 @@ public class DirectMessagesCreateActivity extends AppCompatActivity {
             EditText messageText = findViewById(R.id.createMessageText);
 
             Message message = new Message();
-            message.from_username = LocalStorage.getUsername();
+            message.from_username = LocalStorage.getUser().username;
             message.to_username = destination.getText().toString();
             message.message = messageText.getText().toString();
             message.timestamp = System.currentTimeMillis();

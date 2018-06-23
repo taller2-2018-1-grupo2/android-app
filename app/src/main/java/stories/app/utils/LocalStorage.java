@@ -14,12 +14,4 @@ public class LocalStorage {
     public static User getUser() {
         return LocalStorage.user;
     }
-
-    public static void setUsername(String newUsername) {
-        username = newUsername;
-    }
-
-    public static String getUsername() {
-        return username;
-    }
 }

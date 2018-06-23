@@ -23,6 +23,7 @@ public class Story {
     public String name;
     public String profilePic;
     public JSONArray likes;
+    public JSONArray comments;
 
     public Boolean isLikedByUser(String userId) {
         Boolean likedByUser = false;
@@ -58,6 +59,7 @@ public class Story {
         story.profilePic = storyJson.has("profile_pic") ? storyJson.getString("profile_pic") : "";
 
         story.likes = storyJson.has("likes") ?storyJson.getJSONArray("likes") : new JSONArray();
+        story.comments = storyJson.has("comments") ?storyJson.getJSONArray("comments") : new JSONArray();
 
         return story;
     }
@@ -76,6 +78,7 @@ public class Story {
         storyJson.put("location", story.location);
         storyJson.put("timestamp", story.timestamp);
         storyJson.put("likes", story.likes);
+        storyJson.put("comments", story.comments);
 
         return storyJson;
     }

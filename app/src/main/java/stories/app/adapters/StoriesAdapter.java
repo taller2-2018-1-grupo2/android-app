@@ -3,6 +3,8 @@ package stories.app.adapters;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +14,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -62,6 +66,9 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         holder.updateLikeButton(story);
 
         // Comments
+        holder.updateComments(story.comments);
+
+        // New comment
         User currentUser = LocalStorage.getUser();
         this.setImageFromUrl(currentUser.profilePic, holder.newCommentUserPic, R.drawable.profile_placeholder);
         holder.postCommentButton.setOnClickListener(new PostCommentButtonOnClickHandler(story, holder));
@@ -103,6 +110,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
         ImageView likeButton;
 
+        TextView comments;
         ImageView newCommentUserPic;
         TextView newComment;
         ImageView postCommentButton;
@@ -118,6 +126,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
             this.likeButton = itemView.findViewById(R.id.stories_item_like_button);
 
+            this.comments = itemView.findViewById(R.id.stories_item_comments);
             this.newCommentUserPic = itemView.findViewById(R.id.stories_item_new_comment_userpic);
             this.newComment = itemView.findViewById(R.id.stories_item_new_comment_text);
             this.postCommentButton = itemView.findViewById(R.id.stories_item_new_comment_button);
@@ -156,6 +165,29 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             this.likeButton.setImageResource(likeIcon);
             this.likeButton.setEnabled(true);
             this.likeButton.setOnClickListener(new LikeButtonOnClickHandler(story, this));
+        }
+
+        public void updateComments(JSONArray comments) {
+            String postComments = "";
+            for(int i = 0; i < comments.length(); i++) {
+                try {
+                    JSONObject comment = comments.getJSONObject(i);
+                    String username = comment.getString("username");
+                    String text = comment.getString("text");
+
+                    postComments += "<b>@" + username + ":</b> " + text;
+
+                    if (i + 1 < comments.length()) {
+                        postComments += "<br>";
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            this.comments.setVisibility(comments.length() > 0 ? View.VISIBLE : View.GONE);
+            this.comments.setText(Html.fromHtml(postComments));
         }
     }
 
@@ -248,6 +280,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         }
 
         protected void onPostExecute(Story newStory) {
+            this.holder.updateComments(newStory.comments);
 
             // Enable Post comment elements in the UI and clean up the field
             this.holder.newComment.setText("");

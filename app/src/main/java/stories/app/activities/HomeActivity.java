@@ -77,8 +77,8 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.logout:
                 // borrar firebase token de la DB del appServer
                 // sin firebase token, las notificaciones no llegan
-                LocalStorage.setUser(null);
                 ChatInstanceIDService.sendRegistrationToServer("");
+                LocalStorage.setUser(null);
 
                 navigationIntent = new Intent(HomeActivity.this, LogInActivity.class);
                 startActivity(navigationIntent);

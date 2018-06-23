@@ -29,7 +29,7 @@ public class Story {
 
         for(int i = 0; i < this.likes.length(); i++) {
             try {
-                if (userId == this.likes.getString(i)) {
+                if (userId.equals(this.likes.getString(i))) {
                     likedByUser = true;
                     break;
                 }
@@ -50,7 +50,7 @@ public class Story {
 
         for(int i = 0; i < this.likes.length(); i++) {
             try {
-                if (userId == this.likes.getString(i)) {
+                if (userId.equals(this.likes.getString(i))) {
                     userIdIndex = i;
                     break;
                 }

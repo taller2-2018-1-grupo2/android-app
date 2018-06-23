@@ -88,6 +88,44 @@ public class StoryService extends BaseService {
         }
     }
 
+    public Story updateLikes(String storyId, String userId, String operation) {
+        HttpURLConnection client = null;
+
+        try {
+            URL url = new URL(Constants.appServerURI + "/stories/" + storyId);
+            client = (HttpURLConnection) url.openConnection();
+            client.setRequestMethod("PATCH");
+            client.setRequestProperty("Content-Type", "application/json");
+            client.setRequestProperty("Accept", "application/json");
+
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("op", operation);
+            requestBody.put("path", "/likes");
+            requestBody.put("value", userId);
+
+            OutputStream outputStream = client.getOutputStream();
+            outputStream.write(requestBody.toString().getBytes("UTF-8"));
+            outputStream.close();
+
+            client.connect();
+
+            JSONObject result = this.getResponseResult(client);
+
+            if (result == null) {
+                return null;
+            }
+
+            Story newStory = Story.fromJsonObject(result);
+            return newStory;
+        } catch (Exception exception) {
+            return null;
+        } finally {
+            if (client != null) {
+                client.disconnect();
+            }
+        }
+    }
+
     public String deleteStory(String storyID) {
         HttpURLConnection client = null;
 

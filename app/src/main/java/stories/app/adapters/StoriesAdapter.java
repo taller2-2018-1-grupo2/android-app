@@ -1,6 +1,7 @@
 package stories.app.adapters;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 
 import stories.app.R;
 import stories.app.models.Story;
+import stories.app.services.StoryService;
 import stories.app.utils.LocalStorage;
 
 public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHolder> {
@@ -123,7 +125,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             String currentUserId = LocalStorage.getUser().id;
 
             // If the story belongs to the user, disable the button
-            if (story.userId == currentUserId) {
+            if (story.userId.equals(currentUserId)) {
                 this.likeButton.setEnabled(false);
                 this.likeButton.setImageResource(R.drawable.ic_story_like_disabled);
                 return;
@@ -152,17 +154,44 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
         public void onClick(View v) {
             String currentUserId = LocalStorage.getUser().id;
-
+            String operation = "";
             if (this.story.isLikedByUser(currentUserId)) {
                 this.story.removeLike(currentUserId);
+                operation = "remove";
             } else {
                 this.story.addLike(currentUserId);
+                operation = "add";
             }
 
-            this.holder.setLikeCount(this.story);
-            this.holder.updateLikeButton(this.story);
+            // Update story in the backend
+            new UpdateStoryLikesToUserTask(this.holder).execute(this.story.id, currentUserId, operation);
+        }
+    }
 
-            // TODO: Update story in the backend
+    protected class UpdateStoryLikesToUserTask extends AsyncTask<String, Void, Story> {
+        private StoryService storyService;
+        private StoriesAdapter.ViewHolder holder;
+
+        public UpdateStoryLikesToUserTask(StoriesAdapter.ViewHolder holder) {
+            this.storyService = new StoryService();
+            this.holder = holder;
+        }
+
+        protected void onPreExecute() {
+            // Disable click handler in Like button
+            this.holder.likeButton.setImageResource(R.drawable.ic_story_like_disabled);
+            this.holder.likeButton.setEnabled(false);
+        }
+
+        protected Story doInBackground(String... params) {
+            return storyService.updateLikes(params[0], params[1], params[2]);
+        }
+
+        protected void onPostExecute(Story newStory) {
+
+            // Update like button (UI) with new story
+            this.holder.setLikeCount(newStory);
+            this.holder.updateLikeButton(newStory);
         }
     }
 }

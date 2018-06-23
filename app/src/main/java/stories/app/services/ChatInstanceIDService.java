@@ -35,8 +35,6 @@ public class ChatInstanceIDService extends FirebaseInstanceIdService {
             client.setRequestMethod("PUT");
             client.setRequestProperty("Content-Type", "application/json");
             client.setRequestProperty("Accept", "application/json");
-            String token = String.format("Bearer %s", LocalStorage.getToken());
-            client.setRequestProperty("Authorization", token);
 
             OutputStream outputStream = client.getOutputStream();
             outputStream.write(newFirebaseToken.getBytes("UTF-8"));

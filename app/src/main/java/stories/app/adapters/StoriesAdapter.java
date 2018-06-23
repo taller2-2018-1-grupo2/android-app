@@ -1,7 +1,10 @@
 package stories.app.adapters;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +14,16 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import stories.app.R;
 import stories.app.models.Story;
+import stories.app.models.User;
+import stories.app.services.StoryService;
 import stories.app.utils.LocalStorage;
 
 public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHolder> {
@@ -50,10 +57,21 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         this.setImageFromUrl(story.fileUrl, holder.storyUserImage, R.drawable.profile_placeholder);
         holder.username.setText(story.username + ": ");
         holder.title.setText(story.title);
-        holder.description.setText(story.description);
 
+        holder.description.setText(story.description);
+        holder.description.setVisibility(story.description.length() > 0 ? View.VISIBLE : View.GONE);
+
+        // Likes
         holder.setLikeCount(story);
         holder.updateLikeButton(story);
+
+        // Comments
+        holder.updateComments(story.comments);
+
+        // New comment
+        User currentUser = LocalStorage.getUser();
+        this.setImageFromUrl(currentUser.profilePic, holder.newCommentUserPic, R.drawable.profile_placeholder);
+        holder.postCommentButton.setOnClickListener(new PostCommentButtonOnClickHandler(story, holder));
     }
 
     private void setImageFromUrl(String url, ImageView imageView, int placeholderResId) {
@@ -91,7 +109,11 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         TextView likeCount;
 
         ImageView likeButton;
-        ImageView commentsButton;
+
+        TextView comments;
+        ImageView newCommentUserPic;
+        TextView newComment;
+        ImageView postCommentButton;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -103,6 +125,11 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             this.likeCount = itemView.findViewById(R.id.stories_item_like_count);
 
             this.likeButton = itemView.findViewById(R.id.stories_item_like_button);
+
+            this.comments = itemView.findViewById(R.id.stories_item_comments);
+            this.newCommentUserPic = itemView.findViewById(R.id.stories_item_new_comment_userpic);
+            this.newComment = itemView.findViewById(R.id.stories_item_new_comment_text);
+            this.postCommentButton = itemView.findViewById(R.id.stories_item_new_comment_button);
         }
 
         private void setLikeCount(Story story) {
@@ -123,7 +150,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             String currentUserId = LocalStorage.getUser().id;
 
             // If the story belongs to the user, disable the button
-            if (story.userId == currentUserId) {
+            if (story.userId.equals(currentUserId)) {
                 this.likeButton.setEnabled(false);
                 this.likeButton.setImageResource(R.drawable.ic_story_like_disabled);
                 return;
@@ -139,6 +166,29 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             this.likeButton.setEnabled(true);
             this.likeButton.setOnClickListener(new LikeButtonOnClickHandler(story, this));
         }
+
+        public void updateComments(JSONArray comments) {
+            String postComments = "";
+            for(int i = 0; i < comments.length(); i++) {
+                try {
+                    JSONObject comment = comments.getJSONObject(i);
+                    String username = comment.getString("username");
+                    String text = comment.getString("text");
+
+                    postComments += "<b>@" + username + ":</b> " + text;
+
+                    if (i + 1 < comments.length()) {
+                        postComments += "<br>";
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            this.comments.setVisibility(comments.length() > 0 ? View.VISIBLE : View.GONE);
+            this.comments.setText(Html.fromHtml(postComments));
+        }
     }
 
     protected class LikeButtonOnClickHandler implements View.OnClickListener {
@@ -152,17 +202,91 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
         public void onClick(View v) {
             String currentUserId = LocalStorage.getUser().id;
+            String operation = this.story.isLikedByUser(currentUserId) ? "remove" : "add";
 
-            if (this.story.isLikedByUser(currentUserId)) {
-                this.story.removeLike(currentUserId);
-            } else {
-                this.story.addLike(currentUserId);
+            // Update story in the backend
+            new UpdateStoryLikesToUserTask(this.holder).execute(this.story.id, currentUserId, operation);
+        }
+    }
+
+    protected class UpdateStoryLikesToUserTask extends AsyncTask<String, Void, Story> {
+        private StoryService storyService;
+        private StoriesAdapter.ViewHolder holder;
+
+        public UpdateStoryLikesToUserTask(StoriesAdapter.ViewHolder holder) {
+            this.storyService = new StoryService();
+            this.holder = holder;
+        }
+
+        protected void onPreExecute() {
+            // Disable click handler in Like button
+            this.holder.likeButton.setImageResource(R.drawable.ic_story_like_disabled);
+            this.holder.likeButton.setEnabled(false);
+        }
+
+        protected Story doInBackground(String... params) {
+            return storyService.updateLikes(params[0], params[1], params[2]);
+        }
+
+        protected void onPostExecute(Story newStory) {
+
+            // Update like button (UI) with new story
+            this.holder.setLikeCount(newStory);
+            this.holder.updateLikeButton(newStory);
+        }
+    }
+
+    protected class PostCommentButtonOnClickHandler implements View.OnClickListener {
+        private Story story;
+        private StoriesAdapter.ViewHolder holder;
+
+        PostCommentButtonOnClickHandler(Story story, StoriesAdapter.ViewHolder holder) {
+            this.story = story;
+            this.holder = holder;
+        }
+
+        public void onClick(View v) {
+            User currentUser = LocalStorage.getUser();
+            String commentText = this.holder.newComment.getText().toString();
+
+            if (commentText.length() > 0) {
+                // Update story in the backend
+                new AddStoryCommentTask(this.holder).execute(this.story.id, currentUser, commentText);
             }
+        }
+    }
 
-            this.holder.setLikeCount(this.story);
-            this.holder.updateLikeButton(this.story);
+    protected class AddStoryCommentTask extends AsyncTask<Object, Void, Story> {
+        private StoryService storyService;
+        private StoriesAdapter.ViewHolder holder;
 
-            // TODO: Update story in the backend
+        public AddStoryCommentTask(StoriesAdapter.ViewHolder holder) {
+            this.storyService = new StoryService();
+            this.holder = holder;
+        }
+
+        protected void onPreExecute() {
+            // Disable Post comment elements in the UI
+            this.holder.newComment.setEnabled(false);
+            this.holder.postCommentButton.setEnabled(false);
+            this.holder.postCommentButton.setImageResource(R.drawable.ic_story_comment_disabled);
+        }
+
+        protected Story doInBackground(Object... params) {
+            String storyId = (String)params[0];
+            User user = (User)params[1];
+            String commentText = (String)params[2];
+            return storyService.addComment(storyId, user, commentText);
+        }
+
+        protected void onPostExecute(Story newStory) {
+            this.holder.updateComments(newStory.comments);
+
+            // Enable Post comment elements in the UI and clean up the field
+            this.holder.newComment.setText("");
+            this.holder.newComment.setEnabled(true);
+            this.holder.postCommentButton.setEnabled(true);
+            this.holder.postCommentButton.setImageResource(R.drawable.ic_story_comment);
         }
     }
 }

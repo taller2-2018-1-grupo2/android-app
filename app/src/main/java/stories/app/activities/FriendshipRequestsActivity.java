@@ -147,7 +147,7 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
 
         protected ServiceResponse<String> doInBackground(String... params) {
             return friendshipRequestsService.createFriendshipRequest(
-                    LocalStorage.getUsername(),
+                    LocalStorage.getUser().username,
                     params[0]
             );
         }

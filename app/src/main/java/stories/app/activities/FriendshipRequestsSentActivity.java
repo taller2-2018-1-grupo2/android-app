@@ -88,7 +88,7 @@ public class FriendshipRequestsSentActivity extends AppCompatActivity implements
 
         protected ServiceResponse<ArrayList<HashMap<String,String>>> doInBackground(String... params) {
             return friendshipRequestsService.getFriendshipRequestsSent(
-                    LocalStorage.getUsername()
+                    LocalStorage.getUser().username
             );
         }
 
@@ -122,7 +122,7 @@ public class FriendshipRequestsSentActivity extends AppCompatActivity implements
 
         protected ServiceResponse<String> doInBackground(String... params) {
             return friendshipRequestsService.deleteFriendshipRequest(
-                    LocalStorage.getUsername(),
+                    LocalStorage.getUser().username,
                     params[0]
             );
         }

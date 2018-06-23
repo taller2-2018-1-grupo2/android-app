@@ -39,7 +39,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
         Message message = mMessageList.get(position);
 
-        if (message.from_username.equals(LocalStorage.getUsername())) {
+        if (message.from_username.equals(LocalStorage.getUser().username)) {
             // If the current user is the sender of the message
             return VIEW_TYPE_MESSAGE_SENT;
         } else {

@@ -197,12 +197,7 @@ public class LogInActivity extends AppCompatActivity {
         }
 
         protected ServiceResponse<User> doInBackground(String... params) {
-            return authenticationService.fbLoginUser(
-                    params[0],
-                    params[1],
-                    params[2],
-                    params[3],
-                    params[4]);
+            return authenticationService.fbLoginUser(params[0], params[1], params[2], params[3], params[4]);
         }
 
         protected void onPostExecute(ServiceResponse<User> response) {

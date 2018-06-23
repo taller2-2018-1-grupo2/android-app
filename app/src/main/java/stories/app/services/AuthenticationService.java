@@ -35,20 +35,15 @@ public class AuthenticationService extends BaseService {
 
             client.connect();
 
-            JSONObject result = this.getResponseResult(client);
-            User user = User.fromJsonObject(result);
-            user.username = username;
-
             // Save the user information
-            LocalStorage.setUser(user);
-
-            // Temporary until we find a solution to the code above, which doesn't work for username.
-            LocalStorage.setUsername(username);
+            JSONObject result = this.getResponseResult(client);
+            User userResult = User.fromJsonObject(result.getJSONObject("user"));
+            LocalStorage.setUser(userResult);
 
             // Saving token for future sends
             LocalStorage.setToken(result.getJSONObject("token").getString("token"));
 
-            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, user);
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, userResult);
         } catch(Exception exception) {
             return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
@@ -77,22 +72,15 @@ public class AuthenticationService extends BaseService {
 
             client.connect();
 
-            JSONObject result = this.getResponseResult(client);
-            User signedInUser = User.fromJsonObject(result.getJSONObject("user"));
-
-            // TODO: merge both user and signedInUser
-
             // Save the user information
-            LocalStorage.setUser(signedInUser);
-
-            // Same as in Login method. Inconsistencies with code above.
-            JSONObject jsonUser = result.getJSONObject("user");
-            LocalStorage.setUsername(jsonUser.getString("username"));
+            JSONObject result = this.getResponseResult(client);
+            User userResult = User.fromJsonObject(result.getJSONObject("user"));
+            LocalStorage.setUser(userResult);
 
             // Saving token for future sends
             LocalStorage.setToken(result.getJSONObject("token").getString("token"));
 
-            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, signedInUser);
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, userResult);
         } catch(Exception exception) {
             return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
@@ -125,19 +113,12 @@ public class AuthenticationService extends BaseService {
 
             client.connect();
 
-            JSONObject result = this.getResponseResult(client);
-            User user = User.fromJsonObject(result.getJSONObject("user"));
-
-            // TODO: merge both user and signedInUser
-
             // Save the user information
-            LocalStorage.setUser(user);
+            JSONObject result = this.getResponseResult(client);
+            User userResult = User.fromJsonObject(result.getJSONObject("user"));
+            LocalStorage.setUser(userResult);
 
-            // Same as in Login method. Inconsistencies with code above.
-            JSONObject jsonUser = result.getJSONObject("user");
-            LocalStorage.setUsername(jsonUser.getString("username"));
-
-            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, user);
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, userResult);
         } catch(Exception exception) {
             return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {

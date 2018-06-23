@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import stories.app.models.Story;
 import stories.app.models.responses.ServiceResponse;
+import stories.app.models.User;
 import stories.app.utils.Constants;
 import stories.app.utils.LocalStorage;
 
@@ -94,6 +95,87 @@ public class StoryService extends BaseService {
         }
     }
 
+    public Story updateLikes(String storyId, String userId, String operation) {
+        HttpURLConnection client = null;
+
+        try {
+            URL url = new URL(Constants.appServerURI + "/stories/" + storyId);
+            client = (HttpURLConnection) url.openConnection();
+            client.setRequestMethod("PATCH");
+            client.setRequestProperty("Content-Type", "application/json");
+            client.setRequestProperty("Accept", "application/json");
+
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("op", operation);
+            requestBody.put("path", "/likes");
+            requestBody.put("value", userId);
+
+            OutputStream outputStream = client.getOutputStream();
+            outputStream.write(requestBody.toString().getBytes("UTF-8"));
+            outputStream.close();
+
+            client.connect();
+
+            JSONObject result = this.getResponseResult(client);
+
+            if (result == null) {
+                return null;
+            }
+
+            Story newStory = Story.fromJsonObject(result);
+            return newStory;
+        } catch (Exception exception) {
+            return null;
+        } finally {
+            if (client != null) {
+                client.disconnect();
+            }
+        }
+    }
+
+    public Story addComment(String storyId, User user, String commentText) {
+        HttpURLConnection client = null;
+
+        try {
+            URL url = new URL(Constants.appServerURI + "/stories/" + storyId);
+            client = (HttpURLConnection) url.openConnection();
+            client.setRequestMethod("PATCH");
+            client.setRequestProperty("Content-Type", "application/json");
+            client.setRequestProperty("Accept", "application/json");
+
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("op", "add");
+            requestBody.put("path", "/comments");
+
+            JSONObject value = new JSONObject();
+            value.put("user_id", user.id);
+            value.put("username", user.username);
+            value.put("text", commentText);
+            requestBody.put("value", value);
+
+            OutputStream outputStream = client.getOutputStream();
+            outputStream.write(requestBody.toString().getBytes("UTF-8"));
+            outputStream.close();
+
+            client.connect();
+
+            JSONObject result = this.getResponseResult(client);
+
+            if (result == null) {
+                return null;
+            }
+
+            Story newStory = Story.fromJsonObject(result);
+            return newStory;
+        } catch (Exception exception) {
+            return null;
+        } finally {
+            if (client != null) {
+                client.disconnect();
+            }
+        }
+    }
+
     public ServiceResponse<String> deleteStory(String storyID) {
         HttpURLConnection client = null;
 
@@ -119,7 +201,6 @@ public class StoryService extends BaseService {
             } else {
                 return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
             }
-
         } catch(Exception error) {
             return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         }

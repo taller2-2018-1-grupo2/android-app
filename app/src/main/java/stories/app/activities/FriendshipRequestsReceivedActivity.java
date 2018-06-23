@@ -88,7 +88,7 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
 
         protected ServiceResponse<ArrayList<HashMap<String,String>>> doInBackground(String... params) {
             return friendshipRequestsService.getFriendshipRequestsReceived(
-                    LocalStorage.getUsername()
+                    LocalStorage.getUser().username
             );
         }
 
@@ -123,7 +123,7 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
         protected ServiceResponse<String> doInBackground(String... params) {
             return friendshipRequestsService.acceptFriendshipRequest(
                     params[0],
-                    LocalStorage.getUsername()
+                    LocalStorage.getUser().username
             );
         }
 

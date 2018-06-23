@@ -30,7 +30,7 @@ public class SignInActivity extends AppCompatActivity {
             Pattern.compile("^[a-zA-Z0-9_.-]*$", Pattern.CASE_INSENSITIVE);
 
     public static final Pattern VALID_NAME =
-            Pattern.compile("^[a-zA-Z_.-]*$", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("^[a-zA-Z\\s_.-]*$", Pattern.CASE_INSENSITIVE);
 
     private static final int MINIMUM_PASSWORD_CHARS = 3;
 

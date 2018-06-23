@@ -99,7 +99,7 @@ public class DirectMessagesConversationActivity extends AppCompatActivity {
             EditText messageText = findViewById(R.id.message_text);
 
             Message message = new Message();
-            message.from_username = LocalStorage.getUsername();
+            message.from_username = LocalStorage.getUser().username;
             message.to_username = friendUsername;
             message.message = messageText.getText().toString();
             message.timestamp = System.currentTimeMillis();

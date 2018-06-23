@@ -122,6 +122,9 @@ public class AuthenticationService extends BaseService {
             User userResult = User.fromJsonObject(result.getJSONObject("user"));
             LocalStorage.setUser(userResult);
 
+            // Saving token for future sends
+            LocalStorage.setToken(result.getJSONObject("token").getString("token"));
+
             return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, userResult);
         } catch(Exception exception) {
             return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);

@@ -47,7 +47,7 @@ public class AuthenticationService extends BaseService {
             // sin firebase token, las notificaciones no llegan
             ChatInstanceIDService.sendRegistrationToServer(ChatInstanceIDService.FIREBASE_TOKEN);
 
-            return userResult;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, userResult);
         } catch(Exception exception) {
             return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {

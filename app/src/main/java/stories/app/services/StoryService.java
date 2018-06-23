@@ -95,7 +95,7 @@ public class StoryService extends BaseService {
         }
     }
 
-    public Story updateLikes(String storyId, String userId, String operation) {
+    public ServiceResponse<Story> updateLikes(String storyId, String userId, String operation) {
         HttpURLConnection client = null;
 
         try {
@@ -104,6 +104,8 @@ public class StoryService extends BaseService {
             client.setRequestMethod("PATCH");
             client.setRequestProperty("Content-Type", "application/json");
             client.setRequestProperty("Accept", "application/json");
+            String token = String.format("Bearer %s", LocalStorage.getToken());
+            client.setRequestProperty("Authorization", token);
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("op", operation);
@@ -116,16 +118,21 @@ public class StoryService extends BaseService {
 
             client.connect();
 
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
             JSONObject result = this.getResponseResult(client);
 
             if (result == null) {
-                return null;
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
             }
 
             Story newStory = Story.fromJsonObject(result);
-            return newStory;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, newStory);
         } catch (Exception exception) {
-            return null;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
             if (client != null) {
                 client.disconnect();
@@ -133,7 +140,7 @@ public class StoryService extends BaseService {
         }
     }
 
-    public Story addComment(String storyId, User user, String commentText) {
+    public ServiceResponse<Story> addComment(String storyId, User user, String commentText) {
         HttpURLConnection client = null;
 
         try {
@@ -142,6 +149,8 @@ public class StoryService extends BaseService {
             client.setRequestMethod("PATCH");
             client.setRequestProperty("Content-Type", "application/json");
             client.setRequestProperty("Accept", "application/json");
+            String token = String.format("Bearer %s", LocalStorage.getToken());
+            client.setRequestProperty("Authorization", token);
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("op", "add");
@@ -159,16 +168,21 @@ public class StoryService extends BaseService {
 
             client.connect();
 
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
             JSONObject result = this.getResponseResult(client);
 
             if (result == null) {
-                return null;
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
             }
 
             Story newStory = Story.fromJsonObject(result);
-            return newStory;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, newStory);
         } catch (Exception exception) {
-            return null;
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.ERROR);
         } finally {
             if (client != null) {
                 client.disconnect();

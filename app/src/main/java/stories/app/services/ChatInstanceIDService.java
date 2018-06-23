@@ -32,7 +32,7 @@ public class ChatInstanceIDService extends FirebaseInstanceIdService {
         sendRegistrationToServer(refreshedToken);
     }
 
-    public void sendRegistrationToServer(String newFirebaseToken) {
+    public static void sendRegistrationToServer(String newFirebaseToken) {
         HttpURLConnection client = null;
 
         try {

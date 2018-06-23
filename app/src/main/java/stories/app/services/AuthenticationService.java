@@ -48,6 +48,10 @@ public class AuthenticationService extends BaseService {
             // Temporary until we find a solution to the code above, which doesn't work for username.
             LocalStorage.setUsername(username);
 
+            // enviar firebase token al appServer para guardar nuevamente en DB (borrado en sign out)
+            // sin firebase token, las notificaciones no llegan
+            ChatInstanceIDService.sendRegistrationToServer(ChatInstanceIDService.FIREBASE_TOKEN);
+
             return user;
         } catch(Exception exception) {
             return null;

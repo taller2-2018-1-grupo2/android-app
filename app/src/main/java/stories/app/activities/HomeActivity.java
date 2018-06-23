@@ -20,6 +20,7 @@ import stories.app.R;
 import stories.app.adapters.QuickStoriesAdapter;
 import stories.app.adapters.StoriesAdapter;
 import stories.app.models.Story;
+import stories.app.services.ChatInstanceIDService;
 import stories.app.services.StoryService;
 import stories.app.utils.LocalStorage;
 
@@ -76,6 +77,10 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(navigationIntent);
                 return true;
             case R.id.logout:
+                // borrar firebase token de la DB del appServer
+                // sin firebase token, las notificaciones no llegan
+                ChatInstanceIDService.sendRegistrationToServer("");
+
                 navigationIntent = new Intent(HomeActivity.this, LogInActivity.class);
                 startActivity(navigationIntent);
                 return true;

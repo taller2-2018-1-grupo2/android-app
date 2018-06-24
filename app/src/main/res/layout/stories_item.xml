@@ -15,7 +15,7 @@
         android:layout_marginRight="5dp"
         android:orientation="horizontal">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/stories_item_user_pic"
             android:layout_width="20dp"
             android:layout_height="20dp"
@@ -179,7 +179,7 @@
         android:layout_marginRight="5dp"
         android:gravity="center_vertical">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/stories_item_new_comment_userpic"
             android:layout_width="25dp"
             android:layout_height="25dp"

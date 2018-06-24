@@ -2,9 +2,12 @@ package stories.app.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,7 +61,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         Story story = this.mData.get(position);
 
         this.setImageFromUrl(story.fileUrl, holder.storyImage, R.drawable.story_image_placeholder);
-        this.setImageFromUrl(story.fileUrl, holder.storyUserImage, R.drawable.profile_placeholder);
+        this.setImageFromBase64(story.profilePic, holder.storyUserImage, R.drawable.story_image_placeholder);
+
         holder.username.setText(story.username + ": ");
         holder.title.setText(story.title);
 
@@ -73,7 +77,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
         // New comment
         User currentUser = LocalStorage.getUser();
-        this.setImageFromUrl(currentUser.profilePic, holder.newCommentUserPic, R.drawable.profile_placeholder);
+        this.setImageFromBase64(currentUser.profilePic, holder.newCommentUserPic, R.drawable.profile_placeholder);
         holder.postCommentButton.setOnClickListener(new PostCommentButtonOnClickHandler(story, holder));
     }
 
@@ -101,6 +105,18 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             Log.e("Error", e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void setImageFromBase64(String base64, ImageView imageView, int placeholderResId) {
+
+        if (base64.length() == 0) {
+            imageView.setImageResource(placeholderResId);
+            return;
+        }
+
+        byte[] decodedProfilePic = Base64.decode(base64, Base64.DEFAULT);
+        Bitmap bitmapProfilePic = BitmapFactory.decodeByteArray(decodedProfilePic, 0, decodedProfilePic.length);
+        imageView.setImageBitmap(bitmapProfilePic);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -242,7 +258,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
                     String username = comment.getString("username");
                     String text = comment.getString("text");
 
-                    postComments += "<b>@" + username + ":</b> " + text;
+                    postComments += "<b>" + username + ":</b> " + text;
 
                     if (i + 1 < comments.length()) {
                         postComments += "<br>";

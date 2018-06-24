@@ -73,7 +73,7 @@
 
     </LinearLayout>
 
-    <!-- Likes -->
+    <!-- Reactions -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -83,21 +83,73 @@
         android:layout_marginTop="10dp"
         android:gravity="center_vertical">
 
+        <!-- Like -->
+        <TextView
+            android:id="@+id/stories_item_like_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textPrimary"
+            android:textStyle="bold"
+            tools:text="88" />
+
         <ImageView
             android:id="@+id/stories_item_like_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_story_like_likeable" />
-
-        <TextView
-            android:id="@+id/stories_item_like_count"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_story_like" />
+
+        <!-- Dislike -->
+        <TextView
+            android:id="@+id/stories_item_dislike_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="@color/textPrimary"
             android:textStyle="bold"
-            tools:text="27 likes" />
+            tools:text="41" />
+
+        <ImageView
+            android:id="@+id/stories_item_dislike_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_story_dislike" />
+
+        <!-- Fun -->
+        <TextView
+            android:id="@+id/stories_item_fun_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textPrimary"
+            android:textStyle="bold"
+            tools:text="31" />
+
+        <ImageView
+            android:id="@+id/stories_item_fun_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_story_fun" />
+
+        <!-- Boring -->
+        <TextView
+            android:id="@+id/stories_item_boring_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textPrimary"
+            android:textStyle="bold"
+            tools:text="99" />
+
+        <ImageView
+            android:id="@+id/stories_item_boring_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_story_boring" />
     </LinearLayout>
 
     <!-- Comments -->

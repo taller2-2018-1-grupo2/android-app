@@ -22,25 +22,8 @@ public class Story {
     public String username;
     public String name;
     public String profilePic;
-    public JSONArray likes;
+    public JSONArray reactions;
     public JSONArray comments;
-
-    public Boolean isLikedByUser(String userId) {
-        Boolean likedByUser = false;
-
-        for(int i = 0; i < this.likes.length(); i++) {
-            try {
-                if (userId.equals(this.likes.getString(i))) {
-                    likedByUser = true;
-                    break;
-                }
-            } catch(JSONException e) {
-                // swallow
-            }
-        }
-
-        return likedByUser;
-    }
 
     //outgoing and incoming stories are different, consider refactor
     public static Story fromJsonObject(JSONObject storyJson) throws JSONException {
@@ -58,7 +41,7 @@ public class Story {
         story.name = storyJson.has("name") ? storyJson.getString("name") : "";
         story.profilePic = storyJson.has("profile_pic") ? storyJson.getString("profile_pic") : "";
 
-        story.likes = storyJson.has("likes") ?storyJson.getJSONArray("likes") : new JSONArray();
+        story.reactions = storyJson.has("reactions") ?storyJson.getJSONArray("reactions") : new JSONArray();
         story.comments = storyJson.has("comments") ?storyJson.getJSONArray("comments") : new JSONArray();
 
         return story;
@@ -77,7 +60,7 @@ public class Story {
         storyJson.put("visibility", story.visibility);
         storyJson.put("location", story.location);
         storyJson.put("timestamp", story.timestamp);
-        storyJson.put("likes", story.likes);
+        storyJson.put("reactions", story.reactions);
         storyJson.put("comments", story.comments);
 
         return storyJson;

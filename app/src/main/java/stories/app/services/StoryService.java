@@ -95,7 +95,7 @@ public class StoryService extends BaseService {
         }
     }
 
-    public ServiceResponse<Story> updateLikes(String storyId, String userId, String operation) {
+    public ServiceResponse<Story> updateReaction(String type, String storyId, String userId, String operation) {
         HttpURLConnection client = null;
 
         try {
@@ -109,8 +109,12 @@ public class StoryService extends BaseService {
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("op", operation);
-            requestBody.put("path", "/likes");
-            requestBody.put("value", userId);
+            requestBody.put("path", "/reactions");
+
+            JSONObject value = new JSONObject();
+            value.put("user_id", userId);
+            value.put("type", type);
+            requestBody.put("value", value);
 
             OutputStream outputStream = client.getOutputStream();
             outputStream.write(requestBody.toString().getBytes("UTF-8"));

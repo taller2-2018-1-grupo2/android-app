@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -63,9 +65,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         holder.description.setText(story.description);
         holder.description.setVisibility(story.description.length() > 0 ? View.VISIBLE : View.GONE);
 
-        // Likes
-        holder.setLikeCount(story);
-        holder.updateLikeButton(story);
+        // Reactions
+        holder.updateReactions(story);
 
         // Comments
         holder.updateComments(story.comments);
@@ -108,9 +109,15 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         TextView username;
         TextView title;
         TextView description;
-        TextView likeCount;
 
         ImageView likeButton;
+        TextView likeCount;
+        ImageView dislikeButton;
+        TextView dislikeCount;
+        ImageView funButton;
+        TextView funCount;
+        ImageView boringButton;
+        TextView boringCount;
 
         TextView comments;
         ImageView newCommentUserPic;
@@ -124,9 +131,15 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             this.username =itemView.findViewById(R.id.stories_item_user_name);
             this.title = itemView.findViewById(R.id.stories_item_title);
             this.description = itemView.findViewById(R.id.stories_item_description);
-            this.likeCount = itemView.findViewById(R.id.stories_item_like_count);
 
             this.likeButton = itemView.findViewById(R.id.stories_item_like_button);
+            this.likeCount = itemView.findViewById(R.id.stories_item_like_count);
+            this.dislikeButton = itemView.findViewById(R.id.stories_item_dislike_button);
+            this.dislikeCount = itemView.findViewById(R.id.stories_item_dislike_count);
+            this.funButton = itemView.findViewById(R.id.stories_item_fun_button);
+            this.funCount = itemView.findViewById(R.id.stories_item_fun_count);
+            this.boringButton = itemView.findViewById(R.id.stories_item_boring_button);
+            this.boringCount = itemView.findViewById(R.id.stories_item_boring_count);
 
             this.comments = itemView.findViewById(R.id.stories_item_comments);
             this.newCommentUserPic = itemView.findViewById(R.id.stories_item_new_comment_userpic);
@@ -134,39 +147,91 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             this.postCommentButton = itemView.findViewById(R.id.stories_item_new_comment_button);
         }
 
-        private void setLikeCount(Story story) {
-            String likesText = "No likes";
+        public void updateReactions(Story story) {
+            try {
+                String currentUserId = LocalStorage.getUser().id;
+                Integer likes = 0;
+                Integer dislikes = 0;
+                Integer funs = 0;
+                Integer borings = 0;
+                boolean userLiked = false;
+                boolean userDisliked = false;
+                boolean userSetFun = false;
+                boolean userSetBoring = false;
 
-            if (story.likes.length() == 1) {
-                likesText = "1 like";
+                for (int i = 0 ; i < story.reactions.length(); i++) {
+                    JSONObject reaction = story.reactions.getJSONObject(i);
+                    String reactionUserId = reaction.getString("user_id");
+                    String reactionType = reaction.getString("type");
+
+                    switch(reactionType) {
+                        case "like":
+                            userLiked = userLiked || reactionUserId.equals(currentUserId);
+                            likes += 1;
+                            break;
+                        case "dislike":
+                            userDisliked = userDisliked || reactionUserId.equals(currentUserId);
+                            dislikes += 1;
+                            break;
+                        case "fun":
+                            userSetFun = userSetFun || reactionUserId.equals(currentUserId);
+                            funs += 1;
+                            break;
+                        case "boring":
+                        default:
+                            userSetBoring = userSetBoring || reactionUserId.equals(currentUserId);
+                            borings += 1;
+                            break;
+                    }
+                }
+
+                // Like
+                this.likeCount.setText(likes.toString());
+                if (story.userId.equals(currentUserId)) {
+                    this.likeButton.setEnabled(false);
+                    this.likeButton.setImageResource(R.drawable.ic_story_like_disabled);
+                } else {
+                    this.likeButton.setEnabled(true);
+                    this.likeButton.setImageResource(userLiked ? R.drawable.ic_story_like_set : R.drawable.ic_story_like);
+                    this.likeButton.setOnClickListener(new ReactionButtonClickListener("like", userLiked ? "remove" : "add",this, story, currentUserId));
+                }
+
+                // Dislike
+                this.dislikeCount.setText(dislikes.toString());
+                if (story.userId.equals(currentUserId)) {
+                    this.dislikeButton.setEnabled(false);
+                    this.dislikeButton.setImageResource(R.drawable.ic_story_dislike_disabled);
+                } else {
+                    this.dislikeButton.setEnabled(true);
+                    this.dislikeButton.setImageResource(userDisliked ? R.drawable.ic_story_dislike_set : R.drawable.ic_story_dislike);
+                    this.dislikeButton.setOnClickListener(new ReactionButtonClickListener("dislike", userDisliked ? "remove" : "add",this, story, currentUserId));
+                }
+
+                // Fun
+                this.funCount.setText(funs.toString());
+                if (story.userId.equals(currentUserId)) {
+                    this.funButton.setEnabled(false);
+                    this.funButton.setImageResource(R.drawable.ic_story_fun_disabled);
+                } else {
+                    this.funButton.setEnabled(true);
+                    this.funButton.setImageResource(userSetFun ? R.drawable.ic_story_fun_set : R.drawable.ic_story_fun);
+                    this.funButton.setOnClickListener(new ReactionButtonClickListener("fun", userSetFun ? "remove" : "add",this, story, currentUserId));
+                }
+
+                // Boring
+                this.boringCount.setText(borings.toString());
+                if (story.userId.equals(currentUserId)) {
+                    this.boringButton.setEnabled(false);
+                    this.boringButton.setImageResource(R.drawable.ic_story_boring_disabled);
+                } else {
+                    this.boringButton.setEnabled(true);
+                    this.boringButton.setImageResource(userSetBoring ? R.drawable.ic_story_boring_set : R.drawable.ic_story_boring);
+                    this.boringButton.setOnClickListener(new ReactionButtonClickListener("boring", userSetBoring ? "remove" : "add",this, story, currentUserId));
+                }
             }
-
-            if (story.likes.length() > 1) {
-                likesText = story.likes.length() + " likes";
+             catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            this.likeCount.setText(likesText);
-        }
-
-        private void updateLikeButton(Story story) {
-            String currentUserId = LocalStorage.getUser().id;
-
-            // If the story belongs to the user, disable the button
-            if (story.userId.equals(currentUserId)) {
-                this.likeButton.setEnabled(false);
-                this.likeButton.setImageResource(R.drawable.ic_story_like_disabled);
-                return;
-            }
-
-            // Change the resource depending if the story was liked by the user or not
-            // Otherwise, mark it
-            int likeIcon = story.isLikedByUser(currentUserId)
-                    ? R.drawable.ic_story_like_liked
-                    : R.drawable.ic_story_like_likeable;
-
-            this.likeButton.setImageResource(likeIcon);
-            this.likeButton.setEnabled(true);
-            this.likeButton.setOnClickListener(new LikeButtonOnClickHandler(story, this));
         }
 
         public void updateComments(JSONArray comments) {
@@ -193,56 +258,58 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
         }
     }
 
-    protected class LikeButtonOnClickHandler implements View.OnClickListener {
-        private Story story;
-        private StoriesAdapter.ViewHolder holder;
+    protected class ReactionButtonClickListener implements View.OnClickListener {
+        String type;
+        String operation;
+        ViewHolder holder;
+        Story story;
+        String currentUserId;
 
-        LikeButtonOnClickHandler(Story story, StoriesAdapter.ViewHolder holder) {
-            this.story = story;
+        ReactionButtonClickListener(String type, String operation, ViewHolder holder, Story story, String currentUserId) {
+            this.type = type;
+            this.operation = operation;
             this.holder = holder;
+            this.story = story;
+            this.currentUserId = currentUserId;
         }
 
-        public void onClick(View v) {
-            String currentUserId = LocalStorage.getUser().id;
-            String operation = this.story.isLikedByUser(currentUserId) ? "remove" : "add";
+        @Override
+        public void onClick(View view) {
 
-            // Update story in the backend
-            new UpdateStoryLikesToUserTask(this.holder, v.getContext()).execute(this.story.id, currentUserId, operation);
+            // Disable click handler in reaction button
+            ImageView button = (ImageView) view;
+            button.setEnabled(false);
+
+            new UpdateReactionTask(holder, view.getContext()).execute(type, this.story.id, this.currentUserId, this.operation);
         }
     }
 
-    protected class UpdateStoryLikesToUserTask extends AsyncTask<String, Void, ServiceResponse<Story>> {
+    protected class UpdateReactionTask extends AsyncTask<String, Void, ServiceResponse<Story>> {
         private StoryService storyService;
         private StoriesAdapter.ViewHolder holder;
         private Context context;
 
-        public UpdateStoryLikesToUserTask(StoriesAdapter.ViewHolder holder, Context context) {
+        public UpdateReactionTask(StoriesAdapter.ViewHolder holder, Context context) {
             this.storyService = new StoryService();
             this.holder = holder;
             this.context = context;
         }
 
-        protected void onPreExecute() {
-            // Disable click handler in Like button
-            this.holder.likeButton.setImageResource(R.drawable.ic_story_like_disabled);
-            this.holder.likeButton.setEnabled(false);
-        }
-
         protected ServiceResponse<Story> doInBackground(String... params) {
-            return storyService.updateLikes(params[0], params[1], params[2]);
+            // String type, String storyId, String userId, String operation
+            return storyService.updateReaction(params[0], params[1], params[2], params[3]);
         }
 
         protected void onPostExecute(ServiceResponse<Story> response) {
             ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
-            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
-                Story newStory = response.getServiceResponse();
-                // Update like button (UI) with new story
-                this.holder.setLikeCount(newStory);
-                this.holder.updateLikeButton(newStory);
-            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+            if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
                 Intent navigationIntent = new Intent(context, LogInActivity.class);
                 context.startActivity(navigationIntent);
+                return;
             }
+
+            Story newStory = response.getServiceResponse();
+            this.holder.updateReactions(newStory);
         }
     }
 

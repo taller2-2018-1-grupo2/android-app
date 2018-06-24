@@ -10,23 +10,22 @@
 
     <item
         android:id="@+id/story_menu"
-        android:icon="@android:drawable/ic_menu_edit"
-        app:showAsAction="always"
-        android:title="@string/story_menu" />
+        android:icon="@drawable/ic_add_story"
+        android:title="@string/story_menu"
+        app:showAsAction="always" />
     <item
         android:id="@+id/direct_messages"
-        android:icon="@drawable/ic_menu_messages"
-        app:showAsAction="always"
-        android:title="@string/messages_menu"/>
+        android:icon="@drawable/ic_direct_message"
+        android:title="@string/messages_menu"
+        app:showAsAction="always" />
     <item
         android:id="@+id/friendship_requests"
-        android:icon="@android:drawable/ic_search_category_default"
-        app:showAsAction="always"
-        android:title="@string/friendship_menu"/>
+        android:icon="@drawable/ic_search_friends"
+        android:title="@string/friendship_menu"
+        app:showAsAction="always" />
     <item
         android:id="@+id/profile_menu"
-        android:icon="@drawable/ic_account_circle"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:title="@string/profile_menu"/>
     <item
         android:id="@+id/stories_map"

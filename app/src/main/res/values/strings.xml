@@ -41,8 +41,7 @@
 
     <!-- Strings related to Stories in Home -->
     <string name="new_comment">Agregar un comentario...</string>
-
-
+    <string name="quick_stories_title">Historias rápidas</string>
 
     <!-- Strings related to Images Filters -->
     <string name="activity_title_main">Filtros</string>

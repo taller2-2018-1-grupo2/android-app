@@ -51,7 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
-                    android:text="Stories"
+                    android:text="@string/quick_stories_title"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 

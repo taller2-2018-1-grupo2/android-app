@@ -4,15 +4,15 @@
 
     <item
         android:id="@+id/user_search"
-        android:icon="@android:drawable/ic_search_category_default"
-        app:showAsAction="always"
-        android:title="Buscar Usuarios"/>
+        android:icon="@drawable/ic_search_friends"
+        android:title="Buscar Usuarios"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/item_create_message"
-        app:showAsAction="always"
-        android:icon="@android:drawable/ic_menu_add"
         android:background="@color/primary_material_light"
-        android:title="Create Message"/>
+        android:icon="@drawable/ic_add_direct_message"
+        android:title="Create Message"
+        app:showAsAction="always" />
 
 </menu>

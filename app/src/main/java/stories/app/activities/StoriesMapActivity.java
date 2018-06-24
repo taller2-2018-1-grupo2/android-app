@@ -14,11 +14,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import stories.app.R;
@@ -26,6 +30,7 @@ import stories.app.models.Story;
 import stories.app.models.responses.ServiceResponse;
 import stories.app.services.StoryService;
 import stories.app.utils.Base64UtilityClass;
+import stories.app.utils.Dates;
 import stories.app.utils.LocalStorage;
 
 public class StoriesMapActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -44,10 +49,8 @@ public class StoriesMapActivity extends AppCompatActivity implements OnMapReadyC
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
     }
 
     @Override
@@ -73,15 +76,15 @@ public class StoriesMapActivity extends AppCompatActivity implements OnMapReadyC
 
         LatLng center = new LatLng(-34.606336, -58.381572);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 10));
-
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setAllGesturesEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
         new GetStoriesVisiblesToUserTask().execute(LocalStorage.getUser().id);
     }
 
     protected class GetStoriesVisiblesToUserTask extends AsyncTask<String, Void, ServiceResponse<ArrayList<Story>>> {
         private StoryService storyService = new StoryService();
-
-        protected void onPreExecute() {
-        }
 
         protected ServiceResponse<ArrayList<Story>> doInBackground(String... params) {
             return storyService.getStoriesVisiblesToUser(params[0]);
@@ -98,7 +101,16 @@ public class StoriesMapActivity extends AppCompatActivity implements OnMapReadyC
                         String[] latLngSplit = story.location.split(",");
 
                         LatLng storyLatLng = new LatLng(Double.parseDouble(latLngSplit[0]), Double.parseDouble(latLngSplit[1]));
-                        String snippet = story.name + "," + story.username;
+                        String formattedDate = "";
+
+                        try {
+                            Date date = Dates.convertUtcStringToDate(story.timestamp);
+                            formattedDate = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(date);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        String snippet = story.name + " (" + formattedDate + ")" + "," + story.title;
 
                         mMap.addMarker(new MarkerOptions()
                                 .position(storyLatLng)

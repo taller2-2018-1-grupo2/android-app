@@ -73,9 +73,6 @@ public class LocationService {
             }
         };
 
-        //this.locationListenerGPS = new MobileLocationListener(newLocation -> this.locationGPS = newLocation);
-        //this.locationListenerNetwork = new MobileLocationListener(newLocation -> this.locationNetwork = newLocation);
-
         if (this.checkPermissions(activity)) {
             this.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this.locationListenerGPS);
             this.locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this.locationListenerGPS);

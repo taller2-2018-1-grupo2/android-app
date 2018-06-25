@@ -144,6 +144,8 @@ public class FriendshipRequestsService {
 
             if (200 <= statusCode && statusCode <= 299) {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            } else if (statusCode == 409) {
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.CONFLICT, "");
             } else {
                 br = new BufferedReader(new InputStreamReader(client.getErrorStream()));
             }

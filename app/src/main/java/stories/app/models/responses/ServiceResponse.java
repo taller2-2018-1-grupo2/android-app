@@ -3,7 +3,7 @@ package stories.app.models.responses;
 public class ServiceResponse<T>{
 
     public enum ServiceStatusCode {
-        SUCCESS, UNAUTHORIZED, ERROR
+        SUCCESS, UNAUTHORIZED, ERROR, CONFLICT
     }
 
     private ServiceStatusCode statusCode;

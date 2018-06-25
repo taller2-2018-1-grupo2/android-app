@@ -65,6 +65,7 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             case R.id.profile_menu:
                 navigationIntent = new Intent(HomeActivity.this, ProfileActivity.class);
+                navigationIntent.putExtra("username", LocalStorage.getUser().username);
                 startActivity(navigationIntent);
                 return true;
             case R.id.friendship_requests:

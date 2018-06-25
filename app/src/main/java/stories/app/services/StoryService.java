@@ -53,6 +53,43 @@ public class StoryService extends BaseService {
         }
     }
 
+    public ServiceResponse<ArrayList<Story>> getStoriesFromUser(String username, String userID) {
+
+        HttpURLConnection client = null;
+
+        try {
+            URL url = new URL(Constants.appServerURI + "/stories/from/" + username + "/" + userID);
+            client = (HttpURLConnection) url.openConnection();
+            client.setRequestMethod("GET");
+            String token = String.format("Bearer %s", LocalStorage.getToken());
+            client.setRequestProperty("Authorization", token);
+
+            client.connect();
+
+            int statusCode = client.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.UNAUTHORIZED);
+            }
+
+            JSONObject result = this.getResponseResult(client);
+            JSONArray storiesJson = result.getJSONArray("stories");
+            ArrayList<Story> stories = new ArrayList<>();
+
+            for (int i = 0; i < storiesJson.length(); i++) {
+                JSONObject storyJson = storiesJson.getJSONObject(i);
+                stories.add(Story.fromJsonObject(storyJson));
+            }
+
+            return new ServiceResponse<>(ServiceResponse.ServiceStatusCode.SUCCESS, stories);
+        } catch (Exception exception) {
+            return null;
+        } finally {
+            if (client != null) {
+                client.disconnect();
+            }
+        }
+    }
+
     public ServiceResponse<Story> createStory(Story story) {
         HttpURLConnection client = null;
 

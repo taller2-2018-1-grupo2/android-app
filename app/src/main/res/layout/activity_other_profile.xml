@@ -20,7 +20,7 @@
             style="@style/DefaultTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mi Perfil"
+            android:text="Perfil de Usuario"
             android:textColor="@color/textPrimary"
             android:textSize="25sp" />
 
@@ -41,56 +41,91 @@
         app:layout_constraintVertical_bias="0.201" />
 
     <TextView
-        android:id="@+id/change_pic"
-        android:layout_width="wrap_content"
+        android:id="@+id/username_label"
+        android:layout_width="330dp"
         android:layout_height="wrap_content"
-        android:text="Cambiar foto"
-        android:textColor="@color/accent_material_light"
-        android:textSize="18sp"
+        android:hint="@string/prompt_name"
+        android:text="Nombre"
+        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.532" />
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        app:layout_constraintVertical_bias="0.716" />
 
-    <EditText
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:hint="@string/prompt_name"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/username_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_label"
+        app:layout_constraintVertical_bias="0.114" />
+
+    <TextView
+        android:id="@+id/name_label"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/prompt_name"
+        android:text="Usuario"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.588" />
+
+    <TextView
         android:id="@+id/name"
         android:layout_width="330dp"
         android:layout_height="wrap_content"
-        android:ems="10"
+        android:gravity="right"
         android:hint="@string/prompt_name"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/email_label"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.678" />
+        app:layout_constraintTop_toBottomOf="@+id/username_label"
+        app:layout_constraintVertical_bias="0.783" />
 
-    <EditText
+    <TextView
+        android:id="@+id/email_label"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/prompt_name"
+        android:text="Correo electrónico"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/email"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        app:layout_constraintVertical_bias="0.812" />
+
+    <TextView
         android:id="@+id/email"
         android:layout_width="330dp"
         android:layout_height="wrap_content"
-        android:ems="10"
+        android:gravity="right"
         android:hint="@string/prompt_email"
-        android:inputType="text|textEmailAddress"
+        android:textSize="20sp"
+        android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.778" />
-
-    <Button
-        android:id="@+id/applyChangesButton"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="340dp"
-        android:layout_height="wrap_content"
-        android:text="@string/action_edit_profile"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.978" />
+        app:layout_constraintVertical_bias="0.87" />
 
 </android.support.constraint.ConstraintLayout>

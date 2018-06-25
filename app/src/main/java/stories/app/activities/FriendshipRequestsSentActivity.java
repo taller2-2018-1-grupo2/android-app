@@ -80,6 +80,10 @@ public class FriendshipRequestsSentActivity extends AppCompatActivity implements
     public void onSendMessageClick(View v, int position) {
     }
 
+    @Override
+    public void onProfileButtonClick(View v, int position) {
+    }
+
     protected class GetFriendshipRequestsSent extends AsyncTask<String, Void, ServiceResponse<ArrayList<HashMap<String,String>>>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
 

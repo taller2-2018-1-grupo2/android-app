@@ -22,11 +22,11 @@ public class FriendsService {
 
     private String URL = Constants.appServerURI;
 
-    public ServiceResponse<ArrayList<HashMap<String, String>>> getFriends(String userID) {
+    public ServiceResponse<ArrayList<HashMap<String, String>>> getFriends(String username) {
         HttpURLConnection client = null;
 
         try {
-            java.net.URL url = new URL(URL + "/users/friends/" + userID);
+            java.net.URL url = new URL(URL + "/users/friends/" + username);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("GET");
             String token = String.format("Bearer %s", LocalStorage.getToken());

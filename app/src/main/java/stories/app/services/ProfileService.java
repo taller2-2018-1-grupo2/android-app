@@ -16,11 +16,11 @@ public class ProfileService {
 
     private String URL = Constants.appServerURI;
 
-    public ServiceResponse<String> getUserData(String userID) {
+    public ServiceResponse<String> getUserData(String username) {
         HttpURLConnection client = null;
 
         try {
-            URL url = new URL(URL + "/users/" + userID);
+            URL url = new URL(URL + "/users/info/" + username);
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("GET");
             String token = String.format("Bearer %s", LocalStorage.getToken());

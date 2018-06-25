@@ -80,6 +80,9 @@
         <activity android:name=".activities.images.ImageFiltersActivity"
             android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".activities.UserStoriesActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity android:name=".activities.StoriesMapActivity"
             android:label="@string/title_activity_stories_map"
             android:screenOrientation="portrait"

@@ -103,6 +103,13 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
         startActivity(navigationIntent);
     }
 
+    @Override
+    public void onProfileButtonClick(View v, int position) {
+        Intent navigationIntent = new Intent(FriendshipRequestsActivity.this, ProfileActivity.class);
+        navigationIntent.putExtra("username", recyclerViewAdapter.getItem(position).get("username"));
+        startActivity(navigationIntent);
+    }
+
     protected class GetUsersTask extends AsyncTask<String, Void, ServiceResponse<ArrayList<HashMap<String,String>>>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
 
@@ -169,6 +176,8 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
             } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
                 Intent navigationIntent = new Intent(FriendshipRequestsActivity.this, LogInActivity.class);
                 startActivity(navigationIntent);
+            } else if (statusCode == ServiceResponse.ServiceStatusCode.CONFLICT) {
+                Toast.makeText(this.context, "El usuario ya es tu amigo o tiene una solicitud de amistad pendiente.", Toast.LENGTH_SHORT).show();
             }
         }
     }

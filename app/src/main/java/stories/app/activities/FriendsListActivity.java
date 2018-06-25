@@ -26,6 +26,7 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
     private UsersRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private ArrayList<HashMap<String,String>> dataset = new ArrayList<HashMap<String,String>>();
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,9 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
         setTitle("Amigos");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        Intent myIntent = getIntent();
+        username = myIntent.getStringExtra("username");
+
         // set up the RecyclerView
         recyclerView = findViewById(R.id.users_recycler_view);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
@@ -46,7 +50,7 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
         recyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        new GetFriendsTask().execute();
+        new GetFriendsTask().execute(username);
     }
 
     @Override
@@ -70,6 +74,10 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
     public void onSendMessageClick(View v, int position) {
     }
 
+    @Override
+    public void onProfileButtonClick(View v, int position) {
+    }
+
     protected class GetFriendsTask extends AsyncTask<String, Void, ServiceResponse<ArrayList<HashMap<String,String>>>> {
         private FriendsService friendsService = new FriendsService();
 
@@ -77,9 +85,7 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
         }
 
         protected ServiceResponse<ArrayList<HashMap<String,String>>> doInBackground(String... params) {
-            return friendsService.getFriends(
-                    LocalStorage.getUser().id
-            );
+            return friendsService.getFriends(params[0]);
         }
 
         protected void onPostExecute(ServiceResponse<ArrayList<HashMap<String,String>>> response) {

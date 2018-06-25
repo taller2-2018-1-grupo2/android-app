@@ -33,28 +33,38 @@ import stories.app.utils.LocalStorage;
 public class ProfileActivity extends AppCompatActivity {
 
     private int PICK_IMAGE_REQUEST = 1;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+
+        Intent myIntent = getIntent();
+        username = myIntent.getStringExtra("username");
+
+        if (username.equals(LocalStorage.getUser().username)) {
+            setContentView(R.layout.activity_profile);
+        } else {
+            setContentView(R.layout.activity_other_profile);
+        }
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        setTitle("Editar Perfil");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        Button applyChangesButton = this.findViewById(R.id.applyChangesButton);
-        ApplyChangesClickHandler clickHandler = new ApplyChangesClickHandler(this);
-        applyChangesButton.setOnClickListener(clickHandler);
+        if (username.equals(LocalStorage.getUser().username)) {
+            Button applyChangesButton = this.findViewById(R.id.applyChangesButton);
+            ApplyChangesClickHandler clickHandler = new ApplyChangesClickHandler(this);
+            applyChangesButton.setOnClickListener(clickHandler);
 
-        ImageView profilePicture = this.findViewById(R.id.profile_pic);
-        profilePicture.setOnClickListener(new ProfilePicClickHandler());
+            ImageView profilePicture = this.findViewById(R.id.profile_pic);
+            profilePicture.setOnClickListener(new ProfilePicClickHandler());
 
-        TextView changeProfilePicButton = this.findViewById(R.id.change_pic);
-        changeProfilePicButton.setOnClickListener(new ProfilePicClickHandler());
+            TextView changeProfilePicButton = this.findViewById(R.id.change_pic);
+            changeProfilePicButton.setOnClickListener(new ProfilePicClickHandler());
+        }
 
-        new GetUserDataTask().execute();
+        new GetUserDataTask().execute(username);
     }
 
     @Override
@@ -68,6 +78,12 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.friends_list) {
             Intent navigationIntent = new Intent(ProfileActivity.this, FriendsListActivity.class);
+            navigationIntent.putExtra("username", username);
+            startActivity(navigationIntent);
+            return(true);
+        } else if (item.getItemId() == R.id.user_stories) {
+            Intent navigationIntent = new Intent(ProfileActivity.this, UserStoriesActivity.class);
+            navigationIntent.putExtra("username", username);
             startActivity(navigationIntent);
             return(true);
         }
@@ -131,7 +147,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         protected ServiceResponse<String> doInBackground(String... params) {
-            return profileService.getUserData(LocalStorage.getUser().id);
+            return profileService.getUserData(params[0]);
         }
 
         protected void onPostExecute(ServiceResponse<String> response) {
@@ -146,11 +162,21 @@ public class ProfileActivity extends AppCompatActivity {
 
                     jsonObject = new JSONObject(userJSON);
 
-                    EditText name = findViewById(R.id.name);
-                    EditText email = findViewById(R.id.email);
+                    if (username.equals(LocalStorage.getUser().username)) {
+                        EditText name = findViewById(R.id.name);
+                        EditText email = findViewById(R.id.email);
 
-                    name.setText(jsonObject.getString("name"));
-                    email.setText(jsonObject.getString("email"));
+                        name.setText(jsonObject.getString("name"));
+                        email.setText(jsonObject.getString("email"));
+                    } else {
+                        TextView name = findViewById(R.id.name);
+                        TextView email = findViewById(R.id.email);
+                        TextView mUsername = findViewById(R.id.username);
+
+                        name.setText(jsonObject.getString("name"));
+                        email.setText(jsonObject.getString("email"));
+                        mUsername.setText(jsonObject.getString("username"));
+                    }
 
                     String profilePicString = jsonObject.getString("profile_pic");
 

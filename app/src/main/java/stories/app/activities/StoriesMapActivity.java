@@ -33,7 +33,7 @@ import stories.app.utils.Base64UtilityClass;
 import stories.app.utils.Dates;
 import stories.app.utils.LocalStorage;
 
-public class StoriesMapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class StoriesMapActivity extends AppCompatActivity implements GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
 
     private ArrayList<Story> stories = new ArrayList<>();
     private GoogleMap mMap;
@@ -80,7 +80,18 @@ public class StoriesMapActivity extends AppCompatActivity implements OnMapReadyC
         mMap.getUiSettings().setCompassEnabled(true);
         mMap.getUiSettings().setAllGesturesEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+        mMap.setOnInfoWindowClickListener(this);
+
         new GetStoriesVisiblesToUserTask().execute(LocalStorage.getUser().id);
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        String username = marker.getSnippet().split(",")[3];
+        Intent navigationIntent = new Intent(StoriesMapActivity.this, ProfileActivity.class);
+        navigationIntent.putExtra("username", username);
+        startActivity(navigationIntent);
     }
 
     protected class GetStoriesVisiblesToUserTask extends AsyncTask<String, Void, ServiceResponse<ArrayList<Story>>> {
@@ -110,7 +121,7 @@ public class StoriesMapActivity extends AppCompatActivity implements OnMapReadyC
                             e.printStackTrace();
                         }
 
-                        String snippet = story.name + " (" + formattedDate + ")" + "," + story.title;
+                        String snippet = story.name + "," + formattedDate + "," + story.title + "," + story.username;
 
                         mMap.addMarker(new MarkerOptions()
                                 .position(storyLatLng)
@@ -161,13 +172,16 @@ public class StoriesMapActivity extends AppCompatActivity implements OnMapReadyC
             profilePic.setImageBitmap(Base64UtilityClass.toBitmap(profilePicString));
 
             String name = snippet.split(",")[0];
-            String username = snippet.split(",")[1];
+            String storyTitle = snippet.split(",")[1];
+            String timestamp = snippet.split(",")[2];
 
             TextView nameUI = ((TextView) view.findViewById(R.id.full_name));
-            TextView usernameUI = ((TextView) view.findViewById(R.id.username));
+            TextView titleUI = ((TextView) view.findViewById(R.id.story_title));
+            TextView timestampUI = ((TextView) view.findViewById(R.id.timestamp));
 
             nameUI.setText(name);
-            usernameUI.setText(username);
+            titleUI.setText(storyTitle);
+            timestampUI.setText(timestamp);
         }
     }
 }

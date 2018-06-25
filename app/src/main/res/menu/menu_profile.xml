@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
     <item
+        android:id="@+id/user_stories"
+        app:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_slideshow"
+        android:title="Historias de Usuario"/>
+    <item
         android:id="@+id/friends_list"
         app:showAsAction="always"
         android:icon="@drawable/ic_menu_allfriends"

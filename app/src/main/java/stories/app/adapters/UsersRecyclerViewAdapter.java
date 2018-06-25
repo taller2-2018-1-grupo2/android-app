@@ -80,6 +80,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
         TextView nameTextView;
         ImageView actionButton;
         ImageView sendMessageButton;
+        ImageView profileButton;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -97,6 +98,14 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
                         @Override
                         public void onClick(View view) {
                             mClickListener.onSendMessageClick(view, getAdapterPosition());
+                        }
+                    });
+
+                    profileButton = itemView.findViewById(R.id.profile_button);
+                    profileButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            mClickListener.onProfileButtonClick(view, getAdapterPosition());
                         }
                     });
                     break;
@@ -134,5 +143,7 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
         void onItemClick(View view, int position);
 
         void onSendMessageClick(View view, int position);
+
+        void onProfileButtonClick(View view, int position);
     }
 }

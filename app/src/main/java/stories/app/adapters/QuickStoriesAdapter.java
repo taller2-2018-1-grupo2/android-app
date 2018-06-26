@@ -2,12 +2,15 @@ package stories.app.adapters;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.MediaController;
+import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
@@ -15,13 +18,14 @@ import java.util.ArrayList;
 
 import stories.app.R;
 import stories.app.models.Story;
+import stories.app.utils.FileDialog;
+import stories.app.utils.FileUtils;
 
 public class QuickStoriesAdapter extends RecyclerView.Adapter<QuickStoriesAdapter.ViewHolder> {
 
     private Context context;
     private ArrayList<Story> mData;
     private LayoutInflater mInflater;
-    private QuickStoriesAdapter.ItemClickListener mClickListener;
 
     public QuickStoriesAdapter(Context context, ArrayList<Story> data) {
         this.context = context;
@@ -43,63 +47,38 @@ public class QuickStoriesAdapter extends RecyclerView.Adapter<QuickStoriesAdapte
     @Override
     public void onBindViewHolder(QuickStoriesAdapter.ViewHolder holder, int position) {
         Story story = this.mData.get(position);
-        this.setImageFromUrl(story.fileUrl, holder.storyImageView, R.drawable.story_image_quick_placeholder);
-        holder.storyImageView.setOnClickListener(holder);
-    }
 
-    private void setImageFromUrl(String url, ImageView imageView, int placeholderResId) {
-        try {
-            if (url != null && url.length() > 0) {
-                Picasso.get().load(url).placeholder(placeholderResId).into(imageView);
-            } else {
-                // Load the placeholder instead
-                Picasso.get().load(placeholderResId).placeholder(placeholderResId).into(imageView);
-            }
-        } catch (Exception e) {
-            // The FileUri cannot be parsed.
-            // Swallow the exception and load a placeholder
-            Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(imageView);
-            Log.e("Error", e.getMessage());
-            e.printStackTrace();
+        if (story.fileUrl != null && story.fileUrl.length() > 0 && story.fileUrl.endsWith(".mp4")) {
+            FileUtils.setImageFromVideoUrl(story.fileUrl, holder.storyImageView);
+        } else {
+            // It's an image
+            FileUtils.setImageFromUrl(story.fileUrl, holder.storyImageView, R.drawable.story_image_placeholder);
         }
-    }
 
-    public Story getItem(int id) {
-        return this.mData.get(id);
-    }
-
-    public void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
-    }
-
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
+        holder.setStory(story);
+        holder.storyImageView.setOnClickListener(holder);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView storyImageView;
+        Story story;
 
         ViewHolder(View itemView) {
             super(itemView);
             this.storyImageView = (ImageView)itemView.findViewById(R.id.stories_item_quick_fileUrl);
         }
 
+        private void setStory(Story story) {
+            this.story = story;
+        }
+
         @Override
         public void onClick(View view) {
-            LayoutInflater inflater = LayoutInflater.from(view.getContext());
-            View storyDialog = inflater.inflate(R.layout.stories_dialog, null);
-            final Dialog dialog = new Dialog(view.getContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen); //default fullscreen titlebar
-
-            ImageView image = (ImageView)storyDialog.findViewById(R.id.stories_dialog_image);
-            image.setImageDrawable(storyImageView.getDrawable());
-            image.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View paramView) {
-                    dialog.cancel();
-                }
-            });
-
-            dialog.setContentView(storyDialog);
-            dialog.show();
+            if (story.fileUrl != null && story.fileUrl.length() > 0 && story.fileUrl.endsWith(".mp4")) {
+                FileDialog.showVideoDialog(view.getContext(), story.fileUrl);
+            } else {
+                FileDialog.showImageDialog(view.getContext(), storyImageView.getDrawable());
+            }
         }
     }
 }

@@ -34,9 +34,6 @@ public class CreateStoryActivity extends AppCompatActivity {
 
     private static final int START_FILE_UPLOAD = 5;
     private static final int FINISH_IMAGE_FILTER = 6;
-    private enum SUPPORTED_IMAGE_FORMATS { jpeg, jpg, png }
-    private enum SUPPORTED_VIDEO_FORMATS { mov, mp4 }
-    private static final int MAX_FILE_SIZE_MB = 15;
     private LocationService locationService = new LocationService();
 
     @Override
@@ -55,72 +52,51 @@ public class CreateStoryActivity extends AppCompatActivity {
         this.locationService.startLocationUpdates(this);
     }
 
-    private boolean isSupportedImage(String fileExtension) {
-        for (SUPPORTED_IMAGE_FORMATS imageFormat : SUPPORTED_IMAGE_FORMATS.values()) {
-            if (imageFormat.name().equals(fileExtension)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isSupportedVideo(String fileExtension) {
-        for (SUPPORTED_VIDEO_FORMATS videoFormat : SUPPORTED_VIDEO_FORMATS.values()) {
-            if (videoFormat.name().equals(fileExtension)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean validatesFileSizeRestriction(String filePath){
-        File file = new File(filePath);
-        double fileBytes = file.length();
-        double fileMegabytes = (fileBytes / (1024 * 1024));
-        return fileMegabytes <= MAX_FILE_SIZE_MB;
-    }
-
-    private boolean isSupportedFormat(String fileExtension){
-        return isSupportedImage(fileExtension) || isSupportedVideo(fileExtension);
-    }
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == START_FILE_UPLOAD) {
-            if (resultCode == AppCompatActivity.RESULT_OK) {
-                Uri selectedImage = data.getData();
-                String filePath = FileUtils.getFilePathFromUri(this, selectedImage);
-                String fileExtension = filePath.substring(filePath.lastIndexOf(".") + 1);
 
-                if (isSupportedFormat(fileExtension)){
-                    if (validatesFileSizeRestriction(filePath)) {
-                        if (isSupportedImage(fileExtension)) {
-                            Intent navigationIntent = new Intent(CreateStoryActivity.this, ImageFiltersActivity.class);
-                            navigationIntent.putExtra("imageUri", filePath);
-                            startActivityForResult(navigationIntent, FINISH_IMAGE_FILTER);
-                        } else {
-                            uploadStory(filePath);
-                        }
-                    }
-                    else{
-                        startFileUpload("File selected is bigger than " + MAX_FILE_SIZE_MB + " MB");
-                    }
-                }
-                else{
-                    startFileUpload("File format not supported.");
-                }
-            }
+        if (resultCode == AppCompatActivity.RESULT_CANCELED) {
+            this.startFileUpload();
+            return;
         }
-        else if (requestCode == FINISH_IMAGE_FILTER){
-            if (resultCode == AppCompatActivity.RESULT_OK) {
-                String filePath = FileUtils.getFilePathFromUri(this, Uri.parse(data.getDataString()));
-                uploadStory(filePath);
-            }
+
+        if (requestCode == FINISH_IMAGE_FILTER){
+            String filePath = FileUtils.getFilePathFromUri(this, Uri.parse(data.getDataString()));
+            this.uploadStory(filePath);
+            return;
         }
+
+        Uri selectedImage = data.getData();
+        String filePath = FileUtils.getFilePathFromUri(this, selectedImage);
+        String fileExtension = filePath.substring(filePath.lastIndexOf(".") + 1);
+
+        if (!FileUtils.isSupportedFormat(fileExtension)) {
+            this.startFileUpload("Formato de archivo no soportado.");
+            return;
+        }
+
+        if (!FileUtils.isSizeValid(filePath)) {
+            startFileUpload("El archivo es mayor a " + FileUtils.MAX_FILE_SIZE_MB + "MB");
+            return;
+        }
+
+        if (FileUtils.isSupportedImage(fileExtension)) {
+            Intent navigationIntent = new Intent(CreateStoryActivity.this, ImageFiltersActivity.class);
+            navigationIntent.putExtra("imageUri", filePath);
+            startActivityForResult(navigationIntent, FINISH_IMAGE_FILTER);
+            return;
+        }
+
+        if (FileUtils.isSupportedVideo(fileExtension)) {
+            this.uploadStory(filePath);
+            return;
+        }
+
+        this.startFileUpload("Algo ha ocurrido. Por favor intente nuevamente.");
     }
 
     private void uploadStory(String filePath) {
-        Snackbar snackbar = Snackbar.make(findViewById(R.id.createStoryLayout), "Uploading story...", Snackbar.LENGTH_INDEFINITE);
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.createStoryLayout), "Subiendo la historia...", Snackbar.LENGTH_INDEFINITE);
         ViewGroup contentLay = (ViewGroup) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text).getParent();
         ProgressBar item = new ProgressBar(this);
         item.setIndeterminate(true);
@@ -151,17 +127,18 @@ public class CreateStoryActivity extends AppCompatActivity {
         }
     }
 
-    private void startFileUpload(String messageToDisplay){
-        Snackbar snackbar = Snackbar
-                .make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
+
+    public void startFileUpload(String messageToDisplay){
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
         snackbar.show();
         startFileUpload();
     }
 
     private void startFileUpload() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image/*, video/*");
-        //photoPickerIntent.setTypeAndNormalize("image/jpeg, image/jpg, image/png, video/mp4");
+        photoPickerIntent.setType("*/*");
+        String[] mimeTypes = {"image/*", "video/*"};
+        photoPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         startActivityForResult(photoPickerIntent, START_FILE_UPLOAD);
     }
 
@@ -232,8 +209,7 @@ public class CreateStoryActivity extends AppCompatActivity {
                 }
                 else{
                     String messageToDisplay = "Error al subir la historia. Intente de nuevo.";
-                    Snackbar snackbar = Snackbar
-                            .make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
                     snackbar.show();
 
                     Button createStoryButton = findViewById(R.id.createStoryButton);

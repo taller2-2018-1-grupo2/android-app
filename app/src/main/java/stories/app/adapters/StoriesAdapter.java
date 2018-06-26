@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Base64;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
@@ -24,6 +27,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import stories.app.R;
 import stories.app.activities.LogInActivity;
@@ -31,6 +35,8 @@ import stories.app.models.Story;
 import stories.app.models.User;
 import stories.app.models.responses.ServiceResponse;
 import stories.app.services.StoryService;
+import stories.app.utils.FileDialog;
+import stories.app.utils.FileUtils;
 import stories.app.utils.LocalStorage;
 
 public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHolder> {
@@ -58,10 +64,21 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(StoriesAdapter.ViewHolder holder, int position) {
-        Story story = this.mData.get(position);
+        final Story story = this.mData.get(position);
 
-        this.setImageFromUrl(story.fileUrl, holder.storyImage, R.drawable.story_image_placeholder);
-        this.setImageFromBase64(story.profilePic, holder.storyUserImage, R.drawable.story_image_placeholder);
+        if (story.fileUrl != null && story.fileUrl.length() > 0 && story.fileUrl.endsWith(".mp4")) {
+            FileUtils.setImageFromVideoUrl(story.fileUrl, holder.storyImage);
+            holder.storyImage.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+                     FileDialog.showVideoDialog(view.getContext(), story.fileUrl);
+                 }
+            });
+        } else {
+            FileUtils.setImageFromUrl(story.fileUrl, holder.storyImage, R.drawable.story_image_placeholder);
+        }
+
+        FileUtils.setImageFromBase64(story.profilePic, holder.storyUserImage, R.drawable.profile_placeholder);
 
         holder.username.setText(story.username + ": ");
         holder.title.setText(story.title);
@@ -77,46 +94,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
         // New comment
         User currentUser = LocalStorage.getUser();
-        this.setImageFromBase64(currentUser.profilePic, holder.newCommentUserPic, R.drawable.profile_placeholder);
+        FileUtils.setImageFromBase64(currentUser.profilePic, holder.newCommentUserPic, R.drawable.profile_placeholder);
         holder.postCommentButton.setOnClickListener(new PostCommentButtonOnClickHandler(story, holder));
-    }
-
-    private void setImageFromUrl(String url, ImageView imageView, int placeholderResId) {
-        try {
-
-            if (url != null && url.length() > 0) {
-                Picasso
-                    .get()
-                    .load(url)
-                    .placeholder(placeholderResId)
-                    .into(imageView);
-            } else {
-                // Load the placeholder instead
-                Picasso
-                    .get()
-                    .load(placeholderResId)
-                    .placeholder(placeholderResId)
-                    .into(imageView);
-            }
-        } catch (Exception e) {
-            // The FileUri cannot be parsed.
-            // Swallow the exception and load a placeholder
-            Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(imageView);
-            Log.e("Error", e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void setImageFromBase64(String base64, ImageView imageView, int placeholderResId) {
-
-        if (base64.length() == 0) {
-            imageView.setImageResource(placeholderResId);
-            return;
-        }
-
-        byte[] decodedProfilePic = Base64.decode(base64, Base64.DEFAULT);
-        Bitmap bitmapProfilePic = BitmapFactory.decodeByteArray(decodedProfilePic, 0, decodedProfilePic.length);
-        imageView.setImageBitmap(bitmapProfilePic);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

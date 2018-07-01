@@ -36,6 +36,8 @@ public class UserStoriesActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Intent myIntent = getIntent();
         username = myIntent.getStringExtra("username");
@@ -44,6 +46,13 @@ public class UserStoriesActivity extends AppCompatActivity {
         GetStoriesFromUserTask task = new GetStoriesFromUserTask(this);
         task.execute(username, LocalStorage.getUser().id);
     }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
 
     protected class GetStoriesFromUserTask extends AsyncTask<String, Void, ServiceResponse<ArrayList<Story>>> {
         private StoryService storyService = new StoryService();

@@ -3,11 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
     <item
-        android:id="@+id/search_friends"
-        android:icon="@drawable/ic_add_friend"
-        android:title="Buscar Amigos"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/friendship_requests_sent"
         app:showAsAction="never"
         android:title="Solicitudes Enviadas"/>

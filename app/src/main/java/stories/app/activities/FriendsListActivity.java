@@ -36,8 +36,9 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        setTitle("Amigos");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Intent myIntent = getIntent();
         username = myIntent.getStringExtra("username");
@@ -51,6 +52,12 @@ public class FriendsListActivity extends AppCompatActivity implements UsersRecyc
         recyclerView.setAdapter(recyclerViewAdapter);
 
         new GetFriendsTask().execute(username);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override

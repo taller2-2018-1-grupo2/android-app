@@ -99,7 +99,6 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         protected void onPreExecute() {
-            // Show snackbar until all stories have been loaded
             this.snackbar.show();
         }
 
@@ -109,7 +108,6 @@ public class HomeActivity extends AppCompatActivity {
 
         protected void onPostExecute(ServiceResponse<ArrayList<Story>> response) {
 
-            // Hide the snackbar
             this.snackbar.dismiss();
 
             ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();

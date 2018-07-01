@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +39,8 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // set up the RecyclerView
         recyclerView = findViewById(R.id.friendship_requests_received_recycler_view);
@@ -50,24 +54,9 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_friendship_requests, menu);
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.search_friends) {
-            Intent navigationIntent = new Intent(FriendshipRequestsReceivedActivity.this, FriendshipRequestsActivity.class);
-            startActivity(navigationIntent);
-            return(true);
-        } else if (item.getItemId() == R.id.friendship_requests_sent) {
-            Intent navigationIntent = new Intent(FriendshipRequestsReceivedActivity.this, FriendshipRequestsSentActivity.class);
-            startActivity(navigationIntent);
-            return(true);
-        }
-        return(super.onOptionsItemSelected(item));
     }
 
     @Override
@@ -86,8 +75,14 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
 
     protected class GetFriendshipRequestsReceived extends AsyncTask<String, Void, ServiceResponse<ArrayList<HashMap<String,String>>>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
+        private Snackbar snackbar;
+
+        public GetFriendshipRequestsReceived() {
+            this.snackbar = Snackbar.make(findViewById(R.id.friendship_requests_received_layout), "Cargando...", Snackbar.LENGTH_INDEFINITE);
+        }
 
         protected void onPreExecute() {
+            this.snackbar.show();
         }
 
         protected ServiceResponse<ArrayList<HashMap<String,String>>> doInBackground(String... params) {
@@ -97,6 +92,8 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
         }
 
         protected void onPostExecute(ServiceResponse<ArrayList<HashMap<String,String>>> response) {
+            this.snackbar.dismiss();
+
             ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
             if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
                 ArrayList<HashMap<String,String>> result = response.getServiceResponse();
@@ -114,14 +111,16 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
 
     protected class AcceptFriendshipRequestTask extends AsyncTask<String, Void, ServiceResponse<String>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
-
+        private Snackbar snackbar;
         private Context context;
 
         public AcceptFriendshipRequestTask (Context context){
             this.context = context;
+            this.snackbar = Snackbar.make(findViewById(R.id.friendship_requests_received_layout), "Realizando operación...", Snackbar.LENGTH_INDEFINITE);
         }
 
         protected void onPreExecute() {
+            this.snackbar.show();
         }
 
         protected ServiceResponse<String> doInBackground(String... params) {
@@ -132,10 +131,21 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
         }
 
         protected void onPostExecute(ServiceResponse<String> response) {
+            this.snackbar.dismiss();
+
             ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+
+            if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(FriendshipRequestsReceivedActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
+                return;
+            }
+
             if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
                 String result = response.getServiceResponse();
                 if (result != "") {
+                    Toast.makeText(this.context, "Aceptaste una solicitud de amistad de: " + result, Toast.LENGTH_SHORT).show();
+
                     for (int i = 0; i < dataset.size(); i++) {
                         if (dataset.get(i).get("username") == result) {
                             dataset.remove(i);
@@ -143,9 +153,6 @@ public class FriendshipRequestsReceivedActivity extends AppCompatActivity implem
                     }
                     recyclerViewAdapter.notifyDataSetChanged();
                 }
-            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
-                Intent navigationIntent = new Intent(FriendshipRequestsReceivedActivity.this, LogInActivity.class);
-                startActivity(navigationIntent);
             }
         }
     }

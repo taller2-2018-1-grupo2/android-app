@@ -7,8 +7,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,20 +54,48 @@ public class ProfileActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         if (username.equals(LocalStorage.getUser().username)) {
-            Button applyChangesButton = this.findViewById(R.id.applyChangesButton);
+            final Button applyChangesButton = this.findViewById(R.id.applyChangesButton);
             ApplyChangesClickHandler clickHandler = new ApplyChangesClickHandler(this);
             applyChangesButton.setOnClickListener(clickHandler);
+            applyChangesButton.setEnabled(false);
 
             ImageView profilePicture = this.findViewById(R.id.profile_pic);
             profilePicture.setOnClickListener(new ProfilePicClickHandler());
 
             TextView changeProfilePicButton = this.findViewById(R.id.change_pic);
             changeProfilePicButton.setOnClickListener(new ProfilePicClickHandler());
+
+            final EditText name = findViewById(R.id.name);
+            final EditText email = findViewById(R.id.email);
+
+            TextWatcher textWatcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    applyChangesButton.setEnabled(name.getText().length() != 0 && email.getText().length() != 0);
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {}
+            };
+
+            name.addTextChangedListener(textWatcher);
+            email.addTextChangedListener(textWatcher);
         }
 
         new GetUserDataTask().execute(username);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override
@@ -133,17 +164,24 @@ public class ProfileActivity extends AppCompatActivity {
             EditText email = findViewById(R.id.email);
 
             UpdateUserDataTask task = new UpdateUserDataTask(this.context);
-            task.execute(
-                    name.getText().toString(),
-                    email.getText().toString()
-            );
+            task.execute(name.getText().toString(), email.getText().toString());
         }
     }
 
     protected class GetUserDataTask extends AsyncTask<String, Void, ServiceResponse<String>> {
         private ProfileService profileService = new ProfileService();
+        private Snackbar snackbar;
+
+        public GetUserDataTask() {
+            int layoutId = username.equals(LocalStorage.getUser().username)
+                    ? R.id.activity_profile_layout
+                    : R.id.activity_other_profile_layout;
+
+            this.snackbar = Snackbar.make(findViewById(layoutId), "Cargando...", Snackbar.LENGTH_INDEFINITE);
+        }
 
         protected void onPreExecute() {
+            this.snackbar.show();
         }
 
         protected ServiceResponse<String> doInBackground(String... params) {
@@ -151,6 +189,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(ServiceResponse<String> response) {
+
+            this.snackbar.dismiss();
+
             ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
             if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS){
                 String result = response.getServiceResponse();

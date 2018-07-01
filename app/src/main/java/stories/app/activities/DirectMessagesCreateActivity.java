@@ -28,8 +28,9 @@ public class DirectMessagesCreateActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        setTitle("Enviar Mensaje Nuevo");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         final Button sendMessageButton = this.findViewById(R.id.sendMessageButton);
         sendMessageButton.setOnClickListener(new DirectMessagesCreateActivity.SendMessageHandler());
@@ -55,6 +56,12 @@ public class DirectMessagesCreateActivity extends AppCompatActivity {
 
         destination.addTextChangedListener(textWatcher);
         messageText.addTextChangedListener(textWatcher);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     protected class SendMessageHandler implements View.OnClickListener {

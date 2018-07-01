@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -38,11 +40,17 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        setTitle("Solicitudes de amistad");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        TextView result = findViewById(R.id.friendship_requests_result);
+        result.setText("");
 
         SearchView searchView = this.findViewById(R.id.friends_search_bar);
         searchView.setOnQueryTextListener(new SearchQueryHandler());
+        searchView.setFocusable(true);
+        searchView.requestFocus();
 
         // set up the RecyclerView
         recyclerView = findViewById(R.id.users_recycler_view);
@@ -51,6 +59,12 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
         recyclerViewAdapter = new UsersRecyclerViewAdapter(this, dataset, "users");
         recyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(recyclerViewAdapter);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override
@@ -66,11 +80,14 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
             Intent navigationIntent = new Intent(FriendshipRequestsActivity.this, FriendshipRequestsSentActivity.class);
             startActivity(navigationIntent);
             return(true);
-        } else if (item.getItemId() == R.id.friendship_requests_received) {
+        }
+
+        if (item.getItemId() == R.id.friendship_requests_received) {
             Intent navigationIntent = new Intent(FriendshipRequestsActivity.this, FriendshipRequestsReceivedActivity.class);
             startActivity(navigationIntent);
             return(true);
         }
+
         return(super.onOptionsItemSelected(item));
     }
 
@@ -83,9 +100,7 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
             SearchView searchView = findViewById(R.id.friends_search_bar);
 
             new GetUsersTask().execute(searchView.getQuery().toString());
-
             searchView.clearFocus();
-
             return true;
         }
     }
@@ -112,8 +127,17 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
 
     protected class GetUsersTask extends AsyncTask<String, Void, ServiceResponse<ArrayList<HashMap<String,String>>>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
+        private Snackbar snackbar;
+        private TextView result;
+
+        public GetUsersTask() {
+            this.snackbar = Snackbar.make(findViewById(R.id.activity_friendship_requests), "Buscando...", Snackbar.LENGTH_INDEFINITE);
+            this.result = findViewById(R.id.friendship_requests_result);
+        }
 
         protected void onPreExecute() {
+            this.snackbar.show();
+            this.result.setText("");
         }
 
         protected ServiceResponse<ArrayList<HashMap<String,String>>> doInBackground(String... params) {
@@ -124,32 +148,43 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
         }
 
         protected void onPostExecute(ServiceResponse<ArrayList<HashMap<String,String>>> response) {
+
+            this.snackbar.dismiss();
+
             ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
+
+            if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(FriendshipRequestsActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
+                return;
+            }
+
             if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
                 ArrayList<HashMap<String,String>> result = response.getServiceResponse();
                 dataset.clear();
+
                 for (int i = 0; i < result.size(); i++) {
                     dataset.add(result.get(i));
                 }
+
+                this.result.setText("Se encontraron " + result.size() + " resultados");
                 recyclerViewAdapter.notifyDataSetChanged();
-            }
-            else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
-                Intent navigationIntent = new Intent(FriendshipRequestsActivity.this, LogInActivity.class);
-                startActivity(navigationIntent);
             }
         }
     }
 
     protected class CreateFriendshipRequestTask extends AsyncTask<String, Void, ServiceResponse<String>> {
         private FriendshipRequestsService friendshipRequestsService = new FriendshipRequestsService();
-
+        private Snackbar snackbar;
         private Context context;
 
         public CreateFriendshipRequestTask (Context context){
+            this.snackbar = Snackbar.make(findViewById(R.id.activity_friendship_requests), "Realizando operación...", Snackbar.LENGTH_INDEFINITE);
             this.context = context;
         }
 
         protected void onPreExecute() {
+            this.snackbar.show();
         }
 
         protected ServiceResponse<String> doInBackground(String... params) {
@@ -160,6 +195,9 @@ public class FriendshipRequestsActivity extends AppCompatActivity implements Use
         }
 
         protected void onPostExecute(ServiceResponse<String> response) {
+
+            this.snackbar.dismiss();
+
             ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
             if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
                 String result = response.getServiceResponse();

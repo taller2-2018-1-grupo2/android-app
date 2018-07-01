@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,6 +43,8 @@ public class DirectMessagesActivity extends AppCompatActivity implements Convers
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         this.messagingService = new MessagingService();
 
@@ -65,6 +68,12 @@ public class DirectMessagesActivity extends AppCompatActivity implements Convers
         };
 
         handler.postDelayed(fetchConversations, delay);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override
@@ -105,14 +114,13 @@ public class DirectMessagesActivity extends AppCompatActivity implements Convers
     }
 
     protected class GetUserMessagesTask extends AsyncTask<String, Void, ServiceResponse<ConversationResponse>> {
-        protected void onPreExecute() {
-        }
 
         protected ServiceResponse<ConversationResponse> doInBackground(String... params) {
             return messagingService.getUserMessages(params[0]);
         }
 
         protected void onPostExecute(ServiceResponse<ConversationResponse> response) {
+
             ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
             if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
                 ArrayList<ConversationDMResponse> result = response.getServiceResponse().direct_messages;

@@ -4,12 +4,12 @@
 
     <item
         android:id="@+id/user_stories"
-        app:showAsAction="always"
-        android:icon="@android:drawable/ic_menu_slideshow"
-        android:title="Historias de Usuario"/>
+        android:icon="@drawable/ic_stories"
+        android:title="Historias de Usuario"
+        app:showAsAction="always" />
     <item
         android:id="@+id/friends_list"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_menu_allfriends"
-        android:title="Buscar Amigos"/>
+        android:icon="@drawable/ic_friends"
+        android:title="Buscar Amigos"
+        app:showAsAction="always" />
 </menu>

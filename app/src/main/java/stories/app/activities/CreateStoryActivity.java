@@ -16,15 +16,13 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 
 import java.io.File;
-import java.util.Calendar;
-import java.util.TimeZone;
 
 import stories.app.R;
 import stories.app.activities.images.ImageFiltersActivity;
 import stories.app.models.Story;
+import stories.app.models.responses.ServiceResponse;
 import stories.app.services.FileService;
 import stories.app.services.LocationService;
-import stories.app.models.responses.ServiceResponse;
 import stories.app.services.StoryService;
 import stories.app.utils.Dates;
 import stories.app.utils.FileUtils;
@@ -167,8 +165,7 @@ public class CreateStoryActivity extends AppCompatActivity {
                 new UploadFileTask(this.mFilePath).execute(newStory.id);
             } else {
                 String messageToDisplay = "Error al subir la historia. Intente de nuevo.";
-                Snackbar snackbar = Snackbar
-                        .make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(findViewById(R.id.createStoryLayout), messageToDisplay, Snackbar.LENGTH_LONG);
                 snackbar.show();
 
                 Button createStoryButton = findViewById(R.id.createStoryButton);

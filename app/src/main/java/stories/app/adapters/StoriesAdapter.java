@@ -71,7 +71,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             holder.storyImage.setOnClickListener(new View.OnClickListener() {
                  @Override
                  public void onClick(View view) {
-                     FileDialog.showVideoDialog(view.getContext(), story.fileUrl);
+                     FileDialog.showVideoDialog(view, story.fileUrl);
                  }
             });
         } else {

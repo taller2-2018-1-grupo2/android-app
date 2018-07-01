@@ -75,9 +75,9 @@ public class QuickStoriesAdapter extends RecyclerView.Adapter<QuickStoriesAdapte
         @Override
         public void onClick(View view) {
             if (story.fileUrl != null && story.fileUrl.length() > 0 && story.fileUrl.endsWith(".mp4")) {
-                FileDialog.showVideoDialog(view.getContext(), story.fileUrl);
+                FileDialog.showVideoDialog(view, story.fileUrl);
             } else {
-                FileDialog.showImageDialog(view.getContext(), storyImageView.getDrawable());
+                FileDialog.showImageDialog(view, storyImageView.getDrawable());
             }
         }
     }

@@ -2,8 +2,9 @@ package stories.app.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -11,11 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 import stories.app.R;
 import stories.app.adapters.QuickStoriesAdapter;
@@ -89,18 +86,21 @@ public class HomeActivity extends AppCompatActivity {
                 navigationIntent = new Intent(HomeActivity.this, LogInActivity.class);
                 startActivity(navigationIntent);
                 return true;
-//            case R.id.chat:
-//                navigationIntent = new Intent(HomeActivity.this, ChatActivity.class);
-//                startActivity(navigationIntent);
-//                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     protected class GetStoriesVisiblesToUserTask extends AsyncTask<String, Void, ServiceResponse<ArrayList<Story>>> {
         private StoryService storyService = new StoryService();
+        private Snackbar snackbar;
+
+        public GetStoriesVisiblesToUserTask() {
+            this.snackbar = Snackbar.make(findViewById(R.id.activity_home_layout), "Cargando las historias...", Snackbar.LENGTH_INDEFINITE);
+        }
 
         protected void onPreExecute() {
+            // Show snackbar until all stories have been loaded
+            this.snackbar.show();
         }
 
         protected ServiceResponse<ArrayList<Story>> doInBackground(String... params) {
@@ -109,28 +109,37 @@ public class HomeActivity extends AppCompatActivity {
 
         protected void onPostExecute(ServiceResponse<ArrayList<Story>> response) {
 
+            // Hide the snackbar
+            this.snackbar.dismiss();
+
             ServiceResponse.ServiceStatusCode statusCode = response.getStatusCode();
 
-            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS) {
-                ArrayList<Story> result = response.getServiceResponse();
+            if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
+                Intent navigationIntent = new Intent(HomeActivity.this, LogInActivity.class);
+                startActivity(navigationIntent);
+                return;
+            }
+
+            ArrayList<Story> result = response.getServiceResponse();
+
+            if (statusCode == ServiceResponse.ServiceStatusCode.SUCCESS && result != null) {
 
                 // Split result between regular stories and quick stories
                 ArrayList<Story> regularStories = new ArrayList<Story>();
                 ArrayList<Story> quickStories = new ArrayList<Story>();
 
-                if (result != null) {
-                    for (int i = 0; i < result.size(); i++) {
-                        Story story = result.get(i);
-                        if (story.isQuickStory) {
-                            // Display only 10 fresh stories (<4hs)
-                            if (quickStories.size() < 10 && Dates.isFresh(story.timestamp)) {
-                                quickStories.add(story);
-                            }
-                        } else {
-                            regularStories.add(story);
+                for (int i = 0; i < result.size(); i++) {
+                    Story story = result.get(i);
+                    if (story.isQuickStory) {
+                        // Display only 10 fresh stories (<4hs)
+                        if (quickStories.size() < 10 && Dates.isFresh(story.timestamp)) {
+                            quickStories.add(story);
                         }
+                    } else {
+                        regularStories.add(story);
                     }
                 }
+
                 // Display regular stories
                 RecyclerView storiesList = (RecyclerView) findViewById(R.id.storiesList);
                 storiesList.setAdapter(new StoriesAdapter(HomeActivity.this, regularStories));
@@ -138,9 +147,6 @@ public class HomeActivity extends AppCompatActivity {
                 // Display quick stories
                 RecyclerView quickStoriesList = (RecyclerView) findViewById(R.id.quickStoriesList);
                 quickStoriesList.setAdapter(new QuickStoriesAdapter(HomeActivity.this, quickStories));
-            } else if (statusCode == ServiceResponse.ServiceStatusCode.UNAUTHORIZED) {
-                Intent navigationIntent = new Intent(HomeActivity.this, LogInActivity.class);
-                startActivity(navigationIntent);
             }
         }
     }

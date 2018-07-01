@@ -48,7 +48,7 @@
         android:layout_weight="1"
         android:clickable="true"
         android:padding="2dp"
-        app:srcCompat="@android:drawable/ic_menu_add" />
+        app:srcCompat="@drawable/ic_add_direct_message" />
 
 
 </RelativeLayout>

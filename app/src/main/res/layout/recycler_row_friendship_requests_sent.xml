@@ -39,14 +39,14 @@
 
     <ImageView
         android:id="@+id/delete_friendship_request"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:clickable="true"
-        android:padding="2dp"
-        app:srcCompat="@android:drawable/ic_menu_delete" />
+        app:srcCompat="@drawable/ic_delete" />
 
 
 </RelativeLayout>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".activities.FriendshipRequestsActivity">
 
     <android.support.v7.widget.Toolbar
@@ -11,10 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary_material_light"
-        android:textColor="@color/textPrimary"
         android:elevation="4dp"
+        android:textColor="@color/textPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat" >
+        app:popupTheme="@style/ThemeOverlay.AppCompat">
 
         <TextView
             android:id="@+id/toolbar_title"
@@ -22,8 +23,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Buscar Usuarios"
-            android:textSize="25sp"
-            android:textColor="@color/textPrimary"/>
+            android:textColor="@color/textPrimary"
+            android:textSize="25sp" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -32,18 +33,14 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.108"></SearchView>
+        android:hint="@string/user_search_query_hint"
+        android:queryHint="@string/user_search_query_hint"></SearchView>
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/users_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="match_parent"
         android:layout_marginTop="5dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -54,4 +51,4 @@
         app:layout_constraintVertical_bias="0.777" />
 
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

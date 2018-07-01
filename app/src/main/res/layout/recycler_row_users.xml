@@ -41,36 +41,36 @@
 
     <ImageView
         android:id="@+id/profile_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
         android:layout_toStartOf="@+id/send_message"
         android:layout_weight="1"
         android:clickable="true"
-        android:padding="2dp"
         app:srcCompat="@drawable/ic_profile" />
 
     <ImageView
         android:id="@+id/send_message"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
         android:layout_toStartOf="@+id/add_user"
         android:layout_weight="1"
         android:clickable="true"
-        android:padding="2dp"
-        app:srcCompat="@drawable/ic_menu_send" />
+        app:srcCompat="@drawable/ic_direct_message" />
 
     <ImageView
         android:id="@+id/add_user"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
+        android:layout_marginRight="5dp"
         android:layout_weight="1"
         android:clickable="true"
-        android:padding="2dp"
-        app:srcCompat="@android:drawable/ic_menu_add" />
+        app:srcCompat="@drawable/ic_add_friend" />
 
 
 </RelativeLayout>

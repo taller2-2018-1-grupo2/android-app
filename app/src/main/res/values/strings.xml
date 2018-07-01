@@ -22,6 +22,9 @@
     <string name="stories_map">Ver en Mapa</string>
     <string name="logout">Cerrar sesión</string>
 
+    <!-- String related to User -->
+    <string name="user_search_query_hint">Ingresa un usuario</string>
+
     <!-- Strings related to Create Story -->
     <string name="prompt_title">Título</string>
     <string name="prompt_description">Descripción</string>

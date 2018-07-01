@@ -32,20 +32,18 @@ public class ChatActivity extends AppCompatActivity {
 
         this.chatService = new ChatService();
 
-
         RecyclerView recycler = (RecyclerView) findViewById(R.id.chat_recycler_view);
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(this));
         mAdapter =
-                new FirebaseRecyclerAdapter<Message, MessageHolder>(
-                        Message.class, R.layout.message_item, MessageHolder.class, chatService.messagesDB) {
-                    @Override
-                    public void populateViewHolder(MessageHolder predViewHolder, Message message, int position) {
-                        predViewHolder.setMessageUsername(message);
-                        predViewHolder.setMessage(message);
-                        predViewHolder.setTimestamp(message);
-                    }
-                };
+            new FirebaseRecyclerAdapter<Message, MessageHolder>(Message.class, R.layout.message_item, MessageHolder.class, chatService.messagesDB) {
+                @Override
+                public void populateViewHolder(MessageHolder predViewHolder, Message message, int position) {
+                    predViewHolder.setMessageUsername(message);
+                    predViewHolder.setMessage(message);
+                    predViewHolder.setTimestamp(message);
+                }
+            };
         recycler.setAdapter(mAdapter);
     }
 

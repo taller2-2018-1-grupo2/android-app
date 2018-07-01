@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,8 +31,30 @@ public class DirectMessagesCreateActivity extends AppCompatActivity {
         setTitle("Enviar Mensaje Nuevo");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        Button sendMessageButton = this.findViewById(R.id.sendMessageButton);
+        final Button sendMessageButton = this.findViewById(R.id.sendMessageButton);
         sendMessageButton.setOnClickListener(new DirectMessagesCreateActivity.SendMessageHandler());
+        sendMessageButton.setEnabled(false);
+
+        final EditText destination = findViewById(R.id.createMessageDestination);
+        final EditText messageText = findViewById(R.id.createMessageText);
+
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                sendMessageButton.setEnabled(
+                        destination.getText().length() != 0 && messageText.getText().length() != 0
+                );
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        };
+
+        destination.addTextChangedListener(textWatcher);
+        messageText.addTextChangedListener(textWatcher);
     }
 
     protected class SendMessageHandler implements View.OnClickListener {

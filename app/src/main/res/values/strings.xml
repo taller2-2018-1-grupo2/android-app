@@ -28,7 +28,7 @@
     <string name="label_visibility_public">Pública</string>
     <string name="label_visibility_private">Privada</string>
     <string name="label_isQuickStory">História Rápida</string>
-    <string name="action_selectImage">Cargar Imagen</string>
+    <string name="action_selectImage">Cargar imagen o video</string>
 
     <!-- Strings related to Create Message -->
     <string name="message_destination">Destinatario</string>

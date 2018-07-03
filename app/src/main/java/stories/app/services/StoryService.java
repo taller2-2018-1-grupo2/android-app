@@ -200,6 +200,7 @@ public class StoryService extends BaseService {
             JSONObject value = new JSONObject();
             value.put("user_id", user.id);
             value.put("username", user.username);
+            value.put("name", user.name);
             value.put("text", commentText);
             requestBody.put("value", value);
 

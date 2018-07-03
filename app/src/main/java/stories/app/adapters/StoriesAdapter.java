@@ -80,7 +80,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
         FileUtils.setImageFromBase64(story.profilePic, holder.storyUserImage, R.drawable.profile_placeholder);
 
-        holder.username.setText(story.username + ": ");
+        holder.name.setText(story.name + ": ");
         holder.title.setText(story.title);
 
         holder.description.setText(story.description);
@@ -101,7 +101,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView storyImage;
         ImageView storyUserImage;
-        TextView username;
+        TextView name;
         TextView title;
         TextView description;
 
@@ -123,7 +123,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             super(itemView);
             this.storyImage = itemView.findViewById(R.id.stories_item_fileUrl);
             this.storyUserImage = itemView.findViewById(R.id.stories_item_user_pic);
-            this.username =itemView.findViewById(R.id.stories_item_user_name);
+            this.name =itemView.findViewById(R.id.stories_item_full_name);
             this.title = itemView.findViewById(R.id.stories_item_title);
             this.description = itemView.findViewById(R.id.stories_item_description);
 
@@ -234,10 +234,15 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             for(int i = 0; i < comments.length(); i++) {
                 try {
                     JSONObject comment = comments.getJSONObject(i);
-                    String username = comment.getString("username");
+                    //String username = comment.getString("username");
                     String text = comment.getString("text");
+                    String name = "";
 
-                    postComments += "<b>" + username + ":</b> " + text;
+                    if (comment.has("name")) {
+                        name = comment.getString("name");
+                    }
+
+                    postComments += "<b>" + name + ":</b> " + text;
 
                     if (i + 1 < comments.length()) {
                         postComments += "<br>";

@@ -24,7 +24,7 @@
             tools:src="@drawable/profile_placeholder" />
 
         <TextView
-            android:id="@+id/stories_item_user_name"
+            android:id="@+id/stories_item_full_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"

@@ -41,13 +41,20 @@ public class CreateStoryActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        setTitle("Crear Historia");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Button createStoryButton = this.findViewById(R.id.createStoryButton);
         createStoryButton.setOnClickListener(new CreateStoryHandler());
 
         this.locationService.startLocationUpdates(this);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

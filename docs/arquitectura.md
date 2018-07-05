@@ -84,11 +84,11 @@ Un aspecto de la aplicación a tener en cuenta fue la decisión tomada de restri
 
 | Android SDK Version        | Market Share           |
 | ------------- |:-------------:|
-|**7.0-7.1 (Nougat)**     | 31.5% |
-| **6.0 (Marshmallow)**   | 22.9%      |
-| **5.0-5.1 (Lollipop)** | 19.7%      |
+|**7.0-7.1 (Nougat)**     | **31.5%** |
+| **6.0 (Marshmallow)**   | **22.9%**      |
+| **5.0-5.1 (Lollipop)** | **19.7%**      |
 | 4.4 (KitKat)  | 10.5%  |
-|  **8.0-8.1 (Oreo)** |  10.1% |
+|  **8.0-8.1 (Oreo)** |  **10.1%** |
 |  4.1-4.3 (Jelly Bean) | 4.5%  |
 | 4.0 (Ice Cream Sandwich)  | 0.4%  |
 | 2.3 (Gingerbread)  | 0.4%  |

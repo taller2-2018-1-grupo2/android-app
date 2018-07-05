@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/createStoryLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
-    android:id="@+id/createStoryLayout"
+    android:orientation="vertical"
     tools:context=".activities.CreateStoryActivity">
 
     <android.support.v7.widget.Toolbar
@@ -28,85 +29,70 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <CheckBox
-        android:id="@+id/createStoryIsQuickStory"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/raleway"
-        android:text="@string/label_isQuickStory"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.226" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/createStoryTitle"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/prompt_title"
-        android:inputType="text"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.326" />
-
-    <EditText
-        android:id="@+id/createStoryDescription"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:hint="@string/prompt_description"
-        android:inputType="textMultiLine"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.426" />
-
-    <RadioGroup
-        android:id="@+id/createStoryVisibility"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:checkedButton="@+id/createStoryVisibilityIsPublic"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.526">
-
-        <RadioButton
-            android:id="@+id/createStoryVisibilityIsPublic"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/createStoryTitle"
+            android:layout_width="330dp"
             android:layout_height="wrap_content"
+            android:hint="@string/prompt_title"
+            android:inputType="text"
+            android:textSize="18sp"
+            app:layout_constraintVertical_bias="0.326" />
+
+        <EditText
+            android:id="@+id/createStoryDescription"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:hint="@string/prompt_description"
+            android:inputType="textMultiLine" />
+
+        <CheckBox
+            android:id="@+id/createStoryIsQuickStory"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/raleway"
-            android:text="@string/label_visibility_public"
+            android:text="@string/label_isQuickStory"
             android:textSize="18sp" />
 
-        <RadioButton
-            android:id="@+id/createStoryVisibilitIsPrivate"
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:id="@+id/createStoryVisibility"
+            android:layout_width="330dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/raleway"
-            android:text="@string/label_visibility_private"
-            android:textSize="18sp" />
-    </RadioGroup>
+            android:layout_marginTop="20dp"
+            android:checkedButton="@+id/createStoryVisibilityIsPublic"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/createStoryButton"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:text="@string/action_selectImage"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.726" />
+            <RadioButton
+                android:id="@+id/createStoryVisibilityIsPublic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/raleway"
+                android:text="@string/label_visibility_public"
+                android:textSize="18sp" />
 
-</android.support.constraint.ConstraintLayout>
+            <RadioButton
+                android:id="@+id/createStoryVisibilitIsPrivate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/raleway"
+                android:text="@string/label_visibility_private"
+                android:textSize="18sp" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/createStoryButton"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/action_selectImage" />
+    </LinearLayout>
+
+</LinearLayout>

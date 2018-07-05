@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".activities.SignInActivity">
 
     <TextView
@@ -14,189 +15,126 @@
         android:gravity="center"
         android:text="Stories"
         android:textColor="@color/textColorSecondary"
-        android:textSize="60sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.033" />
+        android:textSize="60sp" />
 
-    <EditText
-        android:id="@+id/username"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/prompt_username"
-        android:inputType="text"
-        app:layout_constraintBottom_toTopOf="@+id/email"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/app_title"
-        app:layout_constraintVertical_bias="0.253" />
-
-    <TextView
-        android:id="@+id/invalid_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:text="Usuario invalido"
-        android:textColor="@color/colorError"
-        android:textSize="14sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.059"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.299" />
-
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/prompt_email"
-        android:inputType="text|textEmailAddress"
-        app:layout_constraintBottom_toTopOf="@+id/password"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username"
-        app:layout_constraintVertical_bias="0.357" />
-
-    <TextView
-        android:id="@+id/invalid_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:text="Email invalido"
-        android:textColor="@color/colorError"
-        android:textSize="14sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.062"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.417" />
-
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/prompt_password"
-        android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/confirmPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email"
-        app:layout_constraintVertical_bias="0.445" />
-
-    <TextView
-        android:id="@+id/invalid_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:text="La contraseña debe tener 8 o mas caracteres"
-        android:textColor="@color/colorError"
-        android:textSize="14sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.253"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.532" />
-
-    <EditText
-        android:id="@+id/confirmPassword"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/prompt_confirm_password"
-        android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.548" />
-
-    <TextView
-        android:id="@+id/invalid_password_confirmation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:text="La contraseña no es la misma"
-        android:textColor="@color/colorError"
-        android:textSize="14sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.095"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.649" />
-
-    <EditText
-        android:id="@+id/name"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/prompt_name"
-        android:inputType="text"
-        app:layout_constraintBottom_toTopOf="@+id/signInButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirmPassword"
-        app:layout_constraintVertical_bias="0.675" />
-
-    <TextView
-        android:id="@+id/invalid_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:text="Nombre invalido"
-        android:textColor="@color/colorError"
-        android:textSize="14sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.062"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.764" />
-
-    <Button
-        android:id="@+id/signInButton"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/raleway"
-        android:text="@string/action_signin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.861" />
-
-    <TextView
-        android:id="@+id/signInResult"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:text="Ocurrio un error al registrar al usuario"
-        android:textColor="@color/colorError"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signInButton"
-        app:layout_constraintVertical_bias="0.571" />
+        android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/prompt_username"
+            android:inputType="text" />
+
+        <TextView
+            android:id="@+id/invalid_username"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Usuario invalido"
+            android:textColor="@color/colorError"
+            android:textSize="14sp"
+            android:visibility="invisible"
+            tools:text="Ocurrio un error al registrar al usuario" />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/prompt_email"
+            android:inputType="text|textEmailAddress" />
+
+        <TextView
+            android:id="@+id/invalid_email"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Email invalido"
+            android:textColor="@color/colorError"
+            android:textSize="14sp"
+            android:visibility="invisible"
+            tools:text="Ocurrio un error al registrar al usuario" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/prompt_password"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/invalid_password"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="La contraseña debe tener 8 o mas caracteres"
+            android:textColor="@color/colorError"
+            android:textSize="14sp"
+            android:visibility="invisible"
+            tools:text="Ocurrio un error al registrar al usuario" />
+
+        <EditText
+            android:id="@+id/confirmPassword"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/prompt_confirm_password"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/invalid_password_confirmation"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="La contraseña no es la misma"
+            android:textColor="@color/colorError"
+            android:textSize="14sp"
+            android:visibility="invisible"
+            tools:text="Ocurrio un error al registrar al usuario" />
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/prompt_name"
+            android:inputType="text" />
+
+        <TextView
+            android:id="@+id/invalid_name"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Nombre invalido"
+            android:textColor="@color/colorError"
+            android:textSize="14sp"
+            android:visibility="invisible"
+            tools:text="Ocurrio un error al registrar al usuario" />
+
+        <Button
+            android:id="@+id/signInButton"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/raleway"
+            android:text="@string/action_signin" />
+
+        <TextView
+            android:id="@+id/signInResult"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/colorError"
+            android:textSize="20sp"
+            tools:text="Ocurrio un error al registrar al usuario" />
+
+    </LinearLayout>
+
+</LinearLayout>

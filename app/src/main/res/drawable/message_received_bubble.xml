@@ -4,7 +4,7 @@
 
     <!-- View background color -->
     <solid
-        android:color="@color/accent_material_light" >
+        android:color="@color/secondary_message_bubble" >
     </solid>
 
     <!-- The radius makes the corners rounded -->

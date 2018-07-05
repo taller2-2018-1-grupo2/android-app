@@ -94,5 +94,5 @@ Un aspecto de la aplicación a tener en cuenta fue la decisión tomada de restri
 | 2.3 (Gingerbread)  | 0.4%  |
 | 3.0-3.2 (Honeycomb)  | 0.0% |
 
-Estos datos nos muestran que, con la decisión tomada, nuestra aplicación tiene una cobertura superior al ***84%***, lo cual fue analizado en pos de los costos vs beneficios de usar un SDK más antiguo y las limitaciones de librerías que conlleva, y resulto una cobertura suficiente.
+Estos datos nos muestran que, con la decisión tomada, nuestra aplicación tiene una cobertura superior al **84%**, lo cual fue analizado en pos de los costos vs beneficios de usar un SDK más antiguo y las limitaciones de librerías que conlleva, y resulto una cobertura suficiente.
 
